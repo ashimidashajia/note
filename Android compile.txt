@@ -1,0 +1,272 @@
+1 20140718
+在一个全新的pc上，直接编译android
+1）bison: command not found
+2） Error: could not find jdk tools.jar, please install JDK6, which you can download from java.sun.com.  需要jdk1.6
+3）/bin/bash: git: command not found    编译需要git命令吗?   apt-get install git-core
+4）host C: acp <= build/tools/acp/acp.c
+<command-line>:0:0: warning: "_FORTIFY_SOURCE" redefined [enabled by default]
+<built-in>:0:0: note: this is the location of the previous definition
+In file included from /usr/include/stdlib.h:25:0,
+                 from build/tools/acp/acp.c:11:
+/usr/include/features.h:324:26: fatal error: bits/predefs.h: No such file or directory
+compilation terminated.
+
+“bits/predefs.h: No such file or directory”  需要安装: g++-multilib
+
+5)target arm C: libc <= bionic/libc/bionic/pthread.c
+prebuilt/.../arm-linux-androideabi/bin/as: error while loading shared libraries: libz.so.1: cannot open shared object file: No such file or directory
+没有找到 libz.so    安装 zlib1g-dev（不是这个）  而是  apt-get install lib32z1-dev
+
+6）空out目录，直接 make systemimage 
+make: *** No rule to make target `device/amlogic/f16ref/initlogo-robot-1920x1080.rle', needed by `out/target/product/f16ref/root/initlogo.1080p.rle'.  Stop.
+
+【lib32z1-dev】：
+compression library - 32 bit development
+ zlib is a library implementing the deflate compression method found in gzip and PKZIP. This package includes the development support files for building 32 bit applications. 
+【zlib1g-dev】：
+
+lib32z1-dev 依赖 zlib1g-dev
+
+6）Lex: aidl <= frameworks/base/tools/aidl/aidl_language_l.l
+/bin/bash: flex: command not found
+
+apt-get install flex 
+ 
+7）No private recovery resources for TARGET_DEVICE f16ref
+host C++: llvm-rs-cc <= frameworks/compile/slang/llvm-rs-cc.cpp
+<command-line>:0:0: error: "_FORTIFY_SOURCE" redefined [-Werror]
+
+-------------------------
+这两天在ubuntu12.04上编译HI3716c android包，发现的如标题的错误。（可以我在公司为啥没有这个错误呢？）
+
+错误打印如下：
+
+host C++: obbtool <= frameworks/base/tools/obbtool/Main.cpp
+<command-line>:0:0: error: "_FORTIFY_SOURCE" redefined [-Werror]
+<built-in>:0:0: note: this is the location of the previous definition
+cc1plus: all warnings being treated as errors
+make: *** [out/host/linux-x86/obj/EXECUTABLES/obbtool_intermediates/Main.o] Error 1
+
+上网查了查，解决方法如下：
+
+修改源码目录下/build/core/combo/HOST_linux-x86.mk文件：
+
+将以下语句
+HOST_GLOBAL_CFLAGS += -D_FORTIFY_SOURCE=0
+修改为
+HOST_GLOBAL_CFLAGS += -U_FORTIFY_SOURCE -D_FORTIFY_SOURCE=0
+
+
+由于我们使用ubuntu12.04对Android进行编译，Android对Ubuntu12.04的编译平台的支持不是很推荐，有些库的兼容方面会有一些问题，在编译过程中会产生一些错误，我们要进行一些修正：
+<command-line>:0:0: error:"_FORTIFY_SOURCE" redefined [-Werror]
+
+原因：
+在Android系统过程中，要使用gcc-4.4/g++-4.4的编译器，而Ubuntu12.04的gcc版本为4.6.3
+
+我公司是11.10  原来家里成功编译ics的是14.04  还真没用过12.04.
+
+12.04：
+# gcc --version
+gcc (Ubuntu/Linaro 4.6.3-1ubuntu5) 4.6.3，此版编译android 4.0会出错
+
+14.04：
+gcc 4.8.2
+
+ubuntu 11.10的gcc版本是4.6.1，版本太高，编译android时失败，要把gcc版本改为4.4.3。
+
+公司的11.10  执行update-alternative --config gcc 看到4.4  4.5  4.6
+家里的12.04  执行如上命令显示： update-alternatives: error: no alternatives for gcc.
+
+
+Install GCC 4.4
+First, install GCC 4.4 (and friends):
+
+apt-get install gcc-4.4 g++-4.4 g++-4.4-multilib gcc-4.4-multilib
+
+Set 4.4 to be the default
+Then set 4.4 to be higher priority than 4.6:
+
+update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-4.4 100
+update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-4.6 50
+update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-4.4 100
+update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-4.6 50
+update-alternatives --install /usr/bin/cpp cpp-bin /usr/bin/cpp-4.4 100  //12.04 实测4.0.4  不变cpp也行
+update-alternatives --install /usr/bin/cpp cpp-bin /usr/bin/cpp-4.6 50
+
+-------------------------
+
+
+---------------
+gperf：
+ GNU gperf is a perfect hash function generator. For a given list of strings, it produces a hash function and hash table, in form of C or C++ code, for looking up a value depending on the input string. The hash function is perfect, which means that the hash table has no collisions, and the hash table lookup needs a single string comparison only. 
+
+python-markdown
+
+This is a Python implementation of John Gruber’s Markdown. It is almost completely compliant with the reference implementation, though there are a few very minor differences. See John’s Syntax Documentation for the syntax rules.
+
+
+lib32readline5-dev
+
+ The GNU readline library aids in the consistency of user interface across discrete programs that need to provide a command line interface.
+
+The GNU history library provides a consistent user interface for recalling lines of previously typed input. 
+
+
+jdk分为openjdk 和 sun jdk 。直接通过源装sun jdk没有。只有区oracal官网注册下载。open jdk可以直接apt-get
+之前在sun官网下载了 jdk-6u35-linux-x64.bin  （jdk1.6 第35个版本）
+执行：
+./jdk-6u35-linux-x64.bin
+
+添加环境变量在 ~/.profile中：亦说 /etc/profile
+
+2 我在12.04中随便执行 javac 提示：  javac是编译器
+gaojie@gaojie:/$ javac
+The program 'javac' can be found in the following packages:
+ * default-jdk
+ * ecj
+ * gcj-4.6-jdk
+ * openjdk-6-jdk
+ * gcj-4.5-jdk
+ * openjdk-7-jdk
+
+这样我就知道openjdk的包名了。
+
+gaojie@gaojie:/$ java   // java是虚拟机
+The program 'java' can be found in the following packages:
+ * default-jre
+ * gcj-4.6-jre-headless
+ * openjdk-6-jre-headless
+ * gcj-4.5-jre-headless
+ * openjdk-7-jre-headless
+
+这个问题： 4.0.4 用openjdk 1.6.0_31 不行。此时ubuntu12.04 apt-get的就是这个版本。网查，要用sunjdk：jdk-6u35-linux-x64.bin
+==========================
+PLATFORM_VERSION=4.0.4
+
+Your version is: java version "1.6.0_31".
+The correct version is: Java SE 1.6.
+
+$ java -version
+java version "1.6.0_31"
+OpenJDK Runtime Environment (IcedTea6 1.13.3) (6b31-1.13.3-1ubuntu1~0.12.04.2)
+OpenJDK 64-Bit Server VM (build 23.25-b01, mixed mode)
+==========================
+
+在ubuntu12.04上安装 sun jdk：
+执行 ./jdk-6u35-linux-x64.bin  这是个自解压包。在当前目录解压出jdk1.6.0_35目录。并没有执行其他高大上的“安装”工作
+接着把他拷贝到合适的位置，然后设置环境变量。
+一般可以拷贝到 /usr/lib/jvm/  实际可以拷到任何目录。
+
+接下来需要设置环境变量，进入当前用户名的主文件夹，修改.profile文件。注意，该文件是当前用户的配置文件，如果要对使用计算机的所有用户生效，那么需要设置的文件应该是 /etc/profile：
+
+
+
+    export JAVA_HOME=/usr/lib/jvm/jdk1.7.0_10
+    export JRE_HOME=/usr/lib/jvm/jdk1.7.0_10/jre
+    export CLASSPATH=.:$JAVA_HOME/lib/dt.jar:$JAVA_HOME/lib/tools.jar:$JAVA_HOME/lib:$JRE_HOME/lib:$CLASSPATH
+
+    export PATH=$JAVA_HOME/bin:$PATH
+
+
+然后保存关闭，此时在命令行输入java -version将会仍然显示java没有安装。此时，需要使用source更新下.profile文件：
+
+    $ source ~/.profile  （或者 . ~/.profile 就是执行一下这个文件）
+但是终端关闭就又回到了openjdk。 log out 一下就好了。
+为什么安装了sun jdk就成了默认的了呢?因为export发现：
+PATH="/usr/lib/jvm/jdk1.6.0_35/bin:/usr/lib/lightdm/lightdm:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games"
+
+因为把 /usr/lib/jvm/jdk1.6.0_35/bin 放到了 /usr/bin 的前面了。
+
+如果之前系统里面已经安装了openjdk，可以使用如下方法将默认jdk更改过来：（实际经过上面操作，系统默认已经变成sun jdk了）
+开始以及做完上面操作：
+update-alternatives --config java
+There is only one alternative in link group java: /usr/lib/jvm/java-6-openjdk-amd64/jre/bin/java
+Nothing to configure.
+
+提示只有一个，然后：
+update-alternatives: --install needs <link> <name> <path> <priority>
+
+原理：
+/usr/bin/java -> /etc/alternatives/java  -> /usr/lib/jvm/java-6-openjdk-amd64/jre/bin/java
+
+所以我执行：
+sudo update-alternatives  --install "/usr/bin/java" "java" "/usr/lib/jvm/jdk1.6.0_35/jre/bin/java" 1
+
+
+
+
+
+
+
+
+------------------
+开机logo：
+RLE全称（run-length encoding），翻译为游程编码
+rle文件
+
+利用Linux的convert命令将11.jpg转化为11.raw：
+convert -depth 8 11.jpg rgb:11.raw
+
+将11.raw文件转换为initlogo.rle。在raw图片文件所在目录下执行：/out/host/linux-x86/bin/rgb2565 -rle <11.raw> initlogo.rle
+
+在device/.../f16ref.mk中：
+PRODUCT_COPY_FILES += \
+       $(LOCAL_PATH)/init.factorytest.rc:init.factorytest.rc \
+       $(LOCAL_PATH)/initlogo-robot-1280x720.rle:root/initlogo.720p.rle \
+
+意思是把 initlogo-robot-1280x720.rle 拷贝到 root/initlogo.720p.rle 中
+phostshop 可以打开，但是gimp打不开。 ubuntu上可以用 golly程序打开（软件中心下载），不行，打不开。
+
+
+系统编译完成后，再次执行：
+ make systemimage showcommands 会发现什么
+
+
+1  packages/amlogic/LibPlayer/amplayer/player/version.c  里面有取系统时间或者git版本号的操作，导致每次编译都变化，很烦人，关闭之。
+2 编译一个.c 使用prebuilt/linux-x86/toolchain/arm-linux-androideabi-4.4.x/bin/arm-linux-androideabi-gcc 这个编译器
+3 image文件是靠mkyaffs2image 程序生成的，他是external目录的yaffs2 目录生成的HOST程序。
+4 我mmm external/yaffs2
+先调用cc（cc就是gcc，系统中是/usr/bin/cc是链接）编译如下文件：
+LOCAL_SRC_FILES := \
+	yaffs2/utils/mkyaffs2image.c \
+	yaffs2/yaffs_packedtags2.c \
+	yaffs2/yaffs_ecc.c \
+	yaffs2/yaffs_tagsvalidity.c
+然后调用 g++ 链接4个.o 成  mkyaffs2image 并安装到 out/host/linux-x86/bin
+$(call dist-for-goals, dist_files, $(LOCAL_BUILT_MODULE)) 这句话干啥用的？
+
+那么 mkyaffsimage4K.dat 是怎么生成的？
+
+host Prebuilt: mkyaffsimage4K.dat (out/host/linux-x86/obj/EXECUTABLES/mkyaffsimage4K.dat_intermediates/mkyaffsimage4K.dat)
+out/host/linux-x86/bin/acp -fp device/amlogic/common/tools/mkyaffsimage4K.dat out/host/linux-x86/obj/EXECUTABLES/mkyaffsimage4K.dat_intermediates/mkyaffsimage4K.dat
+Install: out/host/linux-x86/bin/mkyaffsimage4K.dat
+out/host/linux-x86/bin/acp -fp out/host/linux-x86/obj/EXECUTABLES/mkyaffsimage4K.dat_intermediates/mkyaffsimage4K.dat out/host/linux-x86/bin/mkyaffsimage4K.dat
+
+使用的是  device/amlogic/common/tools 目录下的 mkyaffsimage4k.dat
+
+LOCAL_MODULE := $(TARGET_AMLOGIC_MKYAFFSIMG_TOOL)
+BoardConfig.mk 中定义：
+TARGET_AMLOGIC_MKYAFFSIMG_TOOL := mkyaffsimage4K.dat
+
+
+---
+每次编译，这个文件device/amlogic/f16ref/f16ref.mk 自动生成？！！！
+./build/env_bestv.sh:cp -f $PWD/amlogic/$PRJNAME/conf/f16ref.mk   $PWD/device/amlogic/f16ref/   ！！！
+
+./amlogic/bestv/conf/f16ref.mk  
+
+
+
+------------
+WARNING: Did not find SPI
+Traceback (most recent call last):
+  File "./build/tools/releasetools/ota_from_target_files", line 953, in <module>
+    main(sys.argv[1:])
+  File "./build/tools/releasetools/ota_from_target_files", line 921, in main
+    WriteFullOTAPackage(input_zip, output_zip)
+  File "./build/tools/releasetools/ota_from_target_files", line 517, in WriteFullOTAPackage
+    common.CheckSize(boot_img.data, "boot.img", OPTIONS.info_dict)
+UnboundLocalError: local variable 'boot_img' referenced before assignment
+make: *** [out/target/product/f16ref/f16ref-ota-1.0.29.20140720231750.bestv.zip] Error 1
+
+这个错误 似曾相识啊？！！

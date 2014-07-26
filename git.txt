@@ -1,0 +1,7 @@
+ubuntu 12.04 初始 没有/etc/gitconfig 和~/.gitconfig 文件，需要手动建立
+编辑的时候可以配合  git config 命令
+
+git config --global core.editor vim 会建立 ~/.gitconfig 文件
+
+
+

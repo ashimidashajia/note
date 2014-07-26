@@ -1,0 +1,36 @@
+1 ubuntu14.04 拼音输入法总是不爽
+在软件中心搜索 IBus Pinyin Setup
+重启电脑，我在ubuntu11.10上熟悉的输入法终于回来了（一个蓝色的“拼”字那个，好！），哈哈
+
+2 ubuntu12.04 desktop 安装apache：
+sudo apt-get install apache2
+
+
+与公司整合
+
+1 VirtualBox  设备-〉 共享粘贴板  双向拖放
+
+2 virtualbox + ubuntu10.04 运行wowza： 
+root@gaojie-desktop:/usr/local/WowzaMediaServer/bin# ./startup.sh 
+./startup.sh: 35: java: not found
+需要先安装jre
+
+3 安装ubuntu12.04 ：  mysql  root:12345
+OpenSSH Server
+DNS Server
+LAMP Server
+Tomcat Java server
+Virtual Machine host
+
+4 virtual box 网络设置选择桥接 ，就可以与win7 组成局域网，
+选择 桥接 后，虚拟机地址变为192.168.0.103 这个地址是由路由器的DHCP分配的
+[在DHCP服务器->DHCP列表与绑定 中看到]
+localhost 192.168.0.103 08:00:27:43:2B:B2 
+gaojie-desktop 192.168.0.104 08:00:27:94:EE:B3 
+这2个是虚拟机。通过真实机器的1根网线，路由器认出3个机器，这就是桥接。
+ 
+对于可视化的网页编辑器，部份网页制作者选择Adobe Dreamweaver，
+一部分人使用更图形化的Adobe Golive。而一部分人则纯粹用代码编辑器，
+
+
+

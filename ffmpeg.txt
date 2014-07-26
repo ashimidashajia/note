@@ -1,0 +1,15 @@
+新系统编译ffmpeg 不会编译 ffplay 因为没有sdl，需要安装libsdl1.2-dev包
+
+
+virtual box 虚拟机 ubuntu中 ffplay：
+No more channel combinations to try, audio open failed
+
+
+vlc支持的网络协议：2.1.0 
+http://www.example.com/stream.avi     // avi也可以流化？
+rtp://@:1234
+rtsp://
+
+vlc 可以录屏
+
+
