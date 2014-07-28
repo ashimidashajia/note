@@ -5,3 +5,25 @@
 
 交互：
 百度网盘，打开状态下，修改了密码。下载终止，提示密码错误。
+
+
+
+http.request.method == “POST” 
+
+
+2 Reassembled TCP Segments (1012 bytes): #29902(921), #29903(91)
+
+如果只想过滤http包可以用如下过滤条件：
+1 http&&!udp， 为什么要这样？http基于tcp，已经过滤掉了udp了？其实则不然，没有人规定http
+一定要基于tcp，ssdp就是在udp上传输http。而http&&!udp 后半部分恰恰是要把ssdp过滤掉
+2 对于使用http传输的一个大文件，中间有很多的PDU，只有到发送完成的时候，会组织一个完整的
+HTTP包，叫做 Reassembled TCP 。其实最后一个包本身只是文件的最后数据，这里经过了重组。
+
+tcp还是udp包头都没有字段表明负载是http，wirshark是智能分析的。比如检测到http/1.1字段。
+对于c/s通讯，建立socket的时候会指定协议，以后就用这个协议解析tcp负载，没有必要在每个tcp
+包头加协议字段的。
+
+
+2 要搜索包里面的内容，选择 Packet bytes
+
+
