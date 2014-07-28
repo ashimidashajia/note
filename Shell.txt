@@ -171,5 +171,21 @@ if [ -f "$APKLIBPATH/*.*" ]; then
 fi;
 
 
+---
+1 拷贝android目录下的所有png到某个目录
+find . -name "*.png" | xargs cp ./png 
+这样不行，因为cp需要2个参数，这样默认 ./png是第一个参数不能默认成第二个参数
+可以这样 
+find . -name "*.png" | xargs cp -t ./png  （-t指定这是目的地址）
+提示：cp: target `./3.png' is not a directory
+变通一下，可以这样：
+find . -name "*.png" | xargs tar czf test.tgz  然后再解压缩，因为tar命令第一个参数
+就是*.tgz 呵呵。
+但是不对，这样会带目录结构 
+
+2 cp命令默认是覆盖同名文件的，除非加上 -n (--no-clobber) 选项
+
+
+
 
 
