@@ -1783,6 +1783,142 @@ make: *** [out/target/common/obj/PACKAGING/checkapi-current-timestamp] Error 38
 
 
 
+20130502
+lunch g18ref-eng
+make过程中需要arm-none-linux-gnueabi-gcc（编译内核用）
+kernel在common目录，编译参数：
+ARCH=arm CROSS_COMPILE=arm-none-linux-gnueabi- meson6_g18_jbmr1_defconfig
+
+2 root
+买的开发平台没有root。 在sbin下预制了busybox。使用之前下载的
+
+3 nand 使用的是ext4
+
+4 目录管理：
+  /mnt/sdcard 是flash模拟的分区，sdcard和usb分别挂载到：
+  /storage/external_storage/sdcard0
+  /storage/external_storage/sda0
+----------------------------------
+
+
+5 vendor/amlogic/prebuilt/  DLNA.apk 是 “媒体中心” 这个跟eHomeMediaCentor界面相同
+但里面只有dex文件无jar包库。
+RC_Client.apk  RC_Server.apk 实现手机遥控器
+MiracastSink.apk 实现miracast功能
+
+packages/amlogic/下面有些可用apk资源。
+
+6 kernel中的 common/drivers/amlogic/display 是fb驱动
+
+frameworks/base/cmds/screenshot
+
+7 20140319
+源码里面有pppoe的代码。
+输入法有源码，做一下修改。
+latinime.apk是手机自带的文字输入法,如果你安装有其他输入法,可以删除
+但是如果没有的话，还是最好不要删掉了
+
+20140320 
+编译完成 out 目录22.3G
+
+生成增量包的python代码：build/tools/releasetools/ota_from_target_files
+
+键盘的kl文件在 system/usr/keylayout里面
+
+
+
+-------------------------------------
+编译kernel的地方：
+device/amlogic/g18ref/BoardConfig.mk  中的
+include device/amlogic/$(TARGET_PRODUCT)/Kernel.mk注释掉
+这里不用改，用下面的方法
+
+要不编译kernle 需要使用
+TARGET_NO_KERNEL
+
+device/amlogic/g18ref/BoardConfig.mk:TARGET_NO_KERNEL := false
+需要这里改成 true
+----------------------
+
+20140424
+在system/app下的apk包里不能包含.so,需要把so拷贝出来放到 /system/lib 目录下
+
+
+系统生成 system.img 的方法：
+在build/core/Makefile 中
+
+# $(1): output file
+define build-systemimage-target
+  @echo "Target system fs image: $(1)"
+  @mkdir -p $(dir $(1)) $(systemimage_intermediates) && rm -rf $(systemimage_intermediates)/system_image_info.txt
+  $(call generate-userimage-prop-dictionary, $(systemimage_intermediates)/system_image_info.txt)
+  $(hide) PATH=$(foreach p,$(INTERNAL_USERIMAGES_BINARY_PATHS),$(p):)$$PATH \
+      ./build/tools/releasetools/build_image.py \
+      $(TARGET_OUT) $(systemimage_intermediates)/system_image_info.txt $(1)
+endef
+
+
+./amlogic/g18ref/BoardConfig.mk
+TARGET_USERIMAGES_USE_EXT4 := true  决定使用 ext4 文件系统
+
+
+
+---------------------
+20140429 整理好的 git仓库编译
+build/core/java.mk:37: *** cts/apps/CtsVerifier: Invalid LOCAL_SDK_VERSION 'current' Choices are: . Stop.
+原因是 prebuilt目录没有建立
+
+
+telephony-common
+mms-common 
+这些模块应该不要编译
+
+
+libgabi++ 这个库在 abi目录编译
+
+
+external 有一个 libelf工具 干啥的？
+external 有一个 perf工具
+
+ffmpeg的目录
+packages/amlogic/LibPlayer/amffmpeg/libavcodec/pgssubdec.c
+
+
+make otapackage 这是原生android就提供的
+
+
+x509.pem 是什么？？？
+X.509是一种非常通用的证书格式
+
+
+-----------
+生成ota升级包
+
+Package OTA: out/target/product/g18ref/g18ref-ota-20140430.V0801.zip
+./build/tools/releasetools/ota_from_target_files 
+-vn 
+-p out/host/linux-x86 
+-k build/target/product/security/testkey 
+out/target/product/g18ref/obj/PACKAGING/target_files_intermediates/g18ref-target_files-20140430.V0801.zip 
+out/target/product/g18ref/g18ref-ota-20140430.V0801.zip
+
+
+Package target files: out/target/product/g18ref/obj/PACKAGING/target_files_intermediates/g18ref-target_files-20140430.V0801.zip
+
+
+
+我整理完的android工程 怎么没有编译recovery呢？ 难道是因为没有kernel？！ 我把common目录下的kernle删除了
+
+
+----------
+现在的逻辑：不编译内核 就不编译recovery，没有recovery就读取不到fstab文件 就不知道 fs_type就没有办法做
+otapackage 怎么办？
+
+所以想把kernel完全独立出来，不好弄！
+
+androd
+
+
 
 
 

@@ -1,0 +1,16 @@
+1 ubuntu11.10 的tcpdump
+tcpdump version 4.1.1
+libpcap version 1.1.1
+
+编译tcpdump 4.4.0 不能通过
+
+http://www.tcpdump.org/
+This is the official web site of tcpdump, a powerful command-line packet analyzer
+and libpcap, a portable C/C++ library for network traffic capture.
+
+先编译libpacp 再 编译tcpdump
+
+wireshark 识别.pacp文件
+
+执行tcpdump -i eth1 -w  xx.pacp 然后用wireshark分析文件会得到更多信息
+为啥直接tcpdump -i eht1 没多少打印

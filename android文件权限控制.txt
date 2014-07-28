@@ -1,0 +1,28 @@
+super uid
+super gid
+
+关于文件属性里面的 s 标志
+
+sock=socket(PF_PACKET, SOCK_RAW, htons(ETH_P_IP))
+
+上面这种socket  必须root权限才能成功， 这一点内核是如何检查的呢？
+
+自从内核2.2开始Linux引进了capabilities的概念，
+
+在建立PF_PACKET族的socket时会调用packet_create,
+
+在packet_create中会检查用户是否有CAP_NET_RAW的capability：
+
+if (!capable(CAP_NET_RAW))
+    return -EPERM;
+root拥有所有的capability,
+
+非root也可能有CAP_NET_RAW的capability。
+
+
+进程的权能
+ Linux用“权能（capability）”表示一进程所具有的权力。一种权能仅仅是一个标志，它表明是否允许进程执行一个特
+定的操作或一组特定的操作。这个模型不同于传统的“超级用户对普通用户”模型，在后一种模型中，一个进程要么能做
+任何事情，要么什么也不能做，这取决于它的有效UID。 【effective UID】
+
+
