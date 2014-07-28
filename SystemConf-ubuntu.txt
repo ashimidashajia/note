@@ -1,0 +1,1331 @@
+192.168.1.52 MAC：c0-cb-4e-c8-f0-32
+apt-get remove
+
+安装java6： 写入.bashrc
+export PATH=/usr/lib/jvm/java-1.6.0-openjdk/bin:$PATH
+export JAVA_HOME=/usr/lib/jvm/java-1.6.0-openjdk
+export CLASSPATH=.:/usr/lib/jvm/java-1.6.0-openjdk/lib
+
+ubuntu迁移到64位，拷贝原.ssh目录到新系统，可访问git服务器
+
+执行$ ssh-keygen -t rsa 生成 ~/.ssh/  id_rsa id_rsa.pub 
+
+1 配置tftp 和nfs
+tftp:
+apt-get install tftpd-hpa   (RFC 783)
+apt-get install xinetd
+编辑
+cd /etc/xinetd.d/
+vi tftp
+输入
+service tftp
+{
+        socket_type = dgram
+        protocol = udp
+        wait = yes
+        user = root
+        server = /usr/sbin/in.tftpd   //tftpd 的可执行程序
+        server_args = -s /home/username/tftpboot  路径
+        disable = no
+        per_source = 11
+        cps = 100 2
+        flags =IPv4
+}
+4、从新启动服务
+     /etc/init.d/xinetd restart
+
+This program is run from a terminal: in.tftpd
+TFTP mainly to serve boot images over the network to other machines(PXE网络启动)
+tftp-hpa is an enhanced version of the BSD TFTP server.
+最终的可执行程序为 in.tftpd
+
+xinetd : replacement for inetd with many enhancements 
+(eXtended InterNET services daemon)
+这个是用来管理 tftp服务以及其他服务的
+
+
+nfs:
+$sudo apt-get install nfs-common  客户端
+$sudo aptitude install nfs-kernel-server 服务端
+The NFS kernel server is currently the recommended NFS serer for use with Linux,
+featuring features such as NFSv3 and NFSv4,
+
+人后配置 /etc/exports 文件
+man exports：
+exports - NFS server export table
+
+比如：
+/home/username/NFS/fawn    *(rw,sync,no_subtree_check,no_root_squash)
+
+Ubuntu串口卡驱动的安装
+
+1 制作 Ubuntu11.04 USB启动盘成功安装。
+2 设置软件源：系统设置->Update Manager->Setting->Ubuntu Software->Server for China 
+确认一下 就可更新。此后就可以apt-get软件包了
+  系统设置->语言设置 设置输入法
+  应用程序->ubuntu软件中心 搜索 7zip rar gitg chromium  pdf eclipse
+3 apt-get install curl   /   curl http://vc.cn/repo ~/repo 
+  按照android首页说明 安装java 以及其他git等包    
+4 apt-get  update 这个命令是干什么用的？
+5 22:19 悲崔了，安装一个3D桌面的东西，桌面显示不正常了
+
+6 ubuntu11.04 信使无法显示中文无法设置，使用经典桌面（相对11.04 新推出的桌面 可在启
+动登录时选择）可以：首选项-system-上面两行修改为gb18030 panel font 改为文泉驿 即可。
+再改到默认桌面 iptux显示也正常了，但是仍然有关闭无法再打开问题，可以用kill， 并且默认
+桌面，飞鸽来消息图标不会闪烁。 chromium 浏览器 使用11.04 新桌面 最小化就是关闭的问题 
+用经典桌面就没有问题 
+  
+virtualBox 在device 菜单中执行“安装增强功能”  鼠标就可以自由切换 并且可以全屏显示了 
+共享文件夹设置后需重启。
+
+7 安装2个java版本后，切换命令 
+  sudo update-alternatives --config java
+  sudo update-alternatives --config javac
+
+20120112 编译sdk的时候  make PRODUCT-sdk-sdk 提示错误
+javadoc: error - In doclet class DroidDoc,  method start has thrown an exception 
+java.lang.reflect.InvocationTargetException
+com.sun.tools.javac.code.Symbol$CompletionFailure: class file for 
+sun.util.resources.OpenListResourceBundle not found
+
+ sudo update-alternatives --config javadoc
+这个也要选择成1.5版本
+
+
+8 软件中心安装 wine 然后设置 在desktop integration 选项卡中 设置 Folder 中第二项 把
+默认 /home/username 改为 /home/username/Work
+  上面的方法不灵  安装sourceinsight的时候遇到问题（问题真的是无处不在啊）菜单里面没有
+选项，并且找到其安装目录也不能打开，只有安装完的时候可以打开一次
+
+9 安装 VirtualBox 后 File->Preference->General->Default Machine Folder 选择一个非 
+home/username 目录 是home/username 更简洁
+  好东西，可以switch成 全屏 无缝 scale模式  Host+C  L   F 切换  Host定义为右 Ctrl
+
+10 20111110 由11.04 升级到11.10 相当的成功 （以前这样升级都是失败的，进不了桌面） 速
+度有所提升
+
+11 20111111 
+ubuntu 11.10  evolution 的目录不在  ~/.evolution 了 而是 ~/.local/share/evolution 
+
+12 系统右上角 的系统托盘 叫做 Notification Area
+比如 iptux 信使 在ubuntu 10.10 以前可以显示在托盘区域，但是到11.10 使用unity 2D后，
+系统托盘采用了 白名单 制度（什么叫做白名单），只有支持Indicators 并位于白名单的部分
+程序才可以显示在体统托盘中，有方法解除此限制：
+安装： dconf-tools : directly edit your entire configuration database
+dconf is a low-level key/value datrabase degigned for storing desktop environment settings.
+这个是图形方式的配置系统数据库。命令行输入 dconf-editor 找到 desktop>unity>panel
+把systray-whitelist 的值改为 all
+或者也可以执行命令行（不需要安装dconf程序）：
+gsettings set com.cononical.Unity.Panel systray-whitelist "[....]" 与UI方式一样的
+
+有意思的是事情发生了：修改完后，unity上有效果  unity 2D上没有效果。
+unity 问题挺多，新产品出来需要很多时间磨合
+
+
+------------
+1 20100707 ubuntu 飞鸽传书的安装
+  下载gnome2版本的源码 http://www.ipmsg.org/archive/g2ipmsg-0.9.6.tar.gz
+安装依赖项
+sudo apt-get install libxml-parser-perl libgnomeui-dev libpanel-applet2-dev
+sudo apt-get install gettext intltool
+没有安装
+
+2 sudo apt-get install ckermit 回车
+3 sudo apt-get install minicom 
+不少人反映minicom有时会有问题，连u-boot开发者都推荐使用ckermit
+
+
+4 20100707 10:36 
+使用 minicom -s  配置串口为 ttyS0 （主机自带的串口） 盒子上电 打印出uboot
+下面需要考察 如何使用pci卡的串口，
+lspci -v 可以看到
+03:01.0 Communication controller: NetMos Technology PCI 9835 Multi-I/O Controller (rev 01)
+	Subsystem: LSI Logic / Symbios Logic Device 0012
+	Flags: medium devsel, IRQ 16
+	I/O ports at ec00 [size=8]
+	Kernel driver in use: parport_serial
+	Kernel modules: parport_serial
+
+需要先安装 sudo apt-get install setserial 然后执行
+
+/dev/ttyS1 port 0xec00 UART 16550A irq 16 Baud_base 115200
+注意这里irq的值是上面打印出来的那个。 ttys1 的地址只有靠蒙了 肯定是上面列出来的那几个
+很幸运可以用了，不用安装额外的驱动
+
+/dev下面有很多tty是被  minicom打开后也是默认tty  而串口是ttySx
+
+5 搭建android开发环境
+ sudo apt-get install git-core gnupg sun-java5-jdk flex bison gperf libsdl-dev 
+libesd0-dev libwxgtk2.6-dev build-essential zip curl libncurses5-dev zlib1g-dev
+在10.04上 sun-java5-jdk提示找不到这个包
+
+6 建立samba服务 我在 ubuntu 上直接打开网络 就可以访问
+7 邮箱有自带的  msn也有  安装后右上角就有一个信封标志，可以设置邮件 Evolution
+一步一步设置，就可以打开 Evolution 邮箱 效果还是非常好的。 在编辑-》首选项 里面设置账户
+在“账户编辑器”里面选择 发送电子邮件 选择服务器需要认证 身份验证类型是Login 用户名
+username@cyclecentury.com 选择记住密码  [outlook中 是 使用收件箱相同的设置]
+但是不知道收下来的邮件能否用outlook打开 
+
+
+9 sudo apt-get install subversion   或者
+sudo apt-get install subversion subversion-tools
+10 sudo apt-get install putty 这个工具比minicom 好用多了
+
+13 下载了subversion命令行方式，checkout命令可以实现 但是commit命令不能提交
+又下载了 rapidsvn GUI的svn客户端  安装完成后在 应用程序 编程 项目中
+
+右击书签 有一个删除标签 可以删除以前签出的副本
+使用rapidsvn  可以commit成功  右击书签  最后一项 commit
+快点弄懂 svn的使用方法啊！
+
+14 vi仍然不好用  apt-get install vim 即可
+
+15 android要求使用sun-java5-jdk  但是ubuntu10.04 只能找到sun-java6-jdk
+
+16 查看---显示隐藏文件.
+
+17 在上面板上选择了“新建面板” 结果左右出现了空白  网上解决办法 删除username目录下的一堆 .
+开头的文件夹
+删除后,所有的设置都回复初始状态. 令我痛心的是  邮件也需要重新配置
+Evolution 首次运行时会在您的主目录内创建 .evolution  目录，并使用它储存本地数据。接
+下来首次运行助手会协助您设置电子邮件帐户和位于  .gconf/apps/evolution 的其他用户设置。
+我恰恰把这些东西都删除了 真是防不胜防
+邮件全部都存放在  .evolution 目录下
+还好  配置完成后 邮件都还在 因为目录没有变
+
+
+-------------
+
+13 用ubuntu11.10 编译android4.0.1 出错，是gcc版本太高引起的，需要把gcc 降级 
+（ubuntu11.10 确实还有很多不完善的地方，还是老老实实用10.04吧）
+
+ubuntu10.04 是 4.4.3  ubuntu11.10 是4.6.1  由于这个版本对语法要求比较高，无法编译源代码
+
+实际上ubuntu11.10里面有4.5 4.6 两个版本（也可能是我从11.04 升级到11.10 保留了11.04 
+里面的gcc 4.5）
+
+14 11.10 默认没有gnome桌面 需要安装 gnome-shell   这个版本的gnome 跟 10.04 的比也
+有了很大的变化。软件的变化太快了！哎！  有gnome classic 和 gnome  现在的gnome-shell 
+功能更加强大，可以从网络上随意下载主题。
+软件中心搜索 Gnome Tweak Tool 这是一个高级设置工具，可以设置Theme。这个工具装完后为 
+Advanced Settings 可以设置的项很多很多
+这说明，gnome shell 是一个相当开放的系统 （估计都是基于xml 等什么新技术 哎， android
+ 也是日新月异啊）
+
+“5个非常漂亮的gnome-shell主题”  为什么叫做gnome-shell 主题而不是gnome注意呢？
+难道 gnome3 也叫做 gnome shell？ 
+
+ubuntu的源 就是会实时更新！
+
+15 关于git的权限，只要把原来10.04 上  .ssh目录下的文件拷贝即可
+
+16 Ubuntu Software Center(11.10) 搜索 bcompare  （原来我是下载了deb安装包）  不对 
+中心里没有这个软件 只是用软件中心程序 打开了这个deb文件而已
+
+
+17 使用ubuntu11.10  gnome3 应用靠搜索，常用 disk utility   system monitor
+source insight 3.5 在11.04上安装有问题，在11.10正常，并且比10.04 上运行的还要好。
+菜单都可以直接点了。
+
+
+18 ubuntu root用户问题：默认没有开启root用户，需要这行sudo passwd root 然后su root 
+
+19 20111126 系统由10.04 升级到11.10 后，带来了无穷进的烦恼。所以，变就代表着不稳定。
+在别人都用10.04 的时候我非得要用11.10，这不是找死嘛。最可气的是tftp 设置双ip竟然有问
+题。在网络配置里面设置了双ip，tftp server不可以用。 无法通过wine安装sourceinsight。
+所以说，系统升级后，不可预见的事情太多了。最后，只能把板子的mask 改成 255.255.0.0  
+这样板子地址192.168.10.88  可以连192.168.1.52 作为server（动就会有风险）
+
+20 20111127 系统有一个recovery 模式，可以在紧急情况下进入shell 进行必要的操作。
+ 比如今天 我对系统的bash 做了一个  chmod u+s 的操作，导致系统无法启动。进入recovery
+（注意，有很多选项，有一种进去后没有写权限只能读） 执行 chmod u-s 就好了
+
+21 visualbox 的使用：右Ctrl + F   +Home  等用于各种切换
+
+
+1 apt-get install nautilus-open-terminal 
+可以在目录中直接打开终端
+
+22 ubuntu中使用usb串口线，设备为 /dev/ttyUSB0  在11.10 中，板子上电会导致putty推出
+只用minicom 就没有问题，但是minicom怎么保存数据呢？
+
+minicom配置问题：
+sudo apt-get install
+sudo minicom -s
+进入 Serial port setup 设置ttyUSB0 软硬件流控为No
+进入 Modem and dialing parameter setup 依次输入A B K 将后面的字符删除
+
+
+ctrl+a +l 将串口接受到的所有数据保存到文件中,如果没有指定文件路径,那么文件将默认保存到
+打开minicom时所在的当时目录下,比如shell当前在/home/目录下,这是执行minicom命令打开,
+然后ctrl+a+l打开文件捕获,随后串口上来的所有数据将被捕获存储到/home/目录下minicom.cap的文件中
+ctrl+a +w 打开自动换行功能,如果arm上传来的数据很长而且没有回车换行符号,那么如果不开
+启自动换行功能,尬觉后边传上来的数据就看不到了
+
+
+minicom中上下左右按键不能用
+
+backspace按键的设置 ctrl+a+t B- backspace key sends ：DEL /  BS  选择 DEL  工作正常
+
+23
+android的toobox的shell 就是不支持 上下左右建  依次显示为^[[A ^[[B ^[[C ^[[D  这些是什么意思呢？
+
+
+24 ubuntu修改MAC地址
+
+sudo ifconfig eth0 down
+sudo ifconfig eth0 hw ether AA:BB:CC:DD:EE:FF
+sudo ifconfig eth0 up
+
+此法重启无效，可以写在 /etc/init.d/rc.local 里面，但是偶尔不灵，启动后需要停止网络
+再开始。就没有像windows那样直接改网卡ROM的方法？
+
+
+25 20111216 把老机器的磁盘分区重新整理了一下，使用
+sudo update-grub
+sudo grub-install /dev/sdb
+成功保证了系统正常启动。
+
+那么，原来的系统是10.04 怎么升级到最新的10.04.3这个文档版本？
+
+
+26 wireshark 网络抓包工具
+
+27 我的ubuntu10.04 升级后在system monitor中并没有显示10.04.3 怎么回事？
+记得11.04 到 11.10 就是在升级管理器里面升级成功的
+但是我的10.04 上却没有显示10.10 的更新提示。也许在那个窗口期里面会有提示，但是我没有
+在意，过了那个村就没有那个店了
+
+
+28 ubuntu11.10 文件查看器，使用多个选项卡的时候，有时竟然不能复制粘贴，关闭再打开就
+好了，bug啊！ 使用新版本有风险的！
+
+
+29 20111229 U盘安装ubuntu 10.04.3 server 无法挂在光驱的问题：
+先将 ubuntu server 的 iso 放到优盘上，然后在提示无法找到光驱时，按 alt+f2 打开一个新
+的 console 窗口，将 iso mount 上，具体操作如下：
+
+mkdir /mnt/usb /mnt/iso
+mount -t vfat /dev/sdc1 /mnt/usb
+mount -t iso9660 -o loop /mnt/usb/ubuntu-10.10-server-amd64.iso /mnt/iso
+【这个方法没有解决此问题，原文是针对10.10的】
+
+首先重启电脑，还是进入那个引导选择菜单，选择最下面的帮助 也就是Help，然后会提示你按
+什么F1 F2的你直接按F6按了以后会提示一堆英文不用管。
+下面让输入命令，输入 install cdrom-detect/try-usb=true 回车可以进入安装界面了，一路
+GoGoGo就不会出现上次的问题。
+
+整个安装过程都是字符的，没有界面。
+
+
+
+Set $wgLogo to the URL path to your own logo image  怎么搞定？
+
+在 Preferences 页面里面有很多设置
+
+可用 Printable Version 产生可打印的版本,缺点：左右页面都靠边开始的没有任何空隙。
+使用 Download as PDF 可以产生格式非常棒的pdf 文档，这正是我想要的啊！
+
+PDF 功能由 PDF Handler 提供 （在特殊也  versione 里面看到）
+ PdfHandler extension for MediaWiki software
+在服务器上可以用wget下载
+http://upload.wikimedia.org/ext-dist/PdfHandler-MW1.18-r92186.tar.gz
+
+require_once("$IP/extensions/PdfHandler/PdfHandler.php");
+
+Ubuntu Note: You must have already installed the following 3 packages:
+imagemagick ghostscript xpdf-utils
+
+$wgPdfProcessor = 'gs';
+$wgPdfPostProcessor = $wgImageMagickConvertCommand;
+$wgPdfInfo = 'pdfinfo';
+
+20111229 21：09 pdf打印功能还没有实现
+
+好像还挺复杂的 不过mediawiki上都有说明了
+说是要 require_once("extensions/PdfExport/PdfExport.php");  
+但是查看mediawiki的version 没有看到有PdfExport这个扩展啊
+
+用PdfExport可以生成pdf，但不支持中文，并且跟mediawiki也不一样，人家那个 extension里
+面没有PdfExport 照样行。mediawiki 中是由 Collection 组建完成的。
+require_once("$IP/extensions/Collection/Collection.php"); Print/export 出来了 也
+有 Download as PDF 
+接下来又悲剧了 点击Download as PDF 没有页面。需要安装:Extension:PDF Writer
+
+Make sure, you have the needed environment. On Debian systems:
+apt-get install g++ perl python python-dev python-setuptools python-imaging python-lxml
+
+Simply download and install mwlib with easy_install:
+
+easy_install mwlib && rehash [easy_install 是个命令] 【ubuntu10.04.3 server执行失败】
+
+RPM
+RPM based Distros that have yum - just do : yum search mwlib , then do : yum install mwlib
+fyi: mwlib has some depedencies which makes it more hard to compile from scratch.
+
+【yum 是什么命令？！需要单独安装】
+怎么样让ubuntu支持fedora的yum ？  什么意思？
+
+Yum是Federo的，Debian/Ubuntu是用Apt的，而且Debian/Ubuntu的源更多，速度也更快些  
+
+
+download as pdf 还是没有搞定，
+做服务器，最好还是debina系统吧！
+
+显示安装 gevent 库的时候出错
+
+下载libevent 库 configure make make install 然后 gevent可以安装了，最后 rehash命令
+没有  【 freeBSD的rehash命令】
+libevent 同步事件通知库
+但是还是不行！
+
+
+=====================================================================
+从MediaWiki导出PDF
+搞了一早上才琢磨出怎么将MediaWiki中的文章导出PDF，一开始在CentOS玩，由于yum源上的
+python版本比较低，有些python库装不上，之后就在自己本的Debian上玩，还算比较顺利，将
+方法总结一下
+最开始用了一个Extension叫“Pdf Export”，使用htmldoc来转成pdf，对于英文的文章看起来还
+不错，无奈遇到中文就全乱码了，查了一下，说是htmldoc暂时还不支持亚洲的unicode编码。
+
+于就是试其它的Extension了，有个Collection看着不错，不过装完后进去wiki就直接给我报
+HTTP 500错误，这样就不能在wiki界面上导出，只能找工具线下导出，先试Collection中用到
+的mwlib。
+
+先准备python环境
+apt-get install g++ perl python python-dev python-setuptools python-imaging libxslt-dev
+安装mwlib及可用的writer
+easy_install mwlib mwlib.rl mwlib.xhtml
+
+装好mwlib后，就可以使用mw-render来导出
+
+执行 mw-render --config=http://lingcloud.org/wiki/en/ -w rl -o "test.pdf"  Requirements
+提示找不到 libevent.so
+
+vi i /etc/ld.so.conf  添加 /usr/local/lib  这里有 libevent.so
+ldconfig  刷新
+
+再执行，提示No such writer u'-r1'
+mw-render --list-writers 只显示： odf OpenDocument Test 没有pdf
+
+注意： 应该安装 easy_install mwlib mwlib.rl  mwlib.xhtml  (注意是 字母l  不是数字 1 )
+但是 mwlib.rl 这个包下不了
+这些是python的包， 整个python.org 无法访问，难道被和谐了？ 后来又可以访问了
+再执行 mw-render --config  提示没有 pyfribidi 安装之
+
+看来，必须要安装debian才行啊！ ubuntu server 运行mediawiki有问题，运行
+
+使用mediawiki上说明的 Extension:Pdf Export  也可以生成pdf  但是格式和显示效果没有 Collection的好，差了很多
+
+关注这几个网址：
+http://pediapress.com/code/
+http://mwlib.readthedocs.org/en/latest/index.html
+http://mwlib.readthedocs.org/en/latest/collection.html
+http://pypi.python.org/pypi/mwlib
+http://blog.jeoygin.org/archives/404#more-404
+
+
+解决第一个问题可以安装字体，执行mw-render –list-writers这个命令后提示找不到字体，把
+这些字体装上，并做软连接就可以了。
+
+=====================================================================
+
+不过:就算是wikipedia.org 中文版本的也不支持download as pdf。
+
+服务器上要善于使用wget命令
+
+明白了 Collection 默认使用 tools.pediapress.com/mw-serve  渲染文件，但是我的服务器
+外网是访问不到的，所以不行！那么我就必须搭建自己的mw-serve了
+
+
+mediawiki 就是php源码，里面的语言支持有中文 在language文件夹
+
+======Git Server============
+git-core, gitosis, openssh-server, openssh-client 
+gitosis:git repository hosting application
+服务器上的git仓库只有 .git目录
+$ git init - -bare      注：这是在服务器上运行的，是为了初始化一个根级的git仓库
+企业级Git Server服务器架设，使用Gitolite管理权限    比gitosis 呢？
+
+imagemagick 图像魔法师  用于编辑各种图片的工具库
+-------------------------
+collection 终于配置成功，但是测试：
+mw-zip -c :en -o test.zip Acdc Number
+mw-render -c test.zip -o test.pdf -w rl
+生成的pdf 但是没有目录。
+
+【奇怪】这2条命令什么意思？会去连接 
+http://en.wikipedia.org/w/index.php?title=Help:Books/License&action=raw&templates=expand  
+但这是一个wiki text 用浏览器打开会直接下载这个wikitext文件
+内容在生成的test.pdf 的最后一页。
+
+
+然后，最关键的：启动mw server 这时需要
+
+$ nserve.py
+$ mw-qserve
+$ nslave.py --cachedir ~/cache/
+$ postman.py
+
+None of the programs has the ability to run as a daemon. We recommend using 【runit】 for process supervision
+ daemontools is similar solution. Another alternative is to use supervisor.
+runit - a UNIX init scheme with service supervision
+安装方法：
+ # mkdir -p /package
+ # chmod 1755 /package
+
+Download runit-2.1.1.tar.gz into /package and unpack the archive
+
+ # cd /package
+ # gunzip runit-2.1.1.tar
+ # tar -xpf runit-2.1.1.tar
+ # rm runit-2.1.1.tar
+ # cd admin/runit-2.1.1
+
+Now compile and install the runit programs
+ # package/install
+【糟糕，编译失败！】
+
+换daemontools 试试
+
+步骤跟上面类似，也是编译错误
+
+再试试 supervisor
+这个好！ easy_install supervisor 就搞定了
+
+
+服务起来了，在浏览器上输入 http://192.168.1.52:8899/ 显示 no command given
+这跟输入 http://tools.pediapress.com/mw-serve/ 的显示一样
+但是在LocalSettings.php中加入
+$wgCollectionMWServeURL = "192.168.1.52:8899";
+还是无法导出pdf。崩溃啊！
+
+可能还是 服务启动得不对 再仔细研究一下 supervisor
+我知道了，因为没有安装 curl  这个server需要curl下载wiki页面的！
+如果是这个原因，为什么  mw-zip -c :en -o test.zip Acdc Number 能成功呢？他也去下载页面了
+
+按照说明，编译了支持curl的php 但悲剧的是：还是不行！ 疯了！ 不爽！
+你妈的 搞不定啊！
+
+wiki服务器可以直接在终端设置语言
+
+0.0.0.0  就是 127.0.0.1
+
+
+好！那就再实验一下 手动生成 不用页面生成的
+mw-zip -c http://192.168.1.52/mediawiki -o test.zip About:Flash
+mw-render -c test.zip -o test.pdf -w rl
+成功！
+注意：网址必须是http开头  文章名字跟 mediawiki 分开写在后面（About:Flash）
+汉字仍然不支持，乱码！
+但是有目录了，奇怪的是：目录里面的中文竟然支持！
+
+mw-render 执行的打印：
+Missing fonts:'AR PL Uming HK' 等一堆字体
+start rendering: u'/usr/share/fonts/truetype/tmp8i34ce.'
+
+
+可以安装字体，执行mw-render –list-writers这个命令后提示找不到字体，把这些字体装上，
+并做软连接就可以了。
+
+mw-render 在 usr/local/lib/python2.6/dist-packages/mwlib/mwlib/apps/render (python源码)
+
+生成的pdf文件放到 /var/www 可以在客户端浏览器中直接下载（前提是chmod 777 否则会告知没有权限）
+
+--------------------
+mediawiki 与 ldap 整合
+下载  LdapAuthentication extension 
+
+===========下面这个管用===========
+解决第一个问题可以安装字体，执行mw-render –list-writers这个命令后提示找不到字体，把这些字体装上，并做软连接就可以了。
+apt-get install ttf-indic-fonts ttf-unfonts-core ttf-farsiweb ttf-arphic-uming ttf-gfs-artemisia ttf-sil-ezra ttf-thai-arundina
+ln -s /usr/share/fonts/truetype/* /usr/local/lib/python2.6/dist-packages/mwlib.rl-0.12.8-py2.6.egg/mwlib/fonts/
+果然支持中文了！ 20120101 06:00
+
+
+打印出来的文档都是A4 的有点大，pdf电子书一般是 7x9.19 inch
+A4 太大了，看起来不方便
+
+-----------------
+理解一下字体和编码方式
+桌面出版系统使用的字库有两种标准： postscript字库和truetype字库
+
+你说，pdf最终显示出来的字体效果是跟系统有关还是生成的时候就确定了呢？
+
+上面生成的About:Flash pdf 显示的时候，通过比对，确定用的字体是 /usr/share/fonts/truetype/freefont/FreeSerifBold.ttf
+每个字母显示的都一模一样！
+
+系统中，那么多的字体，是怎么区分管理的呢？
+
+mwlib/rl/fontconfig.py 
+这里定义了字体  从源码中看出，要检测 ~/mwlibfonts/
+======================
+但是我不知道怎么启动服务器，有意思的事情发生了，在http://groups.google.com/ 找到一篇文章
+
+Hello, 
+I'd installed several internal servers for mediawiki and the 
+Collection extension with own render server. 
+Two days ago I had to install a new one, but now I saw, that with the 
+update of mwlib 1.13 the mw-serve is replaced with three or four other 
+processes. 
+I did play around with runit, but I can't get the processes running as 
+expected. 
+Do you plan to publish a sample script for runit or something else, 
+where I am able to start one script like mw-serve in older versions, 
+and all given parameters will be passed through to the one of the four 
+files. 
+I know you have several reasons to do this step to delete mw-serve, 
+but I am not confirm in python to find what it means if I take a look 
+to the mw-serve-file. 
+Thank you in advance for help, because http://mwlib.readthedocs.org/en/latest/renderserver.html【就是官方介绍server安装方法的文章】
+not really helped me, how to start the render server like before. 
+Daniel 
+
+这个人跟我遇到的问题一模一样啊,哈哈，但是没有人回复
+
+==================
+Wiki 还支持 talk 讨论  这很好啊！
+localhost 代表自己
+
+======================
+mediawiki中 render的时候 bookcmd=rendering 而我的 bookcmd=render_article 这会不会是问题所在呢？
+
+mwlib/ext/reportlab/rl_config.py  有 defaultPageSize = 'A4'
+
+又时间再研究一下打印，把海思平台总结出来的经典文档打印成手册。
+ubuntu11.10  采用十进制
+
+20120517
+重装系统，貌似没有什么事情，但是实际一做发现很多问题：比如gwb，git的密钥忘记备份了。
+
+fingerprint 是什么
+
+ssh username@192.168.1.52 -p 29418
+IT IS POSSIBLE THAT SOMEONE IS DOING SOMETHING NASTY!
+Someone could be eavesdropping on you right now (man-in-the-middle attack)!
+It is also possible that a host key has just been changed.
+The fingerprint for the RSA key sent by the remote host is
+08:7b:ca:a4:b7:31:87:3b:81:93:f6:b5:c2:d9:9c:61.
+Please contact your system administrator.
+Add correct host key in /home/username/.ssh/known_hosts to get rid of this message.
+Offending RSA key in /home/username/.ssh/known_hosts:14
+  remove with: ssh-keygen -f "/home/username/.ssh/known_hosts" -R [192.168.1.52]:29418
+RSA host key for [192.168.1.52]:29418 has changed and you have requested strict checking.
+Host key verification failed.
+
+
+known_hosts文件是干什么用的呢？
+
+
+username@username:/$ ssh-keygen -f "/home/username/.ssh/known_hosts" -R [192.168.1.52]:29418
+/home/username/.ssh/known_hosts updated.
+Original contents retained as /home/username/.ssh/known_hosts.old
+
+
+
+username@username:/$ ssh username@192.168.1.52 -p 29418
+The authenticity of host '[192.168.1.52]:29418 ([192.168.1.52]:29418)' can't be established.
+RSA key fingerprint is 08:7b:ca:a4:b7:31:87:3b:81:93:f6:b5:c2:d9:9c:61.
+Are you sure you want to continue connecting (yes/no)? yes
+Warning: Permanently added '[192.168.1.52]:29418' (RSA) to the list of known hosts.
+
+  ****    Welcome to Gerrit Code Review    ****
+
+  Hi username, you have successfully connected over SSH.
+
+  Unfortunately, interactive shells are disabled.
+  To clone a hosted Git repository, use:
+
+  git clone ssh://username@ubuntu:29418/REPOSITORY_NAME.git
+
+Connection to 192.168.1.52 closed.
+
+这回就好了
+然后 ssh -p 29418 username@192.168.1.52 gerrit create-project --empty-commit --name test-proj 创建工程
+
+
+-----------------
+git push ssh://username@192.168.1.4:29418/BCM7231/BCM7231-DD *:*
+可以推送已经存在的仓库，但是提示
+remote: ERROR:  In commit c0819bdd1caa831c3ad5bd398ba4501fd7d5b53d
+remote: ERROR:  committer email address wuzg@cyclecentury.com
+remote: ERROR:  does not match your user account.
+remote: ERROR:
+remote: ERROR:  The following addresses are currently registered:
+remote: ERROR:    username@cyclecentury.com
+remote: ERROR:
+remote: ERROR:  To register an email address, please visit:
+remote: ERROR:  http://192.168.1.4:8088/#/settings/contact
+
+
+可能因为伍志刚还没有添加rsa key 吧，周一再试试
+结果wuzg 粘贴了rsa key 还是不行，注意To register an email address, please visit:
+添加了forge author   forge commiter 就可以了  意思是这些提交我不是作者
+然后出现：
+ ! [remote rejected] master -> master (you are not allowed to upload merges)
+ ! [remote rejected] origin/master -> origin/master (can not create new references)
+加了所有权限都不行，后来把Reference 从refs/head/* 改为 refs/* 就可以了
+提交完成再改回来吧。
+
+
+
+
+----------------
+ git push  origin master 
+Counting objects: 4, done.
+Delta compression using up to 4 threads.
+Compressing objects: 100% (2/2), done.
+Writing objects: 100% (3/3), 312 bytes, done.
+Total 3 (delta 0), reused 0 (delta 0)
+remote: Processing changes: refs: 1, done    
+To ssh://192.168.1.52:29418/test-proj.git
+ ! [remote rejected] master -> master (can not update the reference as a fast forward)
+error: failed to push some refs to 'ssh://192.168.1.52:29418/test-proj.git'
+
+
+无法直接提交
+我可以通过设置gerrit的 Access 使得某些人可以直接提交，当然只有管理员账户有权这样做。
+
+比如我把Administrator组设置为可以对refs/heads/* 可以push。就可以直接提交了
+
+能否创建一个分支都可以控制！
+
+能够review需要很多设置，这些设置要inherit frome all-projects
+
+HEAD:refs/for/master 或者写成 master:refs/for/master  ：前后不能有空格
+
+到gerrit上就变成了 refs/changes/01/1/1 格式 并没有 refs/for/master
+
+如何才能设置成1个人就可以审核通过? 对Label Code-Review  改为一次2分即可。
+但是review完成后，并没有真正把代码提交到master分支，或者说还没有merge
+要点击 Publish and Submit 才可以，但是我只看到了Publish Comments 没有前者啊
+需要单独给某人添加 Verified权限。  Verify 和 Code Review可以是一个人也可以是不同的人
+依据项目规模大小确定。可是还是不行，还需要添加 Submit 权限。这回就有了Publish and Submit
+
+需要Code-Review 和 Verified 2个状态都打勾才可以。
+
+彻底明白了。
+
+------------------
+目前服务器上的gerrit 配置比较复杂，王永杰当时还是做了不少的工作的，比如跟LDAP，跟mantis的联系等等。
+
+----
+20120823
+我直接在2.1的版本机器上运行 java -jar gerrit-2.4.2.war init -d review_site
+覆盖成新版本，没有成功
+Exception in thread "main" com.google.gwtorm.server.OrmException: Cannot upgrade from schema 47; 
+manually run init from Gerrit Code Review 2.1.7 and restart this version to continue.
+需要先升级到2.1.7 再升级到2.4.2
+
+java -jar gerrit-2.1.7.war init -d review_site
+
+Upgrading database schema from version 47 to 48 ...
+Upgrading database schema from version 48 to 49 ...
+Upgrading database schema from version 49 to 50 ...
+Upgrading database schema from version 50 to 51 ...
+Upgrading database schema from version 51 to 52 ...
+Initialized /home/gerrit2/review_site
+很顺利
+
+但是 再升级2.4.2 在重建仓库的时候还是遇到了问题。
+
+
+review的信息都是没有用的，但是账户和分组信息有用! 否则需要所有人再次提交ssh key可就麻烦了啊！
+
+[database]
+        type = H2
+        database = db/ReviewDB
+
+
+那么多的组信息，提交信息 如何才能保存呢？ 无法升级。
+
+提交的那些review信息都存储在哪里呢？ 数据库文件，我看才60M多，这么少？
+
+
+[gerrit]
+        basePath = git
+        canonicalWebUrl = http://192.168.1.4:8088  //2.4.2 中这行很重要 必须这样写才行，怪！
+
+
+[ldap]
+        server = ldap://localhost
+        groupBase = ou=group,dc=vision-com,dc=com
+        accountBase = ou=People,dc=vision-com,dc=com
+        accountFullName = cn
+
+
+20120824 
+gerrit2 升级没有成功，后来又恢复到2.1.6 但是有人反映不能git了，赵毅辉发现：
+针对现在git不能使用的问题，做如下修改：
+    执行rm ~/.ssh/known_hosts命令（只执行一次），然后再进行git操作就ok. 
+
+known_hosts干什么的呢？
+
+ldap安装在了 192.168.1.4 上，但是LDAP Account Manager 安装在了另外一个机器上。
+
+------------
+Generating SSH Keys。 key是rsa算法（三个人名缩写）  ssh 是secure shell
+
+ssh-keygen -t rsa -C "username@cyclecentury.com"
+Generating public/private rsa key pair.
+
+
+The key fingerprint is:   fingerprint 是什么？  指纹
+
+The key fingerprint is:
+ed:73:6e:31:6f:1f:4a:4d:3f:81:26:e6:7d:09:8a:b6 username@cyclecentury.com
+The key's randomart image is:
++--[ RSA 2048]----+
+|                 |
+|                 |
+|                 |
+|         .    .  |
+|        S .o + o |
+|         .+ B + +|
+|         ooo.* *.|
+|        . .+o = o|
+|         E ..o ..|
++-----------------+
+
+同一台机器上2次运行ssh-keygen -t rsa -C "username@cyclecentury.com"
+2个文件内容是完全不同的  但是格式相同
+
+输入 passphrase 与否，文件生成的格式不同。写了passphrase应该是对密钥又加了一次密码。
+
+公钥中包含邮箱信息
+
+登录http://vc.cn:8088  这个是 gerrit 服务器
+
+For more information about SSH key passphrases
+Enter passphrase (empty for no passphrase): usernamexxx
+
+还有，review的时候确实要都看一遍才可以 merge成功 
+
+支持rar
+sudo apt-get install unrar
+
+文件比较  meld 
+
+
+gerrit2 注册用户的时候，页面显示
+
+Server Host Key
+Fingerprint:
+08:7b:ca:a4:b7:31:87:3b:81:93:f6:b5:c2:d9:9c:61
+
+Entry for ~/.ssh/known_hosts:
+[192.168.1.52]:29418 ssh-rsa AAAAB3NzaC1yc2EA...M8OxZQ==
+
+重新注册了rsa key 第一次连接gerrit2 账户的时候
+
+The authenticity of host '192.168.1.52 (192.168.1.52)' can't be established.
+RSA key fingerprint is 25:01:09:08:39:b5:9b:22:93:fe:ee:62:2c:23:d6:35.
+Are you sure you want to continue connecting (yes/no)? yes
+Warning: Permanently added '192.168.1.52' (RSA) to the list of known hosts.
+
+这时在.ssh目录下生成 known_hosts 文件 内容：
+
+|1|9bMP...CW7fT73Kp7XuF8Q==
+
+但是这个跟gerrit Setting SSH Public Keys 显示的并不一样啊！
+这里显示的是 etc/ssh_host_rsa_key.pub 文件内容  （另外一个是dss 是另外一种加密算法，
+我用的是rsa 2.4.2就只有一个rsa没有dss了）
+
+所以 known_hosts 里面的内容并不是gerrit把那个pub key 直接发过来的。
+删除known_hosts 再次生成，内容一样！
+
+“OpenSSH的人都知ssh会把你每个你访问过计算机的公钥(public key)都记录在~/.ssh/known_hosts”
+不过known_hosts的内容一些只是以纯文本方式存放。如果你的帐号被人成功入侵，他可以由
+known_hosts直接得知你到访过的计算机列表。为减低出现类似情况的机会。OpenSSH在4.0p1引
+入了 Hash Known Hosts功能，在known_hosts中把访问过的计算机名称或IP地址以hash方式存
+放，令入侵都不能直接知道你到访过那些计算机。这项新项功能缺省是关闭的，要你手动地在
+ssh_config加上"HashKnownHosts yes"才会被开启。
+然而，偶然一些计算机的ssh公钥是合理地被更动。虽然遇到这些情况OpenSSH会发出惊告并禁止
+你进入该计算机。以往当我们确定该次 ssh公钥被更动没有可疑时，我们用文字编辑器开启
+known_hosts，把相关的公钥记录删掉就可以了。但现在因为所有计算机名称或IP地址都被 hash
+了，我们很难知道那行是相关计算机的公钥。当然我们可以把整个known_hosts删除，但我们会
+同时失去其他正常计算机的ssh公钥。
+
+事实上OpenSSH在工具ssh-keygen加了三个选项，协助你管理hash了的known_hosts。你可以用
+"ssh-keygen -F 计算机名称"找出相关的公钥：
+
+ssh-keygen -F www.example.net
+
+如果你想更新某计算机的公钥，可以先打"ssh-keygen -R 计算机名称"删除该计算机的公钥，然
+后再"ssh 计算机名称"再进入该计算机，ssh自然会重新下载新的公钥。
+
+如果你的known_hosts 档案仍未被hash，你可以打"ssh-keygen -H"
+
+
+SSH服务端的配置使用的配置文件是“/etc/ssh/sshd_config”
+打开发现 HostKey /etc/ssh/ssh_host_rsa_key 
+
+
+
+
+
+20120823
+192.168.1.4 上面有一个www用户，里面有 ftproot (ftp服务器)，用户层配置为只能上传不能
+删除，我只能用root用户进入，在服务器上直接删除。vca 用户里面有 mantis，mediawiki
+
+
+
+
+vi /etc/passwd 可以看到很多用户
+
+www 不是一个账户，只是一个文件夹而已
+/home/www/repos 是svn仓库
+
+vca 用户是干什么的呢？上面运行着 wiki  mantis  testlink 等
+vcs是 root用户
+
+ldap最新版本在192.168.1.4上没有安装成功。
+
+apache 服务终止，导致wiki,mantis,testlink无法工作。
+vcs:/home/vca/git# /etc/init.d/apache2 restart
+Restarting web server: apache2apache2: Syntax error on line 185 of /etc/apache2/apache2.conf: 
+Syntax error on line 1 of /etc/apache2/mods-enabled/php5.load: Cannot load /usr/lib/apache2/modules/libphp5.so 
+into server: /usr/lib/apache2/modules/libphp5.so: cannot open shared object file: No such file or directory
+ failed!
+
+ubuntu服务器  /usr/lib/apache2/modules/ 下面有一个libphp5.so 但是debian同目录变成了libphp5filter.so
+copy libphp5filter.so 为libphp5.so 
+这样做完，ldap 又能安装了.
+
+通过 192.168.1.4/lam 可以访问了（神奇） 那么他安装到哪里了呢？
+登录上，账户怎么得到呢，admin账户的密码竟然还是123456 看来是在ldap服务里面保存好的。
+===============
+Darwin Streaming Server
+6.0.3 版本，却换到root用户 密码 yinjiezoule  执行 ./Install
+enter a new administrator user name:username
+password:123456
+
+web 地址 192.168.1.52:1220
+
+提示：qtss 用户创建失败
+
+从提示信息上看，应该是qtss用户未能创建造成的，查看了一下Install脚本，发现创建用户的脚本是这样的：
+if [ $INSTALL_OS = "Linux" ]; then
+/usr/sbin/useradd -M qtss > /dev/null 2>&1
+else
+/usr/sbin/useradd qtss > /dev/null 2>&1
+fi
+但是useradd并没有-M的命令行参数，应该为-m，将-M修改成-m后，再执行Install脚本，
+安装成功。此时服务已经启动，
+可以使用如下命令确定服务是否已经启动：
+
+Couldn't find the en language messages file
+/usr/local/sbin/streamingadminserver.pl line 2168.
+
+Of course this happened because the AdminHtml dir didn't exist.
+
+-----
+一可执行文件执行的时提示找不到这个文件或目录，因系统64位而程序是32位，需要安装ia32库
+sudo apt-get install ia32-libs
+
+-----------
+20121219 关于dell服务器 R810  安装ubuntu10.04 server  android环境
+1 原来192.168.1.52地址给我的一个台式机用，现在给dell服务器用，ssh时候提示：
+WARNING: REMOTE HOST IDENTIFICATION HAS CHANGED
+IT IS POSSIBLE THAT SOMEONE IS DOING SOMETHING NASTY
+然后按照提示处理即可
+
+2 ubuntu server 没有 add-apt-repository （下载jdk6需要）
+系统提示没有add-apt-repository命令，则需要先安装python-software-properties，
+命令sudo apt-get install python-software-properties
+此时需要手动添加：
+"deb http://archive.canonical.com/ubuntu maverick partner"到/etc/apt/sources.list文件中。)
+
+DNS服务器的设置(不要设置这个，这是自动生成的)
+#/etc/resolv.conf
+nameserver 202.96.128.143
+
+设置网关
+route add default gw 10.65.1.2
+
+
+Ubuntu 10.04 LTS 安装sun-java6-jdk ，出现错误
+国外某个论坛看到说，这个包已经从2012-2-26就移走了
+最后实现办法
+
+1、加源
+sudo add-apt-repository "deb http://us.archive.ubuntu.com/ubuntu/ hardy multiverse" 
+2、sudo apt-get update
+3、sudo apt-get install sun-java6-jdk
+
+R810 配了RAID5 拷贝android out目录 16177M 用时6分钟，折合44M/s。改成4盘 RAID0，硬盘
+写入速度大幅提升，但是编译仍然需16分钟。（原raid5 16-17分钟）。现在还有一个内存的主频
+只工作在937M。
+
+R710 4盘raid0 拷贝19465M 用时150s 折合130M/s 读写，性能不高啊。
+
+hdparm  -Tt /dev/sdb2
+
+/dev/sdb2:
+ Timing cached reads:   13898 MB in  2.00 seconds = 6954.88 MB/sec
+ Timing buffered disk reads: 1232 MB in  3.00 seconds = 410.15 MB/sec （纯粹读 410M/s）
+
+
+
+hdparm -tT /dev/sdb1  测试硬盘性能
+time cp test1 test2  测试拷贝速度
+
+磁盘阵列gfs文件系统
+hdparm 只得到300M
+
+-----------------
+time cp -rf xntg-1/ xntg-2   
+real	2m27.405s  （表示用时2分27s）
+user	0m0.232s
+sys	0m34.930s
+------------
+
+iostat（apt-get install sysstat）
+
+
+
+R810 远程开关机：
+IPMI OVER LAN
+
+20130327
+-----------------------------
+red hat 系统用rpm格式，Debian系列（比如ubuntu）用deb格式。Ubuntu安装rpm需先用alien
+转换软件转换成deb格式。
+
+--------------
+20130327 Wowza 配置
+注册码：
+---------------
+apache 服务配置
+1 安装 sudo apt-get install apache2    /etc/init.d/apache2 restart 
+2 网页地址在 /var/www 默认有index.html内容：It works! 如果无index文件显示目录和
+  文件列表。默认端口80
+3 /etc/apache2/httpd.conf
+4 /etc/apache2/sites-available/default  设置网站地址
+
+/etc/init.d/apache2  restart
+
+
+<Directory /var/www>   <Directory /home/rimke/www>
+
+---MySQL-----------
+
+mysql被orcal收购www.mysql.com 
+默认端口3306
+ubuntu12.04自带mysql 安装时设置mysql root用户密码
+
+192.168.1.52 /192.168.7.95  mysql root 密码：123456
+
+sudo /etc/init.d/mysql restart
+
+
+ubuntu上默认不允许远程连接 mysql，需要：
+
+grant all PRIVILEGES on discuz.*（数据库名称） to ted（用户名）@'123.123.123.123' identified by '123456';（密码）
+
+但是有错误
+mysql -h 192.168.7.32 -P 3306 -ugaowei -p123456
+ERROR 2003 (HY000): Can't connect to MySQL server on '192.168.7.32' (111)
+
+
+-------------
+vim /etc/mysql/my.cnf
+
+# Instead of skip-networking the default is now to listen only on
+# localhost which is more compatible and is not less secure.
+#bind-address           = 127.0.0.1  <---注释掉这一行就可以远程登录了 （管用！）
+-------------------------------
+
+errno 111 is ECONNREFUSED
+----------------
+Nginx 服务配置
+
+
+
+-----------
+配置SKYUC
+
+先在1.87工作机器上配置，不能运行php代码，是apache环境问题。在1.52上就可以，前提是安
+装了ZendGuardLoader.so
+在/etc/php5/apache2/php.ini 中添加
+zend_extension=/lib/ZendGuardLoader.so
+zend_loader.enable=1
+
+配置过程中检测到某些文件/目录不可写，在服务器上 对这些文件的其他用户加写权限即可。
+
+配置信息：
+数据库主机 localhost
+端口号  3306
+用户名 xxx
+密码  xxx
+数据库名 testdb
+数据库类型 选 MySQL
+管理员姓名： username
+登录密码：test
+
+
+更新到ubuntu12.04后，显示 “图像处理库 不支持”
+【网】“同时支持GD和ImageMagick 6两种图像处理库选择”
+运行
+apt-get update
+apt-get install php5-gd
+
+重启apache2 显示 图像处理库......GD
+
+mysql 使用root：123456 账户登录，搜出来2个db :performance_schema   test 
+我创建一个新的，显示不能成功，选择test，安装成功了！
+账户username:test
+
+可以系统帐号 root@'192.168.1.4' 密码 vcrootpass  能查到11个db（用skyuc的配置页面）
+user = debian-sys-maint
+password = TgaAWxNqnEsF1tlo 能查到2个db  一个my_wiki  一个testdb 
+db文件存在 /var/lib/mysql/ 下面
+
+
+------------------------------------------
+skyuc 网站账户
+username:test
+
+-----------------
+注册一个普通用户： username1：testtest
+wwwroot/admincp/ 管理路径
+---------------------------------------------
+20130508
+配置192.168.1.52  ubuntu12.04.1
+账户：username:hejianxin
+root:hejianxin
+
+manage system with Landscape
+
+Software selection:
+OpenSSH Server
+LAMP server (linux apache mysql php?)
+PostgreSQL database
+Tomcat Java server
+Virtual Machine host （这就是 虚拟主机吗？20130508）
+Manual package selection：进入一个怪异界面，q退出即可
+
+--aptitude??
+
+Configuring mysql-server-5.5
+设置 root 密码 123456
+
+命令行设置ip地址子网掩码网关：
+ifconfig eth0 192.168.4.1 netmask 255.255.255.0 up
+route add default gw IP
+echo "nameserver 211.98.1.28">> /etc/resolv.conf
+重启会消失
+20130411
+
+正确方法：编辑 /etc/network/interfaces 文件：
+
+auto eth0 
+iface eth0 inet static （原来是dhcp）
+address 192.168.200.99 
+netmask 255.255.255.0 
+gateway 192.168.200.100 
+dns-nameservers 202.106.0.20 （/etc/resolv.conf 自动添加:nameserver 202.106.0.20）
+
+
+添加root用户：
+sudo passwd root （yinjiezoule）
+su
+
+安装完成后  apache mysql php都ok
+装完后，tomcat 也默认都装好了  端口8080
+
+
+--20130516--R710 192.168.7.95 wowza服务器-
+用户密码：wowza:wowza
+mysql root:123456
+
+---------------------------------------------------
+DNS服务安装
+12.04server 已有 bind9 套件
+sudo /etc/init.d/bind9 start  没成功
+
+
+重启网络
+sudo /etc/init.d/networking restart
+
+
+---20130605--------
+关于磁盘阵列
+Dell MD3600F  SAN解决方案，可以支持直连4-8台server
+server安装HBA-FC卡，在/dev下看到 sdb/sdb1/sdb2   dm/dm-1/dm-2
+需要去mount  dm-2  对系统来说，跟外接一块硬盘一样。
+
+-----------------------
+
+find . -name "*.c" -print0 | xargs -0 sed -i 's/x_cnt/x_counter/g'
+
+fuser -m -v 查看谁在用某个文件描述符
+
+两种方法：
+echo 3 > /proc/sys/vm/drop_caches
+umount /dev/sdx
+
+ubuntu 12.04 server 上默认没有gcc编译器
+apt-get install gcc
+apt-get install make
+
+
+配置eth1 
+
+sudo netstat -anp|grep 80 
+
+开始/结束 防火墙
+ufw enable|disable
+
+2013虚拟化技术 反馈
+vmware 技术
+
+ubuntu nginx 路径
+/usr/share/nginx/www
+
+
+Ubuntu Server 12.04 网口
+/etc/init.d/networking restart 经常出现eth0 无法重启，只能
+
+
+lamp
+http://192.168.1.235/lam/templates/login.php
+
+centos
+网口自动连接，在网络配置里选 connection atuo 
+
+如何确定服务器是ubuntu server？
+cat /proc/version 
+cat /etc/issue 
+lsb_release -a
+
+
+----------Wiki-----------------
+
+20131205 下载 MediaWiki 1.21.3
+ubuntu server 配置 mediawiki过程简单，安装server版ubuntu（选择LAMP），将mediawiki
+解压到 var/www/mediawiki,访问192.168.x.x/mediawiki,然后next next 安装mediawiki 
+最后生成一个 LocalSettings.php  把它拷贝到服务器上index.php 所在目录 再刷新浏览器就可以了
+
+安装了最新的mediawiki 编辑的时候也没有advanced 功能（比如插入表格）看来这是一个类似
+插件的东西，要额外安装
+mediawiki.org/特殊页/version里面看到 Installed extensions
+
+20131205 安装1.21.3 没法运行，经查，系统没有安装php和mysql。注意安装系统的时候一定要
+选择LAMP选项
+apt-get install libapache2-mod-php5 php5
+结果提示下载这个文件，而不是打开一个网页。在网上查，说apache没有成功加载php模块
+
+
+新安装的ubuntu server  
+apt-get install git-core 找不到
+此时需要update 但是
+apt-get update 错误
+Failed to fetch gzip:/var/lib/apt/lists/partial/hk.archive.ubuntu.com_ubuntu
+Hash Sum mismatch
+E: Some index files failed to download. They have been ignored, or old ones used instead.
+需要删除
+ubuntu@ubuntu:/var/lib$ sudo rm -rf apt/lists/partial/
+ubuntu@ubuntu:/var/lib$ sudo rm -rf apt/mirrors/partial/
+再update
+
+
+---------
+20140114 早晨开机分辨率变成了1024*768。重启2次，各种设置无效，不认显示器。乱点了一通。
+突然就又好了，不知何故。
+20140117 问题重现
+
+
+20140505
+ sudo apt-get install openjdk-6-jdk
+
+20140515
+安装opencv时候需要 numpy 但是用apt-get install python-numpy 找不到源，通过其他方式
+下载了他的deb文件。 怎么安装呢？ 直接双击会打开软件中心
+
+dpkg -i packagename.deb  可以安装！！！
+但是提示
+ python-numpy 依赖于 libc6 (>= 2.14)；然而：
+系统中 libc6 的版本为 2.13-20ubuntu5。
+dpkg：处理 python-numpy (--install)时出错：
+说明需要低版本的numpy
+
+sudo apt-get -f install  可以卸载依赖错误的软件包
+再次执行 apt-get install python-numpy :
+错误 http://cn.archive.ubuntu.com/ubuntu/ oneiric/main python-numpy amd64 1:1.5.1-2ubuntu2
+说明需要 1.5.1 这个版本
+但是没有1.5.1这个版本，用了1.3.0  
+ python-numpy 依赖于 python (<< 2.7)；然而：
+系统中 python 的版本为 2.7.2-7ubuntu2。
+
+而ubuntu中也没有提供13.10 的支持，这就是不用04版本的后遗症。
+
+dpkg -r 删除一个包
+
+ python-numpy: 1:1.5.1-2ubuntu2 (Multi-Arch: no) is not co-installable with 
+python-numpy:i386 1:1.5.1-2ubuntu2 (Multi-Arch: no) which is currently installed
+
+apt-get install -f 可以卸载 python-numpy:i386
+
+------------
+20140516
+ubuntu下面的 .deb包 可以解压缩，解开后：
+/DEBIAN/control   描述依赖关系，版本等信息
+/DEBIAN/md5sums   各个文件的md5校验和
+/DEBIAN/postinst  2个sh脚本
+/DEBIAN/prerm
+/usr/lib/python2.7
+
+系统会按照这个目录结构依次拷贝到系统目录。
+
+
+
+------------------
+libxxx.so  和  libxxx-dev.so 不同，后者用于开发，那么有什么不同呢？ 解开包发现 完全不同。
+不带dev的里面是.so 带dev的里面是.a
+
+
+====================
+由于LInux原始的防火墙工具iptables过于繁琐，所以ubuntu默认提供了一个基于iptable之上的防火墙工具ufw。
+
+我在调试 mysql 外网访问时候，执行了 ufw enable  结果导致所有web服务无法使用：apache wiki  gerrit ssh 等
+
+
+---
+20140716
+家里电脑双盘raid0，安装win7。当安装ubuntu双系统时，出现麻烦：1 raid0，2 win7。这跟原来单盘，winxp的情形不同。
+主要原因是grub引导程序不支持raid0。
+方案1：另外安装一块笔记本硬盘用于ubuntu，安装时候把raid0双盘拔掉。独立安装，启动时候靠bios选择引导盘切换系统。
+问题：肯能是这块盘的性能太差，抑或是ubuntu14.04系统本身有问题，系统运行缓慢，软件打开也慢。换成gnome桌面也不行。
+方案2：再安装2块160G硬盘，组成raid0（实验可行，2组raid0，主板还是挺强的）。安装ubuntu12.04时候，选择boot程序装在sda上（此时应该是u盘）实测不行
+ubuntu无法启动。并且，160G raid0 两块盘工作时非常热。并且他们是sata2.0 3.0G  性能肯定不如我的sata3.0 6G双盘好。
+后来考虑，我安装一块320G 笔记本小盘。安装ubuntu12.04 时候可以选择启动程序安装位置，grub不是不支持raid嘛，我把boot
+程序安装在非raid的单盘上，然后把系统安装在raid0上，安装倒是成功了，但是无法启动，没有出现启动菜单，选择320G单盘为
+启动盘，提示grub错误，丢失文件。
+
+方案3：使用EasyBCD引导，不使用grub，折腾一个晚上，没有成功，能出现grub菜单，也可以选，但是停止在启动页面，无法进入ubuntu系统。
+方案4：raid0 独立安装ubuntu，虚拟机安装winxp。跟公司电脑配置一致。这符合我2年内的需求目标！
+
+
+
+-----------------------
+20140717
+给马龙安装12.04，安装gnome-session-fallback的时候装不上，源有问题。需要搞搞清楚，“源”到底是个什么原理。
+
+记录源的文件是：
+
+
+----
+20140718
+思考一个问题，同样是10.04系统，执行apt-get install git-core  王贺超，侯生勇的git版本就是1.7.5  1.9.2
+而马龙的就是1.7.0 导致版本低无法正常使用 repo sync，错误： 什么 gc错误。
+源不同吗？   原因是马龙装的10.04 选的中文版，结果 /etc/apt/source.list 里面的源都是 http://cn.xxx.xx  都是cn开头的
+重安装10.04，选择英文版，apt-get install git-core  找到的版本还是 1.7.0  
+后来实在没有办法，把我的  /usr/bin/git 拷贝给他，竟然就能用了，  git是个“绿色软件”啊
+
+---
+20140723
+通过scp向侯生勇电脑推送，提示：ssh: connect to host x.x.x.x port 22: Connection refused
+原因：没有sshd程序，需要 apt-get install openssh-server
+(执行sshd，会提示安装openssh-server)  装完即好。
+
