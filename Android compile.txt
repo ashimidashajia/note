@@ -1919,6 +1919,16 @@ otapackage 怎么办？
 androd
 
 
+-------------------------
+m3  home :
+Traceback (most recent call last):
+  File "./build/tools/releasetools/ota_from_target_files", line 953, in <module>
+    main(sys.argv[1:])
+  File "./build/tools/releasetools/ota_from_target_files", line 921, in main
+    WriteFullOTAPackage(input_zip, output_zip)
+  File "./build/tools/releasetools/ota_from_target_files", line 517, in WriteFullOTAPackage
+    common.CheckSize(boot_img.data, "boot.img", OPTIONS.info_dict)
+UnboundLocalError: local variable 'boot_img' referenced before assignment [python变量问题，与版本有关]
 
 
 
