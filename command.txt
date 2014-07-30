@@ -1,0 +1,1 @@
+cat  A20-galaxy.tar.bz2.a*  | tar xj 
