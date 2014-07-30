@@ -3,7 +3,7 @@
 1 kernel控制台
 
 kernel 控制台可以用fb显示。
-顾文彪调通了recovery里面用fb显示console内容的部分。
+gwb调通了recovery里面用fb显示console内容的部分。
 recovery使用的是自己带的字库，实际上，kernel里面 drivers/video/console 里面也有字库用于fb显示console
 
 要理解 console 主设备5 次设备1 关注 drivers/char/tty_io.c 文件
@@ -305,5 +305,14 @@ fi
 
 # Call "mkimage" to create U-Boot image
 ${MKUIMAGE} "$@"
+
+-----------
+分区：
+struct mtd_partition
+
+
+----
+make distclean
+make clean
 
 

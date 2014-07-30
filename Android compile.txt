@@ -258,21 +258,6 @@ TARGET_AMLOGIC_MKYAFFSIMG_TOOL := mkyaffsimage4K.dat
 
 
 
-------------
-WARNING: Did not find SPI
-Traceback (most recent call last):
-  File "./build/tools/releasetools/ota_from_target_files", line 953, in <module>
-    main(sys.argv[1:])
-  File "./build/tools/releasetools/ota_from_target_files", line 921, in main
-    WriteFullOTAPackage(input_zip, output_zip)
-  File "./build/tools/releasetools/ota_from_target_files", line 517, in WriteFullOTAPackage
-    common.CheckSize(boot_img.data, "boot.img", OPTIONS.info_dict)
-UnboundLocalError: local variable 'boot_img' referenced before assignment
-make: *** [out/target/product/f16ref/f16ref-ota-1.0.29.20140720231750.bestv.zip] Error 1
-
-这个错误 似曾相识啊？！！
-
-
 1 最后生成.zip升级包的过程：
 
 make otapackage
@@ -1928,7 +1913,15 @@ Traceback (most recent call last):
     WriteFullOTAPackage(input_zip, output_zip)
   File "./build/tools/releasetools/ota_from_target_files", line 517, in WriteFullOTAPackage
     common.CheckSize(boot_img.data, "boot.img", OPTIONS.info_dict)
-UnboundLocalError: local variable 'boot_img' referenced before assignment [python变量问题，与版本有关]
+UnboundLocalError: local variable 'boot_img' referenced before assignment [python变量问题，与版本有关？]
+
+公司11.10 python 2.7.2+
+家12.04   python 2.7.3
+
+
+-------------
+打包：
+./build/tools/releasetools/ota_from_target_files -v --amlogic -n -p out/host/linux-x86 -k build/target/product/security/testkey out/target/product/f16ref/obj/PACKAGING/target_files_intermediates/f16ref-target_files-1.0.31.20140729121932.bestv.zip out/target/product/f16ref/f16ref-ota-1.0.31.20140729121932.bestv.zip
 
 
 
