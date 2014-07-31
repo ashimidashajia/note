@@ -26,4 +26,16 @@ tcp还是udp包头都没有字段表明负载是http，wirshark是智能分析�
 
 2 要搜索包里面的内容，选择 Packet bytes
 
+3 执行sudo wireshark 提示：
+Running as user "root" and group "root".
+This could be dangerous.
+
+If you're running Wireshark this way in order to perform live capture, you may want to be aware that there is a better way documented at
+/usr/share/doc/wireshark-common/README.Debian
+ 
+查看这个文件：
+
+4 抓取小米盒子epg 的json数据，在wireshark中看，并且Copy - Bytes -Printable text only 这样汉字信息取不到，应该先拷贝出：
+http://media.cntv.duokanbox.com/tvservice/getmediadetail2?mediaid=976146&pageno=0&pagesize=0&orderby=0&fee=1&deviceid=1353a94f1f7d634a62de36fd29a42729&apiver=1.8&ver=4.2.2.946&codever=13&ptf=205&ts=-1481390516&nonce=796510208&opaque=509ac7914d6e20336be684b5aa8b22b25f42b537
+然后在浏览器中执行，这样就得到了那个json文件。这个方法好！！！
 
