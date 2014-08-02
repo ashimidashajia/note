@@ -1329,3 +1329,219 @@ ubuntu无法启动。并且，160G raid0 两块盘工作时非常热。并且他
 原因：没有sshd程序，需要 apt-get install openssh-server
 (执行sshd，会提示安装openssh-server)  装完即好。
 
+
+-------
+1 ubuntu14.04 拼音输入法总是不爽
+在软件中心搜索 IBus Pinyin Setup
+重启电脑，我在ubuntu11.10上熟悉的输入法终于回来了（一个蓝色的“拼”字那个，好！），哈哈
+
+2 ubuntu12.04 desktop 安装apache：
+sudo apt-get install apache2
+
+
+与公司整合
+
+1 VirtualBox  设备-〉 共享粘贴板  双向拖放
+
+2 virtualbox + ubuntu10.04 运行wowza： 
+root@gaojie-desktop:/usr/local/WowzaMediaServer/bin# ./startup.sh 
+./startup.sh: 35: java: not found
+需要先安装jre
+
+3 安装ubuntu12.04 ：  mysql  root:12345
+OpenSSH Server
+DNS Server
+LAMP Server
+Tomcat Java server
+Virtual Machine host
+
+4 virtual box 网络设置选择桥接 ，就可以与win7 组成局域网，
+选择 桥接 后，虚拟机地址变为192.168.0.103 这个地址是由路由器的DHCP分配的
+[在DHCP服务器->DHCP列表与绑定 中看到]
+localhost 192.168.0.103 08:00:27:43:2B:B2 
+gaojie-desktop 192.168.0.104 08:00:27:94:EE:B3 
+这2个是虚拟机。通过真实机器的1根网线，路由器认出3个机器，这就是桥接。
+ 
+对于可视化的网页编辑器，部份网页制作者选择Adobe Dreamweaver，
+一部分人使用更图形化的Adobe Golive。而一部分人则纯粹用代码编辑器，
+
+
+-----------
+1  samba服务设置
+   每个用户开一个samba连接。在 /etc/init.d 中有一个samba程序
+/etc/samba/smb.conf 这个是配置文件。配置每个用户的读写权限等。
+修改权限后，要执行 /etc/init.d/samb restart 重启动samba服务。
+
+2 每个用户可以设置别人访问自己的权限。比如是否可以写和删除。
+3 关于权限设置  Operation not permitted (1) 没有解决
+
+4 关于分辨率设置问题
+在AMD 网站上找到了一个驱动 ati-driver-installer-10-3-x86.x86_64.run
+安装后分辨率增加了！ 哈哈。
+其实在安装的过程中出现了一个错误。但是注销了一次root用户。竟然分辨率就提高了！真晕
+哈哈，说明这个驱动是找对了，并且也安装上了，真不错！！
+
+其中1600x1200 4;3的效果最好！ 基本实现了点对点！
+1280x720 反而不是真清晰
+
+root目录 System->Preferences->ATI Catalyst Control Center
+里面可以设置显示效果， 甚至能够识别 [AMOI-LCD TV] ATI Radeon HD 4200
+Refresh 项里面显示 1280x720(perfected) 但是说实话 1280x720 没有1600x1200显示效果好。
+显然1280x720 没有1600x1200高
+没有1920x1080 的分辨率啊！
+
+显然系统检测到了 HDMI显示器！ 很好啊！
+显示最大分辨率1900x1200 但是分辨率选项里面没有
+
+哈哈！解决了！！
+System->Preferences->ATI Catalyst Control Center
+找到 Display Manager 下面显示一个DTV(2) 当然前提是HDMI上连接我的这个AMOI大电视。
+右侧选项卡里面有一个“HDTV”进入后 下面列表里面有 1080P50的选项。
+选中后选择 Apply  完美实现了1080P！！！
+
+但是保存不住，重启后又恢复成原来老样子了。
+
+
+但是，装完显卡驱动后，声卡没有了 声卡设备都找不到了！奇怪吧。
+aplay -l 命令
+aplay 是关于声卡的一个命令。
+【ALSA】
+
+
+并且 多媒体也播不了了 说GStreamer出错了。
+之前都是可以播放音视频的了 怎么GStreamer又不行了呢?
+但到是装了新的显卡驱动后  Gstreamer要重新安装？
+
+cat /proc/asound/card0$/codec#0 |grep Codec   
+Codec:VIA ID 397
+cat /proc/asound/card0$/codec#0 |grep Codec  
+Codec:ATI ATI RS690/780 HDMI
+
+
+4 注意一个错误
+ sudoers is owned by uid 1000, should be 0 
+
+解决办法：
+chown root:root /etc/sudoers 
+chmod 440 /etc/sudoers 
+
+5 关于ubuntu里面的网络。很多时候，直接在控制台里面通过网络下载。
+
+aplay -l
+如果成功显示类似内容：
+card 0: IXP [ATI IXP], device 0: ATI IXP AC97 [ATI IXP AC97]
+Subdevices: 1/1
+Subdevice #0: subdevice #0
+card 0: IXP [ATI IXP], device 1: ATI IXP IEC958 [ATI IXP IEC958 (AC97)]
+Subdevices: 1/1
+Subdevice #0: subdevice #0
+不成功显示：
+aplay: device_list:221: no soundcard found...
+不成功的话，往下看。
+去除系统自带声音模块
+sudo apt-get --purge remove linux-sound-base alsa-base alsa-utils
+重新安装，并安装最新模块：
+sudo apt-get install linux-sound-base alsa-base alsa-utils
+重启后可能不能进入gdm图型登录窗口。
+ubuntu 的用户输入
+sudo apt-get install gdm ubuntu-desktop
+Xubuntu的用户输入：
+sudo apt-get install gdm xubuntu-desktop
+重启一下。
+
+配置声卡的时候，到一个选择ok的选项，按 enter键没用。这时候按 Alt+O  会出现一个列表。
+
+选择了一堆东西后仍然是个哑巴。没有声音。
+
+并且重新下载了一个 图形之类的登录工具（在装声卡的过程中的一个过程） 导致这个登录界面无法登陆root用户了。
+
+Ubuntu 有是有 root无法登陆X的问题啊！  之前是可以的，现在鼓捣鼓捣就不行了。
+ubuntu好像默认是root无法登录X的，
+
+其实我个人认为这没有多大必要，因为当你需要 root 的权限时，使用 sudo 便可以了。如果你实在需要在 Ubuntu 中启用 root 帐号的话，那么不妨执行下面的操作：
+
+sudo passwd root
+
+ubuntu默认情况下是不允许用root用户直接登录桌面系统的，这也是出于安全方面的考虑
+
+ubuntu默认情况下是不允许用root用户直接登录桌面系统的，这也是出于安全方面的考虑，因为在非root用户的模式下每个特权操作都要输入密码，这就大大减少了危险的动作。下面是获取root登录的方法。
+Gnome环境：
+打开System(系统)->Administration(系统管理)->Login Window（登录窗口）点击security(安全)页，选择Allow root login(允许本地系统管理员登陆)。
+可能因为版本更新，allow后的文字不一样，但意思都是一样的。   
+【我这个8.1 是allow  administration 什么什么的】
+
+你说的很对。我在刚开始用ubuntu的时候对不能登录root很恼火，因为之前在RHEL中对权限的控制欲很强。用久了之后，越发觉得这个设计非常好。
+
+
+在ccdt用户下 如果想安装包，需要输入Administration 密码 ：123456
+
+
+5 系统更新方法
+sudo apt-get upgrade
+
+妈的！声卡驱动彻底搞不定了！！！！
+Tomem也不能播放了
+郁闷死了！
+
+6 系统安装完事没有smb服务的，需要另外安装。
+
+7 在ubuntu上 测试gstreamer 的开发 20100511  64位的那个不知道怎么搞的 没有声音了，好像是声卡驱动给搞坏了。
+现在在32位环境下测试。
+
+
+=============================================================================================================================
+
+20100524
+1 samba 管理 
+a 安装samba 
+sudo apt-get install samba
+sudo apt-get install smbfs
+b 配置samba sudo gedit /etc/samba/smb.conf  或者用vi
+c 重启samba服务器
+#/etc/init.d/samba restart
+
+2 ubuntu 8.1 升级到9.10  升级方法：
+System->Administration->Update Manager  
+题外：Alt+F2 是 Run Application 
+
+怎样看目前的ubuntu版本？
+cat /etc/issue 
+
+好像不能从8.10直接升级到9.10  只能升级到9.04   难道要从9.04 再升级到9.10？？
+20100525 10:50
+升级到9.04后，无法启动了，进入不了图形界面，但是SSH还能连上（有条件）
+开机有4个选项2.6.28  2.6.27  选后者能连SSH  前者SSH都连不上
+
+在2.6.27启动 虽然进入不了桌面但是能进入ctrl+alt+f1 能进入命令行
+/boot/grub下面的menu.lst 开始显示的信息
+糟了，升级到9.04后起不来了。
+命令行升级
+apt-get install update-manager-core
+do-release-upgrade
+在ssh中尝试，打印
+This session appears to be running under ssh. It is not recommended
+to perform a upgrade over ssh currently because in case of failure it
+is harder to recover. 
+真牛逼 他能检测到时在ssh中运行的。
+
+后来我在 ctrl+alt+f1字符模式下做了一次升级 do-release-upgrade 这次升级到了9.10
+各种打印信息跟在图形模式下，下面的detail中显示的一摸一样。有体会到了linux本来就是字符模式的真谛。
+
+这次倒是起来了 但是显示一个极其怪异的界面
+然后我安装ATI的那个显卡驱动（字符模式），期待中...
+然后启动后 要我选择一个用户。 界面出来了但是没有鼠标，晕！
+图形界面无法登陆 root 
+
+=========================
+其实我个人认为这没有多大必要，因为当你需要 root 的权限时，使用 sudo 便可以了。如果你实在需要在 Ubuntu 中启用 root 帐号的话，那么不妨执行下面的操作：
+sudo passwd root此命令将会重新设置 root 的密码，按照提示输入新的密码，并加以确认。之后，重启系统时，就可以用 root 登录了。
+如果你想要禁用 root 帐号，则执行下列命令：
+sudo passwd -l root
+=========================
+
+
+
+
+
+
+
