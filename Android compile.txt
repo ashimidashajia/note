@@ -54,7 +54,18 @@ sudo apt-get install git-core gnupg flex bison gperf build-essential \
   libgl1-mesa-dev g++-multilib mingw32 openjdk-6-jdk tofrodos \
   python-markdown libxml2-utils xsltproc zlib1g-dev:i386 lib32z1-dev
 
+$ sudo apt-get install git-core gnupg flex bison gperf build-essential \
+zip curl zlib1g-dev libc6-dev lib32ncurses5-dev ia32-libs \
+x11proto-core-dev libx11-dev lib32readline5-dev lib32z-dev \
+libgl1-mesa-dev g++-multilib mingw32 tofrodos
 
+
+sudo apt-get install git gnupg flex bison gperf build-essential zip curl libc6-dev libncurses5-dev x11proto-core-dev libx11-dev libreadline6-dev libgl1-mesa-dev g++-multilib mingw32 tofrodos python-markdown libxml2-utils xsltproc zlib1g-dev
+
+接着安装
+uestc@uestc-ThinkPad-T43:~/tools$ sudo apt-get install u-boot-tools texinfo texlive ccache gawk gettext uuid-dev
+
+u-boot_tools ???
 -------------------------
 不推荐用ubuntu12.04对编译Android，有库兼容问题会产生一些错误。其实实际使用发现，编译m3 4.0.4 基本成功，只是在做ota zip包时候出现boot_img变量的一个错误。
 在a20 4.2.2 中就正常。怀疑是python版本问题，公司11.10上的版本是2.7.2+（官网找不到这个版本），12.04 是2.7.3。从官网下载2.7.2编译安装。出现新问题：
@@ -124,6 +135,7 @@ python-markdown
 This is a Python implementation of John Gruber’s Markdown. It is almost completely compliant with the reference implementation, though there are a few very minor differences. See John’s Syntax Documentation for the syntax rules.
 
 Python-markdown2：完全用Python实现的Markdown （Markdown 是啥）
+Markdown是一个轻文本标记语言，它允许你在写的时候使用简单文本格式，然后转换为XHTML（HTML）。Python-markdown 是完全用Python实现的Markdown，与用Perl实现的 Markdown.pl非常接近，同时增加了一些扩展，包括语法高亮等
 
 ----------
 公司11.10是安装了的:
@@ -1950,7 +1962,7 @@ Traceback (most recent call last):
 UnboundLocalError: local variable 'boot_img' referenced before assignment [python变量问题，与版本有关？]
 
 
-公司11.10 python 2.7.2+
+公司11.10 python 2.7.2+ (从新立德中看是 2.7.2-7)
 家12.04   python 2.7.3
 
 可以在python官网下载2.7.2 源码编译
@@ -1960,6 +1972,38 @@ UnboundLocalError: local variable 'boot_img' referenced before assignment [pytho
 ota_from_target_files -v --amlogic -n -p out/host/linux-x86 -k build/target/product/security/testkey out/target/product/f16ref/obj/PACKAGING/target_files_intermediates/f16ref-target_files-1.0.31.20140729121932.bestv.zip out/target/product/f16ref/f16ref-ota-1.0.31.20140729121932.bestv.zip
 
 
+
+
+---
+公司 11.10
+lrwxrwxrwx 1 root root       9 2011-11-10 16:46 python -> python2.7
+-rwxr-xr-x 1 root root 2735256 2011-10-05 05:26 python2.7
+-rwxr-xr-x 1 root root    1652 2011-10-05 05:24 python2.7-config
+lrwxrwxrwx 1 root root      11 2011-09-06 05:31 python3.2 -> python3.2mu
+-rwxr-xr-x 1 root root 3024320 2011-09-06 05:31 python3.2mu
+lrwxrwxrwx 1 root root      16 2011-10-09 00:50 python-config -> python2.7-config
+
+#sudo apt-get install python
+Reading package lists... Done
+Building dependency tree       
+Reading state information... Done
+python 已经是最新的版本了。
+升级了 0 个软件包，新安装了 0 个软件包，要卸载 0 个软件包，有 530 个软件包未被升级。
+
+$ sudo apt-get install python2.7
+Reading package lists... Done
+Building dependency tree       
+Reading state information... Done
+将会安装下列额外的软件包：
+  libpython2.7 python2.7-dev python2.7-minimal
+建议安装的软件包：
+  python2.7-doc
+下列软件包将被升级：
+  libpython2.7 python2.7 python2.7-dev python2.7-minimal
+升级了 4 个软件包，新安装了 0 个软件包，要卸载 0 个软件包，有 526 个软件包未被升级。
+需要下载 10.6 MB 的软件包。
+解压缩后将会空出 213 kB 的空间。
+您希望继续执行吗？[Y/n]
 
 
 

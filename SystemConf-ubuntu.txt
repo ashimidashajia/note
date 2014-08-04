@@ -1541,6 +1541,11 @@ sudo passwd -l root
 
 
 
+20140804
+
+xx-dev 包是头文件和静态库
+
+
 
 
 
