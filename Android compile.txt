@@ -37,6 +37,15 @@ apt-get install flex
 host C++: llvm-rs-cc <= frameworks/compile/slang/llvm-rs-cc.cpp
 <command-line>:0:0: error: "_FORTIFY_SOURCE" redefined [-Werror]
 
+8) /bin/bash: xmllint: command not found  
+sudo apt-get install libxml2-utils
+
+9) /bin/bash: xsltproc: command not found
+sudo apt-get install xsltproc
+
+
+
+
 -------------------------
 这两天在ubuntu12.04上编译HI3716c android包，发现的如标题的错误。（可以我在公司为啥没有这个错误呢？）
 
@@ -1915,9 +1924,11 @@ Traceback (most recent call last):
     common.CheckSize(boot_img.data, "boot.img", OPTIONS.info_dict)
 UnboundLocalError: local variable 'boot_img' referenced before assignment [python变量问题，与版本有关？]
 
+
 公司11.10 python 2.7.2+
 家12.04   python 2.7.3
 
+可以在python官网下载2.7.2 源码编译
 
 -------------
 打包：

@@ -16,3 +16,6 @@ StatusBar.NetworkController
 refreshSignalCluster mWifiConnected:true, mShowEthIcon:false
 
 左上角的“超清”角标是后叠加到图片上的。靠"resolution"字段，4为超清，2为普通
+
+WeatherReportUpdater
+
