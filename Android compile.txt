@@ -1,4 +1,3 @@
-
 1 20140718
 在一个全新的pc上，直接编译android
 1）bison: command not found
@@ -44,10 +43,25 @@ sudo apt-get install libxml2-utils
 sudo apt-get install xsltproc
 
 
+-------------------
+需要安装的全部包：
+sudo apt-get install git-core gnupg flex bison gperf build-essential   zip curl zlib1g-dev libc6-dev lib32ncurses5-dev ia32-libs   x11proto-core-dev libx11-dev lib32readline-gplv2-dev lib32z1-dev   libgl1-mesa-dev gcc-multilib g++-multilib mingw32 tofrodos python-markdown   libxml2-utils  xsltproc
+
+
+sudo apt-get install git-core gnupg flex bison gperf build-essential \
+  zip curl libc6-dev libncurses5-dev:i386 x11proto-core-dev \
+  libx11-dev:i386 libreadline6-dev:i386 libgl1-mesa-glx:i386 \
+  libgl1-mesa-dev g++-multilib mingw32 openjdk-6-jdk tofrodos \
+  python-markdown libxml2-utils xsltproc zlib1g-dev:i386 lib32z1-dev
 
 
 -------------------------
-这两天在ubuntu12.04上编译HI3716c android包，发现的如标题的错误。（可以我在公司为啥没有这个错误呢？）
+不推荐用ubuntu12.04对编译Android，有库兼容问题会产生一些错误。其实实际使用发现，编译m3 4.0.4 基本成功，只是在做ota zip包时候出现boot_img变量的一个错误。
+在a20 4.2.2 中就正常。怀疑是python版本问题，公司11.10上的版本是2.7.2+（官网找不到这个版本），12.04 是2.7.3。从官网下载2.7.2编译安装。出现新问题：
+AttributeError: 'NoneType' object has no attribute 'decompressobj'
+再下载2.7.3编译安装，还是有这个问题，并且m3 a20 都不行了。想再恢复到之前的2.7.3 已经不行。执行apt-get install python 提示已经最新。这时犯了一个巨大错误：
+我想先把python2.7 卸载，再安装，结果apt-get remove python 提示要删除400M+空间，仔细看，他把所有与python相关的都卸载了，执行一会感觉不对，停止。但为时已晚，系统已经严重不正常，包括vim gedit  拼音输入法等 都不正常了。
+这两天在ubuntu12.04上编译HI3716c android包，发现的如下错误。（可我在公司为啥没有这个错误呢？）
 
 错误打印如下：
 
@@ -55,9 +69,8 @@ host C++: obbtool <= frameworks/base/tools/obbtool/Main.cpp
 <command-line>:0:0: error: "_FORTIFY_SOURCE" redefined [-Werror]
 <built-in>:0:0: note: this is the location of the previous definition
 cc1plus: all warnings being treated as errors
-make: *** [out/host/linux-x86/obj/EXECUTABLES/obbtool_intermediates/Main.o] Error 1
 
-上网查了查，解决方法如下：
+解决方法：
 
 修改源码目录下/build/core/combo/HOST_linux-x86.mk文件：
 
@@ -65,10 +78,6 @@ make: *** [out/host/linux-x86/obj/EXECUTABLES/obbtool_intermediates/Main.o] Erro
 HOST_GLOBAL_CFLAGS += -D_FORTIFY_SOURCE=0
 修改为
 HOST_GLOBAL_CFLAGS += -U_FORTIFY_SOURCE -D_FORTIFY_SOURCE=0
-
-
-由于我们使用ubuntu12.04对Android进行编译，Android对Ubuntu12.04的编译平台的支持不是很推荐，有些库的兼容方面会有一些问题，在编译过程中会产生一些错误，我们要进行一些修正：
-<command-line>:0:0: error:"_FORTIFY_SOURCE" redefined [-Werror]
 
 原因：
 在Android系统过程中，要使用gcc-4.4/g++-4.4的编译器，而Ubuntu12.04的gcc版本为4.6.3
@@ -114,6 +123,22 @@ python-markdown
 
 This is a Python implementation of John Gruber’s Markdown. It is almost completely compliant with the reference implementation, though there are a few very minor differences. See John’s Syntax Documentation for the syntax rules.
 
+Python-markdown2：完全用Python实现的Markdown （Markdown 是啥）
+
+----------
+公司11.10是安装了的:
+sudo apt-get remove  python-markdown
+Reading package lists... Done
+Building dependency tree       
+Reading state information... Done
+The following packages will be REMOVED
+  python-markdown
+升级了 0 个软件包，新安装了 0 个软件包，要卸载 1 个软件包，有 530 个软件包未被升级。
+解压缩后将会空出 279 kB 的空间。(这个就不像 remove python 那样删除400M多)
+您希望继续执行吗？[Y/n]n
+
+
+----------
 
 lib32readline5-dev
 
@@ -1932,7 +1957,7 @@ UnboundLocalError: local variable 'boot_img' referenced before assignment [pytho
 
 -------------
 打包：
-./build/tools/releasetools/ota_from_target_files -v --amlogic -n -p out/host/linux-x86 -k build/target/product/security/testkey out/target/product/f16ref/obj/PACKAGING/target_files_intermediates/f16ref-target_files-1.0.31.20140729121932.bestv.zip out/target/product/f16ref/f16ref-ota-1.0.31.20140729121932.bestv.zip
+ota_from_target_files -v --amlogic -n -p out/host/linux-x86 -k build/target/product/security/testkey out/target/product/f16ref/obj/PACKAGING/target_files_intermediates/f16ref-target_files-1.0.31.20140729121932.bestv.zip out/target/product/f16ref/f16ref-ota-1.0.31.20140729121932.bestv.zip
 
 
 
