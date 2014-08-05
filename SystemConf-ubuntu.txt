@@ -1,3 +1,23 @@
+Ubuntu系统常见软件包安装：
+1 apache
+apt-get install apache2
+2 目录打开终端
+apt-get install nautilus-open-terminal
+3 串口 
+apt-get install ckermit 或者 putty 或者 minicom
+(minicom有时有问题，u-boot开发者推荐用ckermit)
+4 飞鸽
+apt-get install iptux
+5 svn工具
+apt-get install subversion subversion-tools
+6 vim (系统默认的vi不好用)
+apt-get install vim
+7 64位系统运行32位程序提示找不到这个文件或目录，安装ia32库
+apt-get install ia32-libs
+8 openjdk6 
+apt-get install openjdk-6-jdk
+
+
 192.168.1.52 MAC：c0-cb-4e-c8-f0-32
 apt-get remove
 
@@ -64,7 +84,7 @@ Ubuntu串口卡驱动的安装
 确认一下 就可更新。此后就可以apt-get软件包了
   系统设置->语言设置 设置输入法
   应用程序->ubuntu软件中心 搜索 7zip rar gitg chromium  pdf eclipse
-3 apt-get install curl   /   curl http://vc.cn/repo ~/repo 
+
   按照android首页说明 安装java 以及其他git等包    
 4 apt-get  update 这个命令是干什么用的？
 5 22:19 悲崔了，安装一个3D桌面的东西，桌面显示不正常了
@@ -122,19 +142,6 @@ gsettings set com.cononical.Unity.Panel systray-whitelist "[....]" 与UI方式�
 unity 问题挺多，新产品出来需要很多时间磨合
 
 
-------------
-1 20100707 ubuntu 飞鸽传书的安装
-  下载gnome2版本的源码 http://www.ipmsg.org/archive/g2ipmsg-0.9.6.tar.gz
-安装依赖项
-sudo apt-get install libxml-parser-perl libgnomeui-dev libpanel-applet2-dev
-sudo apt-get install gettext intltool
-没有安装
-
-2 sudo apt-get install ckermit 回车
-3 sudo apt-get install minicom 
-不少人反映minicom有时会有问题，连u-boot开发者都推荐使用ckermit
-
-
 4 20100707 10:36 
 使用 minicom -s  配置串口为 ttyS0 （主机自带的串口） 盒子上电 打印出uboot
 下面需要考察 如何使用pci卡的串口，
@@ -154,11 +161,6 @@ lspci -v 可以看到
 
 /dev下面有很多tty是被  minicom打开后也是默认tty  而串口是ttySx
 
-5 搭建android开发环境
- sudo apt-get install git-core gnupg sun-java5-jdk flex bison gperf libsdl-dev 
-libesd0-dev libwxgtk2.6-dev build-essential zip curl libncurses5-dev zlib1g-dev
-在10.04上 sun-java5-jdk提示找不到这个包
-
 6 建立samba服务 我在 ubuntu 上直接打开网络 就可以访问
 7 邮箱有自带的  msn也有  安装后右上角就有一个信封标志，可以设置邮件 Evolution
 一步一步设置，就可以打开 Evolution 邮箱 效果还是非常好的。 在编辑-》首选项 里面设置账户
@@ -166,23 +168,12 @@ libesd0-dev libwxgtk2.6-dev build-essential zip curl libncurses5-dev zlib1g-dev
 username@cyclecentury.com 选择记住密码  [outlook中 是 使用收件箱相同的设置]
 但是不知道收下来的邮件能否用outlook打开 
 
-
-9 sudo apt-get install subversion   或者
-sudo apt-get install subversion subversion-tools
-10 sudo apt-get install putty 这个工具比minicom 好用多了
-
 13 下载了subversion命令行方式，checkout命令可以实现 但是commit命令不能提交
 又下载了 rapidsvn GUI的svn客户端  安装完成后在 应用程序 编程 项目中
 
 右击书签 有一个删除标签 可以删除以前签出的副本
 使用rapidsvn  可以commit成功  右击书签  最后一项 commit
 快点弄懂 svn的使用方法啊！
-
-14 vi仍然不好用  apt-get install vim 即可
-
-15 android要求使用sun-java5-jdk  但是ubuntu10.04 只能找到sun-java6-jdk
-
-16 查看---显示隐藏文件.
 
 17 在上面板上选择了“新建面板” 结果左右出现了空白  网上解决办法 删除username目录下的一堆 .
 开头的文件夹
@@ -195,7 +186,6 @@ Evolution 首次运行时会在您的主目录内创建 .evolution  目录，并
 
 
 -------------
-
 13 用ubuntu11.10 编译android4.0.1 出错，是gcc版本太高引起的，需要把gcc 降级 
 （ubuntu11.10 确实还有很多不完善的地方，还是老老实实用10.04吧）
 
@@ -242,15 +232,10 @@ source insight 3.5 在11.04上安装有问题，在11.10正常，并且比10.04 
 
 21 visualbox 的使用：右Ctrl + F   +Home  等用于各种切换
 
-
-1 apt-get install nautilus-open-terminal 
-可以在目录中直接打开终端
-
 22 ubuntu中使用usb串口线，设备为 /dev/ttyUSB0  在11.10 中，板子上电会导致putty推出
 只用minicom 就没有问题，但是minicom怎么保存数据呢？
 
-minicom配置问题：
-sudo apt-get install
+minicom配置：
 sudo minicom -s
 进入 Serial port setup 设置ttyUSB0 软硬件流控为No
 进入 Modem and dialing parameter setup 依次输入A B K 将后面的字符删除
@@ -919,10 +904,6 @@ Couldn't find the en language messages file
 
 Of course this happened because the AdminHtml dir didn't exist.
 
------
-一可执行文件执行的时提示找不到这个文件或目录，因系统64位而程序是32位，需要安装ia32库
-sudo apt-get install ia32-libs
-
 -----------
 20121219 关于dell服务器 R810  安装ubuntu10.04 server  android环境
 1 原来192.168.1.52地址给我的一个台式机用，现在给dell服务器用，ssh时候提示：
@@ -997,7 +978,7 @@ red hat 系统用rpm格式，Debian系列（比如ubuntu）用deb格式。Ubuntu
 注册码：
 ---------------
 apache 服务配置
-1 安装 sudo apt-get install apache2    /etc/init.d/apache2 restart 
+1 /etc/init.d/apache2 restart 
 2 网页地址在 /var/www 默认有index.html内容：It works! 如果无index文件显示目录和
   文件列表。默认端口80
 3 /etc/apache2/httpd.conf
@@ -1235,10 +1216,6 @@ ubuntu@ubuntu:/var/lib$ sudo rm -rf apt/mirrors/partial/
 突然就又好了，不知何故。
 20140117 问题重现
 
-
-20140505
- sudo apt-get install openjdk-6-jdk
-
 20140515
 安装opencv时候需要 numpy 但是用apt-get install python-numpy 找不到源，通过其他方式
 下载了他的deb文件。 怎么安装呢？ 直接双击会打开软件中心
@@ -1334,10 +1311,6 @@ ubuntu无法启动。并且，160G raid0 两块盘工作时非常热。并且他
 1 ubuntu14.04 拼音输入法总是不爽
 在软件中心搜索 IBus Pinyin Setup
 重启电脑，我在ubuntu11.10上熟悉的输入法终于回来了（一个蓝色的“拼”字那个，好！），哈哈
-
-2 ubuntu12.04 desktop 安装apache：
-sudo apt-get install apache2
-
 
 与公司整合
 
@@ -1544,6 +1517,18 @@ sudo passwd -l root
 20140804
 
 xx-dev 包是头文件和静态库
+
+
+软件升级
+git到 1.7.2以及以上的版本。
+升级方法：
+增加ppa 
+sudo apt-add-repository ppa:git-core/ppa 
+sudo apt-get update 
+sudo apt-get install git 
+如果本地已经安装过Git，可以使用升级命令： 
+sudo apt-get dist-upgrade
+
 
 
 

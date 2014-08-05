@@ -1831,7 +1831,18 @@ color.diff=auto
 $ git config user.name
 Scott Chacon
 
+20140805
 
+出现error: Exited sync due to gc errors错误
+原因： repo 升级，不兼容GIT  1.7.2 以下的版本。
+方案升级git到 1.7.2以及以上的版本。
+升级方法：
+增加ppa 
+sudo apt-add-repository ppa:git-core/ppa 
+sudo apt-get update 
+sudo apt-get install git 
+如果本地已经安装过Git，可以使用升级命令： 
+sudo apt-get dist-upgrade
 
 
 。
