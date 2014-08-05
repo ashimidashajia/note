@@ -1,24 +1,31 @@
-Ubuntu系统常见软件包安装：
-1 apache
-apt-get install apache2
-2 目录打开终端
-apt-get install nautilus-open-terminal
-3 串口 
-apt-get install ckermit 或者 putty 或者 minicom
-(minicom有时有问题，u-boot开发者推荐用ckermit)
-4 飞鸽
-apt-get install iptux
-5 svn工具
-apt-get install subversion subversion-tools
-6 vim (系统默认的vi不好用)
-apt-get install vim
-7 64位系统运行32位程序提示找不到这个文件或目录，安装ia32库
-apt-get install ia32-libs
-8 openjdk6 
-apt-get install openjdk-6-jdk
+1 Ubuntu系统常见软件包安装：
+	1) apache
+		apt-get install apache2
+	2) 目录打开终端
+		apt-get install nautilus-open-terminal
+	3) 串口 
+		apt-get install ckermit 或者 putty 或者 minicom
+		(minicom有时有问题，u-boot开发者推荐用ckermit)
+	4) 飞鸽
+		apt-get install iptux
+	5) svn工具
+		apt-get install subversion subversion-tools
+	6) vim (系统默认的vi不好用)
+		apt-get install vim
+	7) 64位系统运行32位程序提示找不到这个文件或目录，安装ia32库
+		apt-get install ia32-libs
+	8) openjdk6 
+		apt-get install openjdk-6-jdk
+
+2 基础知识
+	1) apt
+	Debian/Ubuntu采用deb软件包,通常用dpkg（package manager for Debian）或 apt（Advanced Package Tool）工具进行管理。对应RHEL/CentOS/Fedora中的使用yum管理系统中的rpm（Redhat Package Management）。
 
 
-192.168.1.52 MAC：c0-cb-4e-c8-f0-32
+
+
+
+
 apt-get remove
 
 安装java6： 写入.bashrc
@@ -1518,10 +1525,6 @@ sudo passwd -l root
 
 xx-dev 包是头文件和静态库
 
-
-软件升级
-git到 1.7.2以及以上的版本。
-升级方法：
 增加ppa 
 sudo apt-add-repository ppa:git-core/ppa 
 sudo apt-get update 
@@ -1529,6 +1532,24 @@ sudo apt-get install git
 如果本地已经安装过Git，可以使用升级命令： 
 sudo apt-get dist-upgrade
 
+尝试(ubuntu 11.10)：
+$ sudo apt-add-repository ppa:git-core/ppa
+You are about to add the following PPA to your system:
+ Git stable releases
+ The most current stable version of Git for Ubuntu.
+
+For release candidates, go to https://launchpad.net/~git-core/+archive/candidate .
+ More info: https://launchpad.net/~git-core/+archive/ubuntu/ppa
+Press [ENTER] to continue or ctrl-c to cancel adding it
+
+gpg: keyring `/tmp/tmpebKVye/secring.gpg' created
+gpg: keyring `/tmp/tmpebKVye/pubring.gpg' created
+gpg: requesting key E1DF1F24 from hkp server keyserver.ubuntu.com
+gpg: /tmp/tmpebKVye/trustdb.gpg: trustdb created
+gpg: key E1DF1F24: public key "Launchpad PPA for Ubuntu Git Maintainers" imported
+gpg: Total number processed: 1
+gpg:               imported: 1  (RSA: 1)
+OK
 
 
 
