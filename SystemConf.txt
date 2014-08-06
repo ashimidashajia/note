@@ -16,6 +16,8 @@
 		apt-get install ia32-libs
 	8) openjdk6 
 		apt-get install openjdk-6-jdk
+	9) gnome桌面
+        apt-get install gnome-session-fallback
 
 2 基础知识
 	1) apt
@@ -168,7 +170,6 @@ lspci -v 可以看到
 
 /dev下面有很多tty是被  minicom打开后也是默认tty  而串口是ttySx
 
-6 建立samba服务 我在 ubuntu 上直接打开网络 就可以访问
 7 邮箱有自带的  msn也有  安装后右上角就有一个信封标志，可以设置邮件 Evolution
 一步一步设置，就可以打开 Evolution 邮箱 效果还是非常好的。 在编辑-》首选项 里面设置账户
 在“账户编辑器”里面选择 发送电子邮件 选择服务器需要认证 身份验证类型是Login 用户名
@@ -1345,13 +1346,6 @@ gaojie-desktop 192.168.0.104 08:00:27:94:EE:B3
 对于可视化的网页编辑器，部份网页制作者选择Adobe Dreamweaver，
 一部分人使用更图形化的Adobe Golive。而一部分人则纯粹用代码编辑器，
 
-
------------
-1  samba服务设置
-   每个用户开一个samba连接。在 /etc/init.d 中有一个samba程序
-/etc/samba/smb.conf 这个是配置文件。配置每个用户的读写权限等。
-修改权限后，要执行 /etc/init.d/samb restart 重启动samba服务。
-
 2 每个用户可以设置别人访问自己的权限。比如是否可以写和删除。
 3 关于权限设置  Operation not permitted (1) 没有解决
 
@@ -1459,17 +1453,10 @@ Gnome环境：
 5 系统更新方法
 sudo apt-get upgrade
 
-妈的！声卡驱动彻底搞不定了！！！！
-Tomem也不能播放了
-郁闷死了！
-
 6 系统安装完事没有smb服务的，需要另外安装。
 
-7 在ubuntu上 测试gstreamer 的开发 20100511  64位的那个不知道怎么搞的 没有声音了，好像是声卡驱动给搞坏了。
-现在在32位环境下测试。
+7 在ubuntu上 测试gstreamer 的开发 20100511  64位的那个不知道怎么搞的 没有声音了，好像是声卡驱动给搞坏了。现在在32位环境下测试。
 
-
-=============================================================================================================================
 
 20100524
 1 samba 管理 
@@ -1479,6 +1466,13 @@ sudo apt-get install smbfs
 b 配置samba sudo gedit /etc/samba/smb.conf  或者用vi
 c 重启samba服务器
 #/etc/init.d/samba restart
+1  samba
+   每个用户开一个samba连接。在 /etc/init.d 中有一个samba程序
+/etc/samba/smb.conf 这个是配置文件。配置每个用户的读写权限等。
+修改权限后，要执行 /etc/init.d/samb restart 重启动samba服务。
+建立samba服务 我在 ubuntu 上直接打开网络 就可以访问
+
+
 
 2 ubuntu 8.1 升级到9.10  升级方法：
 System->Administration->Update Manager  

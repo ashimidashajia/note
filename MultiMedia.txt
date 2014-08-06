@@ -1,18 +1,14 @@
-1 20111101 发的一封邮件
-
+1 20111101邮件
 各位：
   Trident平台多媒体功能开发历时1年半，贯穿NGB项目始终，现在做一个阶段性总结。
-
 支持文件格式: mkv、mp4、flv/f4v、avi、mpg/mpeg、mov、ts，后续要支持格式：trp、m2ts
 支持视频解码格式：h.264、mpeg1/2、asp/divx/xvid 共3种（vc-1，rmvb能支持但无许可，软
 解码全面放弃）
 支持音频解码格式：aac、mp3、ac3、pcm(dts等目前无法支持)
-
 软件整体结构：
 经过长时间实践，最后采用：
 android2.2 Stagefright+ffmpeg+openmax
 多媒体播放分为 Parser和Decoder2部分，Parser全部由ffmpeg完成，Decoder全部由openmax完成
-
 软件部分存在争议的2点：
 1 android2.3多媒体部分有所增强，尤其在rtp/rtsp支持方面，曾考虑升级。但是升级2.3，涉
 及整个系统各个方面，风险高时间久，
@@ -27,11 +23,7 @@ android2.2 Stagefright+ffmpeg+openmax
 2 加大基于SDK3.1 的多媒体测试，建立多媒体库
 3 多媒体不能无限期拖延了，以上功能全部稳定后此模块就要定版结项！
 
-2 20111102 与候讨论多媒体今后走向以及1年半研发的得失。实际上开始把多媒体想复杂了
-
-
-1 硬盘存放200部影片
-
+2 20111102 与候讨论多媒体今后走向以及1年半研发的得失。
 
 需求	需求描述	备注
 Network Protocols	"RTSP (RTP, SDP)
@@ -45,8 +37,6 @@ Decoder(Profile&Level)	"1 海斯3716: H.264 MPEG-2 MPEG4 SP/ASP DivX4/5/6 VC-1 A
 3716C、7231支持音频透传
 ASP兼容Divx？兼容h.263?
 "
-
-
 ==================================
 关于容器和解码格式的总结（）
 
@@ -1715,5 +1705,10 @@ vlc录制的ts流，vlc播放无法算出总时间，ffplay无法快进
 20140409
 pts 33bit  2^33/90k =  26.5小时溢出一次
 
+
+------------
+20140805 xss：flv跟mp4 类似
+
+00 00 00 02 (09 30 2bytes) 00 00 00 0e (06...80 14bytes)  
 
 
