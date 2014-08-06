@@ -2006,9 +2006,17 @@ Reading state information... Done
 您希望继续执行吗？[Y/n]
 
 
+用adb install 安装的应用在data里面。安装完后，就不是那个文件名了（如果直接拷贝到system/app就是原始文件名），而是包名.apk(为啥在m3平台上 是com.joysee.stb.tv-2.apk 前面是包名 -2 是什么意思)
+
+am start -n com.joysee.stb.tv/com.joysee.stb.tv.HomepageActivity  在m3上没有成功
 
 
+com.joysee.stb.tv-2.apk
+com.luxtone.launcher-2.apk
 
+
+---
+hou 可以直接在eclipse中截取stb画面。
 
 
 
