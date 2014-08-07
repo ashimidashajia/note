@@ -824,6 +824,10 @@ D/MediaPlayerListeners(  796): [20140806192537164][net.sunniwell.browser.jsext.M
 
 
 
+------------
+packages/amlogic  BUFFERING 调查buffer状态标志
+
+
 
 
 

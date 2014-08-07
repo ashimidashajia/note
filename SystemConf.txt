@@ -25,7 +25,8 @@
 
 
 
-
+3 Ubuntu版本
+11.10 oneiric
 
 
 apt-get remove

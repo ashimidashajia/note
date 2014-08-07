@@ -281,3 +281,17 @@ framework/base/core/java/android/view/KeyEvent.java  (跟 .kl文件有什么联�
 
 KeyEvent.KEYCODE_HOME
 
+./core/java/android/view/WindowManagerPolicy.java
+
+return 0 if the key should be dispatched immediately, -1 if the key should
+     * not be dispatched ever, or a positive value indicating the number of
+     * milliseconds by which the key dispatch should be delayed before trying
+     * again.
+     */
+public long interceptKeyBeforeDispatching(WindowState win, KeyEvent event, int policyFlags);
+
+
+
+张焕超  读取序列号 android.so.Build.SERIAL 不用getproperty。android.so是包名，Build是类名。
+
+

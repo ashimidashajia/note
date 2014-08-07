@@ -2018,5 +2018,11 @@ com.luxtone.launcher-2.apk
 ---
 hou 可以直接在eclipse中截取stb画面。
 
+adb install 错误：
+Failure [INSTALL_PARSE_FAILED_INCONSISTENT_CERTIFICATES] 之前安装了不同人编译的包名相同的apk
+可以先删除了。 但是直接在/data/app下面删除，再安装，提示：
+Failure [INSTALL_FAILED_UPDATE_INCOMPATIBLE] 因为apk删除不彻底。把/data/data/相应包名/ 目录 还有 ./dalvik-cache 目录还是不行
+只能卸载或者恢复出厂设置
+
 
 

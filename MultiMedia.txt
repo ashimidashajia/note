@@ -1717,3 +1717,6 @@ pts 33bit  2^33/90k =  26.5小时溢出一次
 20140806 xuss
 ffmpeg seek后要清buffer，重新下载数据。
 
+xuss buffer缓冲通知机制：
+
+
