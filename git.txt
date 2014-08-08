@@ -1845,5 +1845,7 @@ sudo apt-get install git
 sudo apt-get dist-upgrade
 
 
-。
+------
+android大仓库中切换版本：
+
 

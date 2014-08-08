@@ -815,13 +815,9 @@ SWLocalPlayer.apk         1.2.6
 SWPlayer.apk              1.0.6
 
 
-
 MediaPlayerListeners(  796): [20140806192537214][net.sunniwell.browser.jsext.MediaPlayerListeners][onInfo][106]:==========  开始缓冲。    MediaPlayerParams.EVENTCODE_MEDIA_INFO_BUFFERING_START========== 
 
 D/MediaPlayerListeners(  796): [20140806192537164][net.sunniwell.browser.jsext.MediaPlayerListeners][onBufferingUpdate][159]:====onBufferingUpdate====percent=6 
-
-
-
 
 
 ------------
@@ -829,10 +825,42 @@ packages/amlogic  BUFFERING 调查buffer状态标志
 
 
 
+--------
+20140808
+m3 点播
+I/LiveSession( 1141): onConnect 
+
+http://zjcmcc.cnbn.cn/itv/m3u8/70ccc6c6f569cd0b027b94d4396d233b/aHR0cDovL2NhY2hlLnpqY21jYy5jbmJuLmNuLzIwMTQwODA1LzVlLzVmLzJhOTJkOGMyZDg4MDE3MDIwMjAwZDg5NTdhMDc1ZTZkLm0zdTgsMA==/1407462249532.m3u8'
+
+
+银河：
+D/SysUtils( 2531): Context get mac address : 00:18:95:12:3e:c3
 
 
 
+-----------
+多媒体部分代码，2处：
+package/amlogic/LibPlayer
+frameworks/base/media/libmediaplayerservice  生成libmediaplayerservice.so   ./bin/mediaserver 调用之
 
+
+
+----------
+徐松：
+m3 华数直接推送的是ts流 而不是m3u8 
+m3 银河是m3u8文件，抓出来的m3u8视频源可以直接播放，比如：
+http://zjcmcc.cnbn.cn/itv/m3u8/bd388fc5c96011b5457fd95c8f898e74/aHR0cDovL2NhY2hlLnpqY21jYy5jbmJuLmNuLzIwMTQwODA0LzhkL2U3L2YzMmQwNjRmN2RhNGE4MzJjMzAzZmU2YjZjMTk2ZjYyLm0zdTgsMA==/1407481354431.m3u8
+
+m3 银河直播（栏目点播）
+http://zjcm-m3u8.3atv.cn:10009/m3u8/m3u8?version=123&id=101400
+每个文件里面有5条目
+
+getNextM3u8
+
+
+------
+丁伟:
+a20 因为配置，可以配置成单核工作，导致一些错误。也是因为直播卡顿。
 
 
 

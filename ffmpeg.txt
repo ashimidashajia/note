@@ -563,3 +563,10 @@ vitamio 继续深化ffmpeg，作出8秒视频的应用。
 ---
 广告与正片无缝衔接
 
+
+
+---
+ffplay播放一个ts流小段落，提示
+non-existing SPS 0 referenced in buffering period
+
+

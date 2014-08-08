@@ -105,4 +105,11 @@ A20 直播的时候狂打印
 升级方法
 根目录下建立upgrade文件夹，然后升级包放进去
 
+----
+命令行启动apk
+am start --user 0 com.joysee.stb.tv/com.joysee.stb.tv.xxx (包名+activity名)
+
+银河HomepageActivity1.5.0.0_ZJCMCC.apk 在银河版本盒子上就要认证，在其他盒子上安装就没有认证过程。
+什么情况。
+
 
