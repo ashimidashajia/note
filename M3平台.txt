@@ -864,6 +864,7 @@ a20 因为配置，可以配置成单核工作，导致一些错误。也是因�
 
 
 
+target thumb C: su <= system/extras/su/su.c
 
 
 

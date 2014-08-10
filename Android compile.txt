@@ -11,8 +11,11 @@
 	zlib is a library implementing the deflate compression method found in gzip and PKZIP. This package includes the development support files for building 32 bit applications. 
 	lib32z1-dev 依赖 zlib1g-dev
    显示安装3个包：lib32z1 lib32z1-dev zlib1g-dev
+9) gperf： generate a perfect hash function from a key set. (makeprop.pl调用)
 
+10) libncurses-dev   libncurses5-dev
 
+ncurses  = new curses  什么东东？
 
 2 jdk专题(以12.04为例)
 
@@ -147,21 +150,21 @@ host C++: llvm-rs-cc <= frameworks/compile/slang/llvm-rs-cc.cpp
 
 -------------------
 需要安装的全部包：
-sudo apt-get install   gperf    zip  zlib1g-dev libc6-dev lib32ncurses5-dev ia32-libs   x11proto-core-dev libx11-dev lib32readline-gplv2-dev lib32z1-dev   libgl1-mesa-dev gcc-multilib g++-multilib mingw32 tofrodos python-markdown   libxml2-utils  xsltproc
+sudo apt-get install       zip  zlib1g-dev libc6-dev  ia32-libs   x11proto-core-dev libx11-dev lib32readline-gplv2-dev lib32z1-dev   libgl1-mesa-dev gcc-multilib g++-multilib mingw32 tofrodos python-markdown   libxml2-utils  xsltproc
 
 
-sudo apt-get install   gperf  \
-  zip  libc6-dev libncurses5-dev:i386 x11proto-core-dev \
+sudo apt-get install     
+  zip  libc6-dev  x11proto-core-dev \
   libx11-dev:i386 libreadline6-dev:i386 libgl1-mesa-glx:i386 \
   libgl1-mesa-dev g++-multilib mingw32 tofrodos \
   python-markdown libxml2-utils xsltproc zlib1g-dev:i386 lib32z1-dev
 
-$ sudo apt-get install   gperf  \
-zip  zlib1g-dev libc6-dev lib32ncurses5-dev ia32-libs \
+$ sudo apt-get install 
+zip  zlib1g-dev libc6-dev  ia32-libs \
 x11proto-core-dev libx11-dev lib32readline5-dev lib32z-dev \
 libgl1-mesa-dev g++-multilib mingw32 tofrodos
 
- gperf  zip  libc6-dev libncurses5-dev x11proto-core-dev libx11-dev libreadline6-dev libgl1-mesa-dev g++-multilib mingw32 tofrodos python-markdown libxml2-utils xsltproc zlib1g-dev
+   zip  libc6-dev  x11proto-core-dev libx11-dev libreadline6-dev libgl1-mesa-dev g++-multilib mingw32 tofrodos python-markdown libxml2-utils xsltproc zlib1g-dev
 
 
 
@@ -195,10 +198,6 @@ gcc 4.8.2
 
 ubuntu 11.10的gcc版本是4.6.1，版本太高，编译android时失败，要把gcc版本改为4.4.3。
 
-
----------------
-gperf：
- GNU gperf is a perfect hash function generator. For a given list of strings, it produces a hash function and hash table, in form of C or C++ code, for looking up a value depending on the input string. The hash function is perfect, which means that the hash table has no collisions, and the hash table lookup needs a single string comparison only. 
 
 python-markdown
 
@@ -1259,9 +1258,6 @@ nameserver 192.168.0.1
 
  
 
-3. 安装开发工具
-
-sudo apt-get install build-essential vim libncurses-dev lrzsz
 
  
 
@@ -1466,8 +1462,7 @@ Android SDK 1.0使用的linux版本是2.6.25，而我们刚刚完成移植的版
 
 Android对Linux Kernel做了不少的改进，比如添加对yaffs2文件系统的支持，改进蓝牙的支持，改进电源管理机制，以及为模拟器版本添加的Goldfish平台等等，不过内核的编译方式和标准的kernel并没有区别。
 
-尽管很多人安装完Ubuntu后第一件事情就是装上build-essential，不过我在这里还是要提醒一下大家，另外做menuconfig的时候 ncurses-devel库也是必须的。运行以下命令，一次搞定：
-sudo apt-get install build-essential ncurses-dev
+尽管很多人安装完Ubuntu后第一件事情就是装上build-essential，不过我在这里还是要提醒一下大家，另外做menuconfig的时候 ncurses-dev库也是必须的。运行以下命令，一次搞定：
 
 Android代码树中有一个prebuilt项目，包含了我们编译内核所需的交叉编译工具，如果你拿了完整的Android 1.5代码树，它就会在prebuilt目录下。
 
