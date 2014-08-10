@@ -18,12 +18,46 @@
 		apt-get install openjdk-6-jdk
 	9) gnome桌面
         apt-get install gnome-session-fallback
+	10) 命令行url工具
+	apt-get install curl
+
 
 2 基础知识
 	1) apt
 	Debian/Ubuntu采用deb软件包,通常用dpkg（package manager for Debian）或 apt（Advanced Package Tool）工具进行管理。对应RHEL/CentOS/Fedora中的使用yum管理系统中的rpm（Redhat Package Management）。
+	2) apt-get install时候，Suggested packages: 部分默认是不安装的。若要让apt-get默认下载推荐的包，需要建立一个配置文件：/etc/apt/apt.conf：
+		APT::Install-Recommends "true";
+		APT::Install-Suggests "true";
+		如果不希望apt-get下载suggested的包：
+		apt-get --no-install-recommends install package
+	实例说明1：
+	apt-get install gcc-4.4
+	The following extra packages will be installed:
+	  cpp-4.4 gcc-4.4-base(这2个是本体的朋友)
+	Suggested packages:(不安装)
+	  gcc-4.4-locales gcc-4.4-multilib(这个建议安装，所以后面要手动安装才能用gcc) libmudflap0-4.4-dev gcc-4.4-doc libgcc1-dbg libgomp1-dbg libmudflap0-dbg libcloog-ppl0 libppl-c2 libppl7
+	The following NEW packages will be installed:
+	  cpp-4.4 gcc-4.4(这是本体) gcc-4.4-base （本体+朋友共3个）
+	0 upgraded, 3 newly installed, 0 to remove and 0 not upgraded.
+
+	实例说明2：
+	apt-get instal lib32z1-dev 显示安装3个包：lib32z1 lib32z1-dev zlib1g-dev
+	若先执行：
+	apt-get instal lib32z1则安装1个包：lib32z1
+	再次执行：
+	apt-get instal lib32z1-dev 显示安装2个包：lib32z1-dev zlib1g-dev
 
 
+
+build-essential 包都包含啥？
+
+The following extra packages will be installed:
+  dpkg-dev g++ g++-4.6 libalgorithm-diff-perl libalgorithm-diff-xs-perl libalgorithm-merge-perl libdpkg-perl libstdc++6-4.6-dev libtimedate-perl
+The following NEW packages will be installed:
+  build-essential dpkg-dev g++ g++-4.6 libalgorithm-diff-perl libalgorithm-diff-xs-perl libalgorithm-merge-perl libdpkg-perl libstdc++6-4.6-dev libtimedate-perl
+
+
+apt-get autoremove  可以自动删除系统中没用的包。比如我在软件中心installede里面卸载了一个游戏，但是相关包没有删除掉，执行此命令时相关包被彻底删除。
 
 3 Ubuntu版本
 11.10 oneiric
@@ -1547,6 +1581,8 @@ gpg:               imported: 1  (RSA: 1)
 OK
 
 
+---
+ubuntu12.04  gnome 想删除不用的应用，在软件中心选择 "intalled" 逐个删除即可。
 
 
 

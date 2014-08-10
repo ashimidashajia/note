@@ -1,74 +1,91 @@
-1 20140718
-在一个全新的pc上，直接编译android
-1）bison: command not found
-2） Error: could not find jdk tools.jar, please install JDK6, which you can download from java.sun.com.  需要jdk1.6
-3）/bin/bash: git: command not found    编译需要git命令吗?   apt-get install git-core
-4）host C: acp <= build/tools/acp/acp.c
-<command-line>:0:0: warning: "_FORTIFY_SOURCE" redefined [enabled by default]
-<built-in>:0:0: note: this is the location of the previous definition
-In file included from /usr/include/stdlib.h:25:0,
-                 from build/tools/acp/acp.c:11:
-/usr/include/features.h:324:26: fatal error: bits/predefs.h: No such file or directory
-compilation terminated.
-
-“bits/predefs.h: No such file or directory”  需要安装: g++-multilib
-
-5)target arm C: libc <= bionic/libc/bionic/pthread.c
-prebuilt/.../arm-linux-androideabi/bin/as: error while loading shared libraries: libz.so.1: cannot open shared object file: No such file or directory
-没有找到 libz.so    安装 zlib1g-dev（不是这个）  而是  apt-get install lib32z1-dev
-
-6）空out目录，直接 make systemimage 
-make: *** No rule to make target `device/amlogic/f16ref/initlogo-robot-1920x1080.rle', needed by `out/target/product/f16ref/root/initlogo.1080p.rle'.  Stop.
-
-【lib32z1-dev】：
-compression library - 32 bit development
- zlib is a library implementing the deflate compression method found in gzip and PKZIP. This package includes the development support files for building 32 bit applications. 
-【zlib1g-dev】：
-
-lib32z1-dev 依赖 zlib1g-dev
-
-6）Lex: aidl <= frameworks/base/tools/aidl/aidl_language_l.l
-/bin/bash: flex: command not found
-
-apt-get install flex 
- 
-7）No private recovery resources for TARGET_DEVICE f16ref
-host C++: llvm-rs-cc <= frameworks/compile/slang/llvm-rs-cc.cpp
-<command-line>:0:0: error: "_FORTIFY_SOURCE" redefined [-Werror]
-
-8) /bin/bash: xmllint: command not found  
-sudo apt-get install libxml2-utils
-
-9) /bin/bash: xsltproc: command not found
-sudo apt-get install xsltproc
+1 20140810 编译android环境：
+1) bison flex  2个工具配合使用，语法解释器（类似yacc），跟aidl有关
+2) git-core
+3) jdk 1.6 (见jdk专题)
+4) libxml2-utils (xmllint: command not found)
+5) xsltproc (xsltproc: command not found)
+6) gnupg (GNU Privacy Guard 是一个用于加密或签名的软件，用于从google下载代码，如已下载好不用)
+7) build-essential  主要是gcc  gcc库等 查看SystemConf.txt 试验发现没有必要这样安装，需要gcc4.4 可单独安装
+8) lib32z1-dev (为何32位？为何dev版本？只安装lib32z1包不行吗？)错误提示: libz.so.1: cannot open shared object file。
+	compression library - 32 bit development
+	zlib is a library implementing the deflate compression method found in gzip and PKZIP. This package includes the development support files for building 32 bit applications. 
+	lib32z1-dev 依赖 zlib1g-dev
+   显示安装3个包：lib32z1 lib32z1-dev zlib1g-dev
 
 
--------------------
-需要安装的全部包：
-sudo apt-get install git-core gnupg flex bison gperf build-essential   zip curl zlib1g-dev libc6-dev lib32ncurses5-dev ia32-libs   x11proto-core-dev libx11-dev lib32readline-gplv2-dev lib32z1-dev   libgl1-mesa-dev gcc-multilib g++-multilib mingw32 tofrodos python-markdown   libxml2-utils  xsltproc
+
+2 jdk专题(以12.04为例)
+
+1) jdk包含jre，分open和sun两个版本，提供：java（虚拟机）和javac（编译器）。open版安装：
+apt-get install openjdk-6-jdk 或 openjdk-7-jdk （12.04默认不含）
+安装完成直接使用了update-alternative, 有：
+/usr/bin/java -> /etc/alternatives/java
+/usr/bin/javac -> /etc/alternatives/javac
+真正安装位置：
+/usr/lib/jvm/java-6-openjdk-amd64
+
+sun版现无法通过源安装，需在oracal官网注册下载bin文件，如jdk-6u35-linux-x64.bin（jdk1.6 第35个版本）执行：
+./jdk-6u35-linux-x64.bin
+在当前位置生成jdk1.6.0_35目录，接着把他拷贝到合适的位置(如/usr/lib/jvm 与openjdk并列)，然后设置环境变量。
+更好做法是使用：
+update-alternatives: --install needs <link> <name> <path> <priority>
+最终效果：
+/usr/bin/java -> /etc/alternatives/java  -> /usr/lib/jvm/java-6-openjdk-amd64/jre/bin/java
+执行：
+sudo update-alternatives  --install "/usr/bin/java" "java" "/usr/lib/jvm/jdk1.6.0_35/jre/bin/java" 1
+sudo update-alternatives  --install "/usr/bin/javac" "java" "/usr/lib/jvm/jdk1.6.0_35/bin/javac" 1
 
 
-sudo apt-get install git-core gnupg flex bison gperf build-essential \
-  zip curl libc6-dev libncurses5-dev:i386 x11proto-core-dev \
-  libx11-dev:i386 libreadline6-dev:i386 libgl1-mesa-glx:i386 \
-  libgl1-mesa-dev g++-multilib mingw32 openjdk-6-jdk tofrodos \
-  python-markdown libxml2-utils xsltproc zlib1g-dev:i386 lib32z1-dev
+设置环境变量，修改~/.profile(当前用户)或/etc/profile(全局用户)
+    export JAVA_HOME=/usr/lib/jvm/jdk1.7.0_10
+    export JRE_HOME=/usr/lib/jvm/jdk1.7.0_10/jre
+    export CLASSPATH=.:$JAVA_HOME/lib/dt.jar:$JAVA_HOME/lib/tools.jar:$JAVA_HOME/lib:$JRE_HOME/lib:$CLASSPATH
+    export PATH=$JAVA_HOME/bin:$PATH
 
-$ sudo apt-get install git-core gnupg flex bison gperf build-essential \
-zip curl zlib1g-dev libc6-dev lib32ncurses5-dev ia32-libs \
-x11proto-core-dev libx11-dev lib32readline5-dev lib32z-dev \
-libgl1-mesa-dev g++-multilib mingw32 tofrodos
+source ～/.profile后生效（或重启/log out）
 
-sudo apt-get install git gnupg flex bison gperf build-essential zip curl libc6-dev libncurses5-dev x11proto-core-dev libx11-dev libreadline6-dev libgl1-mesa-dev g++-multilib mingw32 tofrodos python-markdown libxml2-utils xsltproc zlib1g-dev
+这样sun成了默认jdk，因为：
+PATH="/usr/lib/jvm/jdk1.6.0_35/bin::/usr/bin:..."
+/usr/lib/jvm/jdk1.6.0_35/bin 在/usr/bin(open版java/javac) 的前面。
+
+3 安装gcc4.4(and friends[这个表达有意思])
+与 build-essential包有交叉部分。
+12.04默认4.6（默认只有gcc-4.6没有g++-4.6？？），需要降版本（4.5,4.6编译都会失败。小版本没关系？ubuntu10.04是4.4.3）:
+apt-get install gcc-4.4 g++-4.4 g++-4.4-multilib gcc-4.4-multilib(最终装的是4.4.7，并且随安装时间不同而变化，那怎么控制小版本呢？)
+
+路径/usr/bin下原有 gcc 指向gcc-4.6，安装完gcc-4.4套件后，多了gcc-4.4，但是gcc链接仍指向gcc-4.6。可执行：
+
+update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-4.4 100 (优先级高于4.6)
+update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-4.6 50(12.04默认没有安装g++-4.6)
+update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-4.4 100
+update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-4.6 50
+
+//12.04 实测4.0.4  不注册cpp也可
+update-alternatives --install /usr/bin/cpp cpp-bin /usr/bin/cpp-4.4 100  
+
+跟踪发现：
+install gcc-4.4安装3个新包： cpp-4.4 gcc-4.4 gcc-4.4-base
+install gcc-4.4-multilib 安装8个新包：gcc-4.4-multilib gcc-4.6-multilib(闹那样) gcc-multilib lib32gcc1 lib32gomp1 lib32quadmath0 libc6-dev-i386 libc6-i386
+install g++-4.4 安装2个新包：g++-4.4 libstdc++6-4.4-dev
+install g++-4.4-multilib 安装2个新包：g++-4.4-multilib lib32stdc++6
 
 
-接着安装
-uestc@uestc-ThinkPad-T43:~/tools$ sudo apt-get install u-boot-tools texinfo texlive ccache gawk gettext uuid-dev
 
-u-boot_tools ???
--------------------------
-不推荐用ubuntu12.04对编译Android，有库兼容问题会产生一些错误。其实实际使用发现，编译m3 4.0.4 基本成功，只是在做ota zip包时候出现boot_img变量的一个错误。
-在a20 4.2.2 中就正常。怀疑是python版本问题，公司11.10上的版本是2.7.2+（官网找不到这个版本），12.04 是2.7.3。从官网下载2.7.2编译安装。出现新问题：
+奇怪，android4.0 中要clang llvm 干什么用啊！ 难道不用gcc编译而是用clang了？
+
+
+
+
+3 版本搭配
+1）4.0.4不能用openjdk 1.6.0_31，提示：
+Your version is: java version "1.6.0_31".
+The correct version is: Java SE 1.6.
+需要用sun jdk 1.6.35
+2）4.0.4不能用gcc4.6，要用gcc4.4
+3) 不推荐12.04编译Android，库兼容问题产生错误。实测发现编译m3平台4.0.4基本成功，仅在做ota zip包时出现boot_img变量的一个错误。
+在a20平台4.2.2中成功。
+
+怀疑是python版本问题，公司11.10上的版本是2.7.2+（官网找不到这个版本），12.04 是2.7.3。从官网下载2.7.2编译安装。出现新问题：
 AttributeError: 'NoneType' object has no attribute 'decompressobj'
 再下载2.7.3编译安装，还是有这个问题，并且m3 a20 都不行了。想再恢复到之前的2.7.3 已经不行。执行apt-get install python 提示已经最新。这时犯了一个巨大错误：
 我想先把python2.7 卸载，再安装，结果apt-get remove python 提示要删除400M+空间，仔细看，他把所有与python相关的都卸载了，执行一会感觉不对，停止。但为时已晚，系统已经严重不正常，包括vim gedit  拼音输入法等 都不正常了。
@@ -80,6 +97,80 @@ host C++: obbtool <= frameworks/base/tools/obbtool/Main.cpp
 <command-line>:0:0: error: "_FORTIFY_SOURCE" redefined [-Werror]
 <built-in>:0:0: note: this is the location of the previous definition
 cc1plus: all warnings being treated as errors
+
+
+
+===================================================================================================
+
+当你不知道某个命令在哪个包里的时候，可以直接执行之，会自动给出提示，例如：
+# javac
+The program 'javac' can be found in the following packages:
+ * default-jdk
+ * openjdk-6-jdk
+ * gcj-4.5-jdk
+ * openjdk-7-jdk
+
+
+
+注意gcc4.4.3  安装的时候是gcc-4.4
+不能指定小版本号
+
+
+=================================================================================================
+
+4）host C: acp <= build/tools/acp/acp.c
+<command-line>:0:0: warning: "_FORTIFY_SOURCE" redefined [enabled by default]
+<built-in>:0:0: note: this is the location of the previous definition
+In file included from /usr/include/stdlib.h:25:0,
+                 from build/tools/acp/acp.c:11:
+/usr/include/features.h:324:26: fatal error: bits/predefs.h: No such file or directory
+compilation terminated.
+
+“bits/predefs.h: No such file or directory”  需要安装: g++-multilib
+
+
+
+
+6）空out目录，直接 make systemimage 
+make: *** No rule to make target `device/amlogic/f16ref/initlogo-robot-1920x1080.rle', needed by `out/target/product/f16ref/root/initlogo.1080p.rle'.  Stop.
+
+
+
+
+ 
+7）No private recovery resources for TARGET_DEVICE f16ref
+host C++: llvm-rs-cc <= frameworks/compile/slang/llvm-rs-cc.cpp
+<command-line>:0:0: error: "_FORTIFY_SOURCE" redefined [-Werror]
+
+
+
+
+-------------------
+需要安装的全部包：
+sudo apt-get install   gperf    zip  zlib1g-dev libc6-dev lib32ncurses5-dev ia32-libs   x11proto-core-dev libx11-dev lib32readline-gplv2-dev lib32z1-dev   libgl1-mesa-dev gcc-multilib g++-multilib mingw32 tofrodos python-markdown   libxml2-utils  xsltproc
+
+
+sudo apt-get install   gperf  \
+  zip  libc6-dev libncurses5-dev:i386 x11proto-core-dev \
+  libx11-dev:i386 libreadline6-dev:i386 libgl1-mesa-glx:i386 \
+  libgl1-mesa-dev g++-multilib mingw32 tofrodos \
+  python-markdown libxml2-utils xsltproc zlib1g-dev:i386 lib32z1-dev
+
+$ sudo apt-get install   gperf  \
+zip  zlib1g-dev libc6-dev lib32ncurses5-dev ia32-libs \
+x11proto-core-dev libx11-dev lib32readline5-dev lib32z-dev \
+libgl1-mesa-dev g++-multilib mingw32 tofrodos
+
+ gperf  zip  libc6-dev libncurses5-dev x11proto-core-dev libx11-dev libreadline6-dev libgl1-mesa-dev g++-multilib mingw32 tofrodos python-markdown libxml2-utils xsltproc zlib1g-dev
+
+
+
+
+接着安装
+uestc@uestc-ThinkPad-T43:~/tools$ sudo apt-get install u-boot-tools texinfo texlive ccache gawk gettext uuid-dev
+
+u-boot_tools ???
+-------------------------
 
 解决方法：
 
@@ -103,27 +194,6 @@ gcc (Ubuntu/Linaro 4.6.3-1ubuntu5) 4.6.3，此版编译android 4.0会出错
 gcc 4.8.2
 
 ubuntu 11.10的gcc版本是4.6.1，版本太高，编译android时失败，要把gcc版本改为4.4.3。
-
-公司的11.10  执行update-alternative --config gcc 看到4.4  4.5  4.6
-家里的12.04  执行如上命令显示： update-alternatives: error: no alternatives for gcc.
-
-
-Install GCC 4.4
-First, install GCC 4.4 (and friends):
-
-apt-get install gcc-4.4 g++-4.4 g++-4.4-multilib gcc-4.4-multilib
-
-Set 4.4 to be the default
-Then set 4.4 to be higher priority than 4.6:
-
-update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-4.4 100
-update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-4.6 50
-update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-4.4 100
-update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-4.6 50
-update-alternatives --install /usr/bin/cpp cpp-bin /usr/bin/cpp-4.4 100  //12.04 实测4.0.4  不变cpp也行
-update-alternatives --install /usr/bin/cpp cpp-bin /usr/bin/cpp-4.6 50
-
--------------------------
 
 
 ---------------
@@ -157,93 +227,6 @@ lib32readline5-dev
  The GNU readline library aids in the consistency of user interface across discrete programs that need to provide a command line interface.
 
 The GNU history library provides a consistent user interface for recalling lines of previously typed input. 
-
-
-jdk分为openjdk 和 sun jdk 。直接通过源装sun jdk没有。只有区oracal官网注册下载。open jdk可以直接apt-get
-之前在sun官网下载了 jdk-6u35-linux-x64.bin  （jdk1.6 第35个版本）
-执行：
-./jdk-6u35-linux-x64.bin
-
-添加环境变量在 ~/.profile中：亦说 /etc/profile
-
-2 我在12.04中随便执行 javac 提示：  javac是编译器
-gaojie@gaojie:/$ javac
-The program 'javac' can be found in the following packages:
- * default-jdk
- * ecj
- * gcj-4.6-jdk
- * openjdk-6-jdk
- * gcj-4.5-jdk
- * openjdk-7-jdk
-
-这样我就知道openjdk的包名了。
-
-gaojie@gaojie:/$ java   // java是虚拟机
-The program 'java' can be found in the following packages:
- * default-jre
- * gcj-4.6-jre-headless
- * openjdk-6-jre-headless
- * gcj-4.5-jre-headless
- * openjdk-7-jre-headless
-
-这个问题： 4.0.4 用openjdk 1.6.0_31 不行。此时ubuntu12.04 apt-get的就是这个版本。网查，要用sunjdk：jdk-6u35-linux-x64.bin
-==========================
-PLATFORM_VERSION=4.0.4
-
-Your version is: java version "1.6.0_31".
-The correct version is: Java SE 1.6.
-
-$ java -version
-java version "1.6.0_31"
-OpenJDK Runtime Environment (IcedTea6 1.13.3) (6b31-1.13.3-1ubuntu1~0.12.04.2)
-OpenJDK 64-Bit Server VM (build 23.25-b01, mixed mode)
-==========================
-
-在ubuntu12.04上安装 sun jdk：
-执行 ./jdk-6u35-linux-x64.bin  这是个自解压包。在当前目录解压出jdk1.6.0_35目录。并没有执行其他高大上的“安装”工作
-接着把他拷贝到合适的位置，然后设置环境变量。
-一般可以拷贝到 /usr/lib/jvm/  实际可以拷到任何目录。
-
-接下来需要设置环境变量，进入当前用户名的主文件夹，修改.profile文件。注意，该文件是当前用户的配置文件，如果要对使用计算机的所有用户生效，那么需要设置的文件应该是 /etc/profile：
-
-
-
-    export JAVA_HOME=/usr/lib/jvm/jdk1.7.0_10
-    export JRE_HOME=/usr/lib/jvm/jdk1.7.0_10/jre
-    export CLASSPATH=.:$JAVA_HOME/lib/dt.jar:$JAVA_HOME/lib/tools.jar:$JAVA_HOME/lib:$JRE_HOME/lib:$CLASSPATH
-
-    export PATH=$JAVA_HOME/bin:$PATH
-
-
-然后保存关闭，此时在命令行输入java -version将会仍然显示java没有安装。此时，需要使用source更新下.profile文件：
-
-    $ source ~/.profile  （或者 . ~/.profile 就是执行一下这个文件）
-但是终端关闭就又回到了openjdk。 log out 一下就好了。
-为什么安装了sun jdk就成了默认的了呢?因为export发现：
-PATH="/usr/lib/jvm/jdk1.6.0_35/bin:/usr/lib/lightdm/lightdm:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games"
-
-因为把 /usr/lib/jvm/jdk1.6.0_35/bin 放到了 /usr/bin 的前面了。
-
-如果之前系统里面已经安装了openjdk，可以使用如下方法将默认jdk更改过来：（实际经过上面操作，系统默认已经变成sun jdk了）
-开始以及做完上面操作：
-update-alternatives --config java
-There is only one alternative in link group java: /usr/lib/jvm/java-6-openjdk-amd64/jre/bin/java
-Nothing to configure.
-
-提示只有一个，然后：
-update-alternatives: --install needs <link> <name> <path> <priority>
-
-原理：
-/usr/bin/java -> /etc/alternatives/java  -> /usr/lib/jvm/java-6-openjdk-amd64/jre/bin/java
-
-所以我执行：
-sudo update-alternatives  --install "/usr/bin/java" "java" "/usr/lib/jvm/jdk1.6.0_35/jre/bin/java" 1
-
-
-
-
-
-
 
 
 ------------------
@@ -857,21 +840,12 @@ gcc -v
 
 
 
-注意gcc4.4.3  安装的时候是gcc-4.4   
-android官网上建议用
-ubuntu10.04  而此版本gcc 为4.4.3 
-
-apt-get install gcc-4.4
-apt-get install g++-4.4
-apt-get install g++-4.4-multilib (这个库是干什么用的？)
 
 
-但是编译器不单单是这几个文件吧，只切换这几个就可以了吗？
-最终使用gcc4.4.6 编译通过了
 
-4.5 4.6 都会失败 （注意编译器版本太高的问题）
 
-奇怪，android4.0 中要clang llvm 干什么用啊！ 难道不用gcc编译而是用clang了？
+
+
 
 visual box  右Ctrl + H  L F 等切换模式  挂在共享目录后需要注销生效。
 
