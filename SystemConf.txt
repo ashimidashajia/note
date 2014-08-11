@@ -20,7 +20,8 @@
         apt-get install gnome-session-fallback
 	10) 命令行url工具
     	apt-get install curl
-
+	11) ts分析工具
+		apt-get install tstools
 
 2 基础知识
 	1) apt

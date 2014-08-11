@@ -384,3 +384,5 @@ http://tvsedge119.truevisions.tv:80/liveedge/smil:c12_low_th.smil/playlist.m3u8
 
 tvsedge后的编号会不停变化。
 
+---
+模拟推送udp格式ts流，使用vlc 或者 tstools
