@@ -19,7 +19,7 @@
 	9) gnome桌面
         apt-get install gnome-session-fallback
 	10) 命令行url工具
-	apt-get install curl
+    	apt-get install curl
 
 
 2 基础知识
