@@ -311,7 +311,6 @@ Upgrade_step = 2 成功
 Upgrade_step = 0 没成功
 
 发现 这个是uboot里面的一个环境变量。修改过来就好了！
-你妈逼的，害我搞了1下午。
 难道是我执行
 update_reboot还是 charging_reboot，的时候，他修改了这个环境变量？！！！！
 
@@ -323,7 +322,7 @@ ota升级，重启显示 Upgrade_step=1
 启动进入uboot：
 upgrade_step=2
 
-你妈的，好乱套啊：
+乱套啊：
 ./base/core/java/android/os/RecoverySystem.java:
 SystemProperties.set("ubootenv.var.upgrade_step", "1");
 
@@ -391,7 +390,7 @@ mediaserver 会重启。
 之前我看到2个kernel相差20个字节那个是哪个平台来着？！！
 recovery的kernel和真正使用的kernel
 
-太你妈神奇了。更新了 bootable/recovery/。。。。/image里面的图片后，开机按着电源键，进入
+更新了 bootable/recovery/。。。。/image里面的图片后，开机按着电源键，进入
 的还是改图片之前的recovery， adb reboot recovery 或者恢复出厂设置，进入的就是我改过的recovery
 孙科说系统中有2个recovery，分别在spi flash和 nand flash里面，这，这，这。。。
 

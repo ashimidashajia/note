@@ -532,8 +532,7 @@ $wgCollectionMWServeURL = "192.168.1.52:8899";
 我知道了，因为没有安装 curl  这个server需要curl下载wiki页面的！
 如果是这个原因，为什么  mw-zip -c :en -o test.zip Acdc Number 能成功呢？他也去下载页面了
 
-按照说明，编译了支持curl的php 但悲剧的是：还是不行！ 疯了！ 不爽！
-你妈的 搞不定啊！
+按照说明，编译了支持curl的php 还是不行搞不定
 
 wiki服务器可以直接在终端设置语言
 
@@ -568,7 +567,7 @@ mediawiki 与 ldap 整合
 解决第一个问题可以安装字体，执行mw-render –list-writers这个命令后提示找不到字体，把这些字体装上，并做软连接就可以了。
 apt-get install ttf-indic-fonts ttf-unfonts-core ttf-farsiweb ttf-arphic-uming ttf-gfs-artemisia ttf-sil-ezra ttf-thai-arundina
 ln -s /usr/share/fonts/truetype/* /usr/local/lib/python2.6/dist-packages/mwlib.rl-0.12.8-py2.6.egg/mwlib/fonts/
-果然支持中文了！ 20120101 06:00
+支持中文了！ 20120101
 
 
 打印出来的文档都是A4 的有点大，pdf电子书一般是 7x9.19 inch

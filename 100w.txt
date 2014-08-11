@@ -42,7 +42,7 @@ x86_64-linux-glibc2.7-4.6
 device目录 仅有softwinner是有用的   ti samung asus 等删除
 softwinner目录除common和A20_B133  a20_product_base 外都可以删除  200M
 注意，这个还不能删除
-你妈逼，wing-common 也不能删除
+wing-common 也不能删除
 
 
 #add_lunch_combo A20_B133-eng 仅仅为了显示，不写 直接执行 lunch A20_B133-eng 也行！
