@@ -258,7 +258,7 @@ $ ./ffmpeg -i test.ts  -vf '[in]select=eq(pict_type\,I)' I.frames.ts
 生成的I帧文件可以播放
 
  ./ffmpeg -i test.ts  -vf '[in]select=eq(pict_type\,I),showinfo[out]' I.frames.jpeg
-ffmpeg太强大了
+ffmpeg功能强大
 [image2 @ 0x1abf040] Could not get frame filename number 2 from pattern 'I.frames.jpeg' 
 (either set updatefirst or use a pattern like %03d within the filename pattern)
 av_interleaved_write_frame(): Invalid argument

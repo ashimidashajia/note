@@ -177,7 +177,7 @@ gerrit2.8 使用http 认证方式调试2天没有成功，不爽。
 Gerrit如果要用http认证，就必须使用反向代理
 注意：
 安装gerrit过程中有 y/N  Y/n  大写的表示默认
-草泥马！还是不行，去你妈的  不搞http 反向代理了，神码玩意！
+不行，不搞http 反向代理了。
 
 -------------------------------------------
 htpasswd - Manage user files for basic authentication

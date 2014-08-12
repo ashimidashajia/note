@@ -227,12 +227,6 @@ MP3 file is divided into a small blocks - frames. Each frame has constant time l
 octave就算出是 1.1856e+05 + 2.4465e+05i  
 
 
-
-
-
-
-
-
 -----
 11.10 上 make install 了vlc 2.1.4 后导致播放不正常，很多格式无法播放。后来想恢复到原来的版本 apt-get install vlc没有成功
 用包管理器无法正常删除vlc2.1.4 (因为不是用包管理器安装的就管理不了？) 

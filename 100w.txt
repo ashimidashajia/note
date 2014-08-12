@@ -1,6 +1,3 @@
-2y100w mtxz xlg tjh 有资格，宣言
-大长腿
-
 这里要提醒的是：用apt-get或者ubuntu软件中直接安装的jdk，jre的时候，编译Android是总是编译不过，出现JDK版本不一致的情况；
 
 oracle 官网没有显式提供jdk1.6下载，而是提供最新的。我可以baidu搜索Java SE 6u35 到达oracle，点击archive，
@@ -45,7 +42,7 @@ x86_64-linux-glibc2.7-4.6
 device目录 仅有softwinner是有用的   ti samung asus 等删除
 softwinner目录除common和A20_B133  a20_product_base 外都可以删除  200M
 注意，这个还不能删除
-你妈逼，wing-common 也不能删除
+wing-common 也不能删除
 
 
 #add_lunch_combo A20_B133-eng 仅仅为了显示，不写 直接执行 lunch A20_B133-eng 也行！
