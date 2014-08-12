@@ -32,8 +32,10 @@ ubuntu64位下执行adb，或者启动Eclipse报libncurses.so.5找不到,具体�
 
 
 
+系统中64位  32位的ncurses都有，怎么链接
+11.10上 adb 是32位，readelf显示依赖libncurses.so.5 在/lib32目录下
 
-
+i386  i686 都是32位  x86_64 代表64位
 
 
 2 jdk专题(以12.04为例)
@@ -2015,5 +2017,11 @@ Failure [INSTALL_FAILED_UPDATE_INCOMPATIBLE] 因为apk删除不彻底。把/data
 
 
 ./docs/source.android.com/src/source/initializing.md:      zip curl zlib1g-dev libc6-dev lib32ncurses5-dev ia32-libs \
+
+
+mmm -B system/core/adb/ 编译出2个东西：
+/root/sbin/adbd 运行在盒子上
+system/bin/adb  盒子上为啥还需要adb程序：# adb host tool for device-as-host
+out/host/linux-x86/bin/adb 运行在主机
 
 

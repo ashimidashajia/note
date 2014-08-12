@@ -1607,3 +1607,17 @@ sudo apt-get install libncurses5-dev
 /lib/x86_64-linux-gnu$ 有 libncurses.so.5
 
 
+
+从http://pkgs.org/下载的 ia32-libs 是个 transitional package 这个包本身只有几k，
+里面是一些控制脚本，检查系统的64位库，然后配上32位库下载之。
+
+/lib 都是64位库
+/lib32 都是32位库
+
+我把 /lib32 目录下
+libncurses.so.5 -> libncurses.so.5.9
+这个链接关系删除，即删除软连接libncurses.so.5 。执行sudo ldconfig，会自动再建立这个链接。
+
+/lib32/libncurses.so.5.9 名字改了，再执行adb提示：
+adb: error while loading shared libraries: libncurses.so.5: wrong ELF class: ELFCLASS64
+

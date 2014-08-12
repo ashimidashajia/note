@@ -1,3 +1,5 @@
+12.04 install ia32-libs
+
 The following NEW packages will be installed:
   bluez-alsa:i386 esound-common gcc-4.6-base:i386 glib-networking:i386 gstreamer0.10-plugins-base:i386 gstreamer0.10-plugins-good:i386 gstreamer0.10-x:i386 gtk2-engines:i386 gtk2-engines-murrine:i386
   gtk2-engines-oxygen:i386 gtk2-engines-pixbuf:i386 gvfs:i386 gvfs-libs:i386 ia32-libs ia32-libs-multiarch:i386 ibus-gtk:i386 libaa1:i386 libacl1:i386 libaio1:i386 libao-common libao4:i386
@@ -26,4 +28,23 @@ The following packages will be upgraded:
 4 upgraded, 245 newly installed, 0 to remove and 10 not upgraded.
 Need to get 80.7 MB of archives.
 After this operation, 270 MB of additional disk space will be used.
+
+
+11.10 remove ia32-libs
+
+#sudo apt-get remove ia32-libs
+
+下列软件包是自动安装的并且现在不需要了：
+  lib32bz2-1.0 ia32-libs-multiarch:i386 libqt4-declarative:i386 liblcms1:i386 libqt4-qt3support:i386 libcupsimage2:i386 libqt4-test:i386
+  libqt4-script:i386 libqt4-designer:i386 libqt4-network:i386 libxxf86vm1:i386 libgl1-mesa-dri:i386 libgl1-mesa-glx:i386 libglapi-mesa:i386
+  libqt4-opengl:i386 lib32ffi6 libqt4-xmlpatterns:i386 lib32asound2 libgdbm3:i386 libqt4-sql:i386 libqt4-svg:i386 libxss1:i386 lib32ncursesw5
+  libqtgui4:i386 libqt4-scripttools:i386 libaudio2:i386 libmng1:i386 libllvm2.9:i386
+使用'apt-get autoremove'来卸载它们
+The following packages will be REMOVED
+  ia32-libs
+升级了 0 个软件包，新安装了 0 个软件包，要卸载 1 个软件包，有 529 个软件包未被升级。
+解压缩后将会空出 118 MB 的空间。
+您希望继续执行吗？[Y/n]
+
+
 
