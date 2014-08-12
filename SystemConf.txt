@@ -1584,6 +1584,26 @@ OK
 ---
 ubuntu12.04  gnome 想删除不用的应用，在软件中心选择 "intalled" 逐个删除即可。
 
+12.04 软件更新提示：New Ubuntu release 14.04.1 LTS is available  (12.10的升级提示应该不会有，因为12.04 是LTS)
+而我公司装的11.10 就会提示又12.04升级提示。或者10.04 我也看到过12.04 的升级提示
 
+
+
+/usr/bin/ld: cannot find -lncurses
+collect2: ld 返回 1
+
+首先到usr/lib/目录下寻找libncurses开头的文件
+1.如果没有那就是缺少库文件
+解决方法：
+$ sudo apt-cache search ncurses-
+有这样一个结果：
+libncurses5-dev - developer's libraries and docs for ncurses
+
+安装libncurses
+sudo apt-get install libncurses5-dev
+
+
+/usr/lib/x86_64-linux-gnu/libncurses.so 打开是 INPUT(libncurses.so.5 -ltinfo)
+/lib/x86_64-linux-gnu$ 有 libncurses.so.5
 
 

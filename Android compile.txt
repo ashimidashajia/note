@@ -12,10 +12,29 @@
 	lib32z1-dev 依赖 zlib1g-dev
    显示安装3个包：lib32z1 lib32z1-dev zlib1g-dev
 9) gperf： generate a perfect hash function from a key set. (makeprop.pl调用)
+10) ia32-libs (这个包大有文章！)
+11) libncurses-dev (cannot find -lncurses  = new curses)
+	整个系统中有很多地方要用到这个库，尤其在external目录里。还有 ./system/core/adb/Android.mk
+	apt-get install libncurses-dev :  libncurses5-dev libtinfo-dev 两个，但还是提示找不到-lncurses
+	安装位置：usr/lib/x86_64-linux-gnu/libncurses.so 也执行了ldconfig。原因是用readelf -h看：
+	out/host/linux-x86/obj/EXECUTABLES/adb_intermediates/下面的adb.o 是ELF32（因编译参数又-m32） 而:	
+	/lib/x86_64-linux-gnu/libncurses.so.5 是ELF64
 
-10) libncurses-dev   libncurses5-dev
+ubuntu64位下执行adb，或者启动Eclipse报libncurses.so.5找不到,具体错误提示
+    adb: error while loading shared libraries: libncurses.so.5: cannot open shared object file: No such file or directory  
+原因是因为我用的是64位的系统，而adb需要引用32位的包，需要安装ia32-libs包。
+执行以下命令：
+    sudo apt-get install ia32-libs  
 
-ncurses  = new curses  什么东东？
+我单独执行 sudo apt-get install libncurses5:i386  （从ia32-libs 里面取出的） 仍然找不到
+执行 sudo apt-get install ia32-libs 
+
+
+
+
+
+
+
 
 2 jdk专题(以12.04为例)
 
@@ -150,7 +169,7 @@ host C++: llvm-rs-cc <= frameworks/compile/slang/llvm-rs-cc.cpp
 
 -------------------
 需要安装的全部包：
-sudo apt-get install       zip  zlib1g-dev libc6-dev  ia32-libs   x11proto-core-dev libx11-dev lib32readline-gplv2-dev lib32z1-dev   libgl1-mesa-dev gcc-multilib g++-multilib mingw32 tofrodos python-markdown   libxml2-utils  xsltproc
+sudo apt-get install       zip  zlib1g-dev libc6-dev   x11proto-core-dev libx11-dev lib32readline-gplv2-dev lib32z1-dev   libgl1-mesa-dev gcc-multilib g++-multilib mingw32 tofrodos python-markdown   libxml2-utils  xsltproc
 
 
 sudo apt-get install     
@@ -160,7 +179,7 @@ sudo apt-get install
   python-markdown libxml2-utils xsltproc zlib1g-dev:i386 lib32z1-dev
 
 $ sudo apt-get install 
-zip  zlib1g-dev libc6-dev  ia32-libs \
+zip  zlib1g-dev libc6-dev 
 x11proto-core-dev libx11-dev lib32readline5-dev lib32z-dev \
 libgl1-mesa-dev g++-multilib mingw32 tofrodos
 
@@ -1993,5 +2012,8 @@ Failure [INSTALL_PARSE_FAILED_INCONSISTENT_CERTIFICATES] 之前安装了不同�
 Failure [INSTALL_FAILED_UPDATE_INCOMPATIBLE] 因为apk删除不彻底。把/data/data/相应包名/ 目录 还有 ./dalvik-cache 目录还是不行
 只能卸载或者恢复出厂设置
 
+
+
+./docs/source.android.com/src/source/initializing.md:      zip curl zlib1g-dev libc6-dev lib32ncurses5-dev ia32-libs \
 
 
