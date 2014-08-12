@@ -48,6 +48,42 @@
 	再次执行：
 	apt-get instal lib32z1-dev 显示安装2个包：lib32z1-dev zlib1g-dev
 
+3 virtual Box相关
+	1) 在device菜单中执行“安装增强功能”鼠标可自由切换且可全屏显示 
+	2) 共享文件夹设置后需重启
+	3) File->Preference->General->Default Machine Folder 可选择非home/user目录(在这个目录觉得不爽)
+	4) 网络设置选择桥接 ，就可以与win7 组成局域网，
+		选择 桥接 后，虚拟机地址变为192.168.0.103 这个地址是由路由器的DHCP分配的
+		[在DHCP服务器->DHCP列表与绑定 中看到]
+		localhost 192.168.0.103 08:00:27:43:2B:B2 
+		gaojie-desktop 192.168.0.104 08:00:27:94:EE:B3 
+		这2个是虚拟机。通过真实机器的1根网线，路由器认出3个机器，此为桥接。
+ 	5) 4.1.12版安装系统有错误提示，在命令行运行虚拟机，提示需要安装virtualbox-ose-dkms和linux-headers-generic包
+	   The character device /dev/vboxdrv does not exist
+		要运行/etc/init.d/vboxdrv setup'但是找不到vboxdrv命令
+
+
+4 dpkg
+dpkg -l
+dpkg -i packagename.deb  可以安装！！！
+但是提示
+ python-numpy 依赖于 libc6 (>= 2.14)；然而：
+系统中 libc6 的版本为 2.13-20ubuntu5。
+dpkg：处理 python-numpy (--install)时出错：
+说明需要低版本的numpy
+
+sudo apt-get -f install  可以卸载依赖错误的软件包
+再次执行 apt-get install python-numpy :
+错误 http://cn.archive.ubuntu.com/ubuntu/ oneiric/main python-numpy amd64 1:1.5.1-2ubuntu2
+说明需要 1.5.1 这个版本
+但是没有1.5.1这个版本，用了1.3.0  
+ python-numpy 依赖于 python (<< 2.7)；然而：
+系统中 python 的版本为 2.7.2-7ubuntu2。
+
+而ubuntu中也没有提供13.10 的支持，这就是不用04版本的后遗症。
+
+dpkg -r 删除一个包
+
 
 
 build-essential 包都包含啥？
@@ -139,9 +175,6 @@ Ubuntu串口卡驱动的安装
 再改到默认桌面 iptux显示也正常了，但是仍然有关闭无法再打开问题，可以用kill， 并且默认
 桌面，飞鸽来消息图标不会闪烁。 chromium 浏览器 使用11.04 新桌面 最小化就是关闭的问题 
 用经典桌面就没有问题 
-  
-virtualBox 在device 菜单中执行“安装增强功能”  鼠标就可以自由切换 并且可以全屏显示了 
-共享文件夹设置后需重启。
 
 7 安装2个java版本后，切换命令 
   sudo update-alternatives --config java
@@ -161,10 +194,6 @@ sun.util.resources.OpenListResourceBundle not found
 默认 /home/username 改为 /home/username/Work
   上面的方法不灵  安装sourceinsight的时候遇到问题（问题真的是无处不在啊）菜单里面没有
 选项，并且找到其安装目录也不能打开，只有安装完的时候可以打开一次
-
-9 安装 VirtualBox 后 File->Preference->General->Default Machine Folder 选择一个非 
-home/username 目录 是home/username 更简洁
-  好东西，可以switch成 全屏 无缝 scale模式  Host+C  L   F 切换  Host定义为右 Ctrl
 
 10 20111110 由11.04 升级到11.10 相当的成功 （以前这样升级都是失败的，进不了桌面） 速
 度有所提升
@@ -1263,24 +1292,7 @@ ubuntu@ubuntu:/var/lib$ sudo rm -rf apt/mirrors/partial/
 安装opencv时候需要 numpy 但是用apt-get install python-numpy 找不到源，通过其他方式
 下载了他的deb文件。 怎么安装呢？ 直接双击会打开软件中心
 
-dpkg -i packagename.deb  可以安装！！！
-但是提示
- python-numpy 依赖于 libc6 (>= 2.14)；然而：
-系统中 libc6 的版本为 2.13-20ubuntu5。
-dpkg：处理 python-numpy (--install)时出错：
-说明需要低版本的numpy
 
-sudo apt-get -f install  可以卸载依赖错误的软件包
-再次执行 apt-get install python-numpy :
-错误 http://cn.archive.ubuntu.com/ubuntu/ oneiric/main python-numpy amd64 1:1.5.1-2ubuntu2
-说明需要 1.5.1 这个版本
-但是没有1.5.1这个版本，用了1.3.0  
- python-numpy 依赖于 python (<< 2.7)；然而：
-系统中 python 的版本为 2.7.2-7ubuntu2。
-
-而ubuntu中也没有提供13.10 的支持，这就是不用04版本的后遗症。
-
-dpkg -r 删除一个包
 
  python-numpy: 1:1.5.1-2ubuntu2 (Multi-Arch: no) is not co-installable with 
 python-numpy:i386 1:1.5.1-2ubuntu2 (Multi-Arch: no) which is currently installed
@@ -1355,29 +1367,15 @@ ubuntu无法启动。并且，160G raid0 两块盘工作时非常热。并且他
 在软件中心搜索 IBus Pinyin Setup
 重启电脑，我在ubuntu11.10上熟悉的输入法终于回来了（一个蓝色的“拼”字那个，好！），哈哈
 
-与公司整合
+wowza： ./startup.sh: 35: java: not found  需要先安装jre
 
-1 VirtualBox  设备-〉 共享粘贴板  双向拖放
-
-2 virtualbox + ubuntu10.04 运行wowza： 
-root@gaojie-desktop:/usr/local/WowzaMediaServer/bin# ./startup.sh 
-./startup.sh: 35: java: not found
-需要先安装jre
-
-3 安装ubuntu12.04 ：  mysql  root:12345
+3 安装ubuntu12.04 server ：  mysql  root:12345
 OpenSSH Server
 DNS Server
 LAMP Server
 Tomcat Java server
 Virtual Machine host
 
-4 virtual box 网络设置选择桥接 ，就可以与win7 组成局域网，
-选择 桥接 后，虚拟机地址变为192.168.0.103 这个地址是由路由器的DHCP分配的
-[在DHCP服务器->DHCP列表与绑定 中看到]
-localhost 192.168.0.103 08:00:27:43:2B:B2 
-gaojie-desktop 192.168.0.104 08:00:27:94:EE:B3 
-这2个是虚拟机。通过真实机器的1根网线，路由器认出3个机器，这就是桥接。
- 
 对于可视化的网页编辑器，部份网页制作者选择Adobe Dreamweaver，
 一部分人使用更图形化的Adobe Golive。而一部分人则纯粹用代码编辑器，
 
@@ -1584,8 +1582,7 @@ OK
 ---
 ubuntu12.04  gnome 想删除不用的应用，在软件中心选择 "intalled" 逐个删除即可。
 
-12.04 软件更新提示：New Ubuntu release 14.04.1 LTS is available  (12.10的升级提示应该不会有，因为12.04 是LTS)
-而我公司装的11.10 就会提示又12.04升级提示。或者10.04 我也看到过12.04 的升级提示
+12.04 软件更新提示：New Ubuntu release 14.04.1 LTS is available 这种12.04 到14.04 的升级不要选择
 
 
 
@@ -1620,4 +1617,33 @@ libncurses.so.5 -> libncurses.so.5.9
 
 /lib32/libncurses.so.5.9 名字改了，再执行adb提示：
 adb: error while loading shared libraries: libncurses.so.5: wrong ELF class: ELFCLASS64
+
+ubuntu包管理网站：
+http://packages.ubuntu.com/
+
+LTS版本：
+lucid (10.04LTS)
+precise (12.04LTS)
+trusty (14.04LTS)
+
+问题解决：
+1 20140812
+12.04 不知道怎么弄的，virtualbox无法启动，提示libncursesw.so.5找不到。软件中心检查，libncursesw库以及libncursesw:i386库都是安装的，但是在系统中找不到64位版的libncursesw.so.5
+在http://packages.ubuntu.com上找到这个库，文件列表：
+/lib/x86_64-linux-gnu/libncursesw.so.5   （检查，发现我的12.04根本没有这个文件，那为什么包管理器显示这个库已经安装了呢？bug？）
+/lib/x86_64-linux-gnu/libncursesw.so.5.9
+/usr/lib/x86_64-linux-gnu/libformw.so.5
+/usr/lib/x86_64-linux-gnu/libformw.so.5.9
+/usr/lib/x86_64-linux-gnu/libmenuw.so.5
+/usr/lib/x86_64-linux-gnu/libmenuw.so.5.9
+/usr/lib/x86_64-linux-gnu/libpanelw.so.5
+/usr/lib/x86_64-linux-gnu/libpanelw.so.5.9
+/usr/share/doc/libncursesw5/changelog.Debian.gz
+/usr/share/doc/libncursesw5/copyright
+然后执行：
+dpkg -i libncursesw5_5.9-4_amd64.deb
+ldconfig
+
+然后virtualbox就起来了（第一次安装12.04，virtualbox是可以正常启动的，不知道为何重装12.04就不行了）
+
 

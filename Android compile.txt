@@ -20,16 +20,20 @@
 	out/host/linux-x86/obj/EXECUTABLES/adb_intermediates/下面的adb.o 是ELF32（因编译参数又-m32） 而:	
 	/lib/x86_64-linux-gnu/libncurses.so.5 是ELF64
 
+最终证明，需要安装lib32ncurses5-dev 这个库，上次的12.04 肯定是装了。而不是libncurses5:i386
+
 ubuntu64位下执行adb，或者启动Eclipse报libncurses.so.5找不到,具体错误提示
     adb: error while loading shared libraries: libncurses.so.5: cannot open shared object file: No such file or directory  
 原因是因为我用的是64位的系统，而adb需要引用32位的包，需要安装ia32-libs包。
 执行以下命令：
     sudo apt-get install ia32-libs  
 
-我单独执行 sudo apt-get install libncurses5:i386  （从ia32-libs 里面取出的） 仍然找不到
+我单独执行 sudo apt-get install libncurses5:i386  （从ia32-libs 里面取出的） 仍然找不到 （第一次安装的12.04没有遇到这个问题）
 执行 sudo apt-get install ia32-libs 
 
+1.0.31版adb不依赖libncurses库了
 
+12.04 ld版本2.22，编译4.0.4 host adb时候，明明有32位版libncurses.so 就是说找不到
 
 
 系统中64位  32位的ncurses都有，怎么链接
