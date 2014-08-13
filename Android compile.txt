@@ -43,38 +43,45 @@ i386  i686 都是32位  x86_64 代表64位
 
 
 2 jdk专题(以12.04为例)
+	1) jdk包含jre，分open和sun两个版本，提供：java（虚拟机）和javac（编译器）。open版安装：
+	apt-get install openjdk-6-jdk 或 openjdk-7-jdk （12.04默认不含）
+	安装完成直接使用了update-alternative, 有：
+	/usr/bin/java -> /etc/alternatives/java
+	/usr/bin/javac -> /etc/alternatives/javac
+	真正安装位置：
+	/usr/lib/jvm/java-6-openjdk-amd64
 
-1) jdk包含jre，分open和sun两个版本，提供：java（虚拟机）和javac（编译器）。open版安装：
-apt-get install openjdk-6-jdk 或 openjdk-7-jdk （12.04默认不含）
-安装完成直接使用了update-alternative, 有：
-/usr/bin/java -> /etc/alternatives/java
-/usr/bin/javac -> /etc/alternatives/javac
-真正安装位置：
-/usr/lib/jvm/java-6-openjdk-amd64
-
-sun版现无法通过源安装，需在oracal官网注册下载bin文件，如jdk-6u35-linux-x64.bin（jdk1.6 第35个版本）执行：
-./jdk-6u35-linux-x64.bin
-在当前位置生成jdk1.6.0_35目录，接着把他拷贝到合适的位置(如/usr/lib/jvm 与openjdk并列)，然后设置环境变量。
-更好做法是使用：
-update-alternatives: --install needs <link> <name> <path> <priority>
-最终效果：
-/usr/bin/java -> /etc/alternatives/java  -> /usr/lib/jvm/java-6-openjdk-amd64/jre/bin/java
-执行：
-sudo update-alternatives  --install "/usr/bin/java" "java" "/usr/lib/jvm/jdk1.6.0_35/jre/bin/java" 1
-sudo update-alternatives  --install "/usr/bin/javac" "java" "/usr/lib/jvm/jdk1.6.0_35/bin/javac" 1
+	2) sun版现无法通过源安装，需在oracal官网注册下载bin文件，如jdk-6u35-linux-x64.bin（jdk1.6 第35个版本）执行：
+	./jdk-6u35-linux-x64.bin
+	在当前位置生成jdk1.6.0_35目录，接着把他拷贝到合适的位置(如/usr/lib/jvm 与openjdk并列)，然后设置环境变量。
+	更好做法是使用：
+	update-alternatives: --install needs <link> <name> <path> <priority>
+	最终效果：
+	/usr/bin/java -> /etc/alternatives/java  -> /usr/lib/jvm/java-6-openjdk-amd64/jre/bin/java
+	执行：
+	sudo update-alternatives  --install "/usr/bin/java" "java" "/usr/lib/jvm/jdk1.6.0_35/jre/bin/java" 1
+	sudo update-alternatives  --install "/usr/bin/javac" "java" "/usr/lib/jvm/jdk1.6.0_35/bin/javac" 1
 
 
-设置环境变量，修改~/.profile(当前用户)或/etc/profile(全局用户)
-    export JAVA_HOME=/usr/lib/jvm/jdk1.7.0_10
-    export JRE_HOME=/usr/lib/jvm/jdk1.7.0_10/jre
-    export CLASSPATH=.:$JAVA_HOME/lib/dt.jar:$JAVA_HOME/lib/tools.jar:$JAVA_HOME/lib:$JRE_HOME/lib:$CLASSPATH
-    export PATH=$JAVA_HOME/bin:$PATH
+	设置环境变量，修改~/.profile(当前用户)或/etc/profile(全局用户)
+	export JAVA_HOME=/usr/lib/jvm/jdk1.7.0_10
+	export JRE_HOME=/usr/lib/jvm/jdk1.7.0_10/jre
+	export CLASSPATH=.:$JAVA_HOME/lib/dt.jar:$JAVA_HOME/lib/tools.jar:$JAVA_HOME/lib:$JRE_HOME/lib:$CLASSPATH
+	export PATH=$JAVA_HOME/bin:$PATH
 
-source ～/.profile后生效（或重启/log out）
+	source ～/.profile后生效（或重启/log out）
 
-这样sun成了默认jdk，因为：
-PATH="/usr/lib/jvm/jdk1.6.0_35/bin::/usr/bin:..."
-/usr/lib/jvm/jdk1.6.0_35/bin 在/usr/bin(open版java/javac) 的前面。
+	这样sun成了默认jdk，因为：
+	PATH="/usr/lib/jvm/jdk1.6.0_35/bin::/usr/bin:..."
+	/usr/lib/jvm/jdk1.6.0_35/bin 在/usr/bin(open版java/javac) 的前面。
+	3) ubuntu源的问题： 
+	12.04 apt-get openjdk-6-jdk 安装的是1.6.0_31，4.0.4不可用，提示：
+	Your version is: java version "1.6.0_31".
+	The correct version is: Java SE 1.6.
+	需要用sun jdk 1.6.35
+	10.04 apt-get openjdk-6-jdk 安装的是1.6.0_32，4.0.4可用
+
+
 
 3 安装gcc4.4(and friends[这个表达有意思])
 与 build-essential包有交叉部分。
@@ -102,13 +109,6 @@ install g++-4.4-multilib 安装2个新包：g++-4.4-multilib lib32stdc++6
 奇怪，android4.0 中要clang llvm 干什么用啊！ 难道不用gcc编译而是用clang了？
 
 
-
-
-3 版本搭配
-1）4.0.4不能用openjdk 1.6.0_31，提示：
-Your version is: java version "1.6.0_31".
-The correct version is: Java SE 1.6.
-需要用sun jdk 1.6.35
 2）4.0.4不能用gcc4.6，要用gcc4.4
 3) 不推荐12.04编译Android，库兼容问题产生错误。实测发现编译m3平台4.0.4基本成功，仅在做ota zip包时出现boot_img变量的一个错误。
 在a20平台4.2.2中成功。
@@ -2027,5 +2027,32 @@ mmm -B system/core/adb/ 编译出2个东西：
 /root/sbin/adbd 运行在盒子上
 system/bin/adb  盒子上为啥还需要adb程序：# adb host tool for device-as-host
 out/host/linux-x86/bin/adb 运行在主机
+
+
+将aapt 和 adb 拷贝到/usr/bin目录
+
+adb uninstall com.joysee.stb.tv 成功删除
+
+
+在虚拟机的新10.04上编译m3 4.0.4，提示：
+/bin/bash: prebuilt/linux-x86/toolchain/arm-linux-androideabi-4.4.x/bin/arm-linux-androideabi-gcc: No such file or directory
+这个文件当然是有的，但readelf发现是32位的。
+直接执行：
+# ./arm-linux-androideabi-gcc
+bash: ./arm-linux-androideabi-gcc: No such file or directory
+
+readelf -d 发现依赖：libc.so.6  这时安装ia32-libs后，立即就能执行了。
+
+
+host C: acp <= build/tools/acp/acp.c
+/usr/include/gnu/stubs.h:7:27: error: gnu/stubs-32.h: No such file or directory
+原因：apt-get install g++-multilib
+
+
+在虚拟机中  cp -r sbin/  sbin-back
+cp: cannot create symbolic link `sbin-back/ueventd': Read-only file system
+
+
+
 
 

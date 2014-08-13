@@ -59,8 +59,20 @@
 		gaojie-desktop 192.168.0.104 08:00:27:94:EE:B3 
 		这2个是虚拟机。通过真实机器的1根网线，路由器认出3个机器，此为桥接。
  	5) 4.1.12版安装系统有错误提示，在命令行运行虚拟机，提示需要安装virtualbox-ose-dkms和linux-headers-generic包
-	   The character device /dev/vboxdrv does not exist
-		要运行/etc/init.d/vboxdrv setup'但是找不到vboxdrv命令
+	   	The character device /dev/vboxdrv does not exist，按照提示运行：
+		/etc/init.d/vboxdrv setup 提示找不到vboxdrv命令。No suitable module for running kernel found，反复安装卸载都不行。
+		从virtualbox官网下载64位deb包，dpdg -i安装， /etc/init.d/vboxdrv 命令有了，但是setup失败：
+		Starting VirtualBox kernel modules ...failed!
+  		(modprobe vboxdrv failed. Please use 'dmesg' to find out why)
+		sudo modprobe vboxdrv
+		FATAL: Error inserting vboxdrv (/lib/modules/3.13.0-33-generic/misc/vboxdrv.ko): Unknown symbol in module, or unknown parameter (see dmesg)
+		查看dmesg：有 vboxdrv: Unknown symbol mcount。（找不到mcount符号）
+		开始以为kernel版本问题，显示grub(方法见grub专题)，选择老版本kernel，还是不行
+		最后查明，原因是我编译android的时候把gcc切换到4.4了，而这里需要4.6才能成功执行 /etc/init.d/vboxdrv setup （百度 Unknown symbol mcount）
+		(都是12.04升级惹的祸，以后不要升级ubuntu，装完啥样就啥样，升级带来风险，但同时也学到了不少)
+	6) 设置共享文件夹。背后隐藏的权限问题
+		
+
 
 
 4 dpkg
@@ -85,8 +97,23 @@ sudo apt-get -f install  可以卸载依赖错误的软件包
 dpkg -r 删除一个包
 
 
+5 grub
+	1) 单ubuntu系统不显示grub菜单,可一直按住shift键显示
+
+    打开/etc/default/grub文件，找到
+        GRUB_HIDDEN_TIMEOUT=0 注释掉
+
+    保存后，执行命令
+        sudo update-grub
+
+可以选择旧版本的kernel
+
+
+
 
 build-essential 包都包含啥？
+
+
 
 The following extra packages will be installed:
   dpkg-dev g++ g++-4.6 libalgorithm-diff-perl libalgorithm-diff-xs-perl libalgorithm-merge-perl libdpkg-perl libstdc++6-4.6-dev libtimedate-perl
@@ -1646,4 +1673,20 @@ ldconfig
 
 然后virtualbox就起来了（第一次安装12.04，virtualbox是可以正常启动的，不知道为何重装12.04就不行了）
 
+
+系统已经通过软件中心安装了 低版本 virtualbox时候：
+$ sudo dpkg -i virtualbox-4.3_4.3.14-95030~Ubuntu~precise_amd64.deb 
+dpkg: considering removing virtualbox in favour of virtualbox-4.3 ...
+dpkg: no, cannot proceed with removal of virtualbox (--auto-deconfigure will help):
+ virtualbox-qt depends on virtualbox (= 4.1.12-dfsg-2ubuntu0.6)
+  virtualbox is to be removed.
+dpkg: regarding virtualbox-4.3_4.3.14-95030~Ubuntu~precise_amd64.deb containing virtualbox-4.3:
+ virtualbox-4.3 conflicts with virtualbox
+  virtualbox (version 4.1.12-dfsg-2ubuntu0.6) is present and installed.
+dpkg: error processing virtualbox-4.3_4.3.14-95030~Ubuntu~precise_amd64.deb (--install):
+ conflicting packages - not installing virtualbox-4.3
+Errors were encountered while processing:
+ virtualbox-4.3_4.3.14-95030~Ubuntu~precise_amd64.deb
+
+需要先删除旧版本
 
