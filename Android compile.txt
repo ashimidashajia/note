@@ -1,32 +1,33 @@
 1 20140810 编译android环境：
-1) bison flex  2个工具配合使用，语法解释器（类似yacc），跟aidl有关
-2) git-core
-3) jdk 1.6 (见jdk专题)
-4) libxml2-utils (xmllint: command not found)
-5) xsltproc (xsltproc: command not found)
-6) gnupg (GNU Privacy Guard 是一个用于加密或签名的软件，用于从google下载代码，如已下载好不用)
-7) build-essential  主要是gcc  gcc库等 查看SystemConf.txt 试验发现没有必要这样安装，需要gcc4.4 可单独安装
-8) lib32z1-dev (为何32位？为何dev版本？只安装lib32z1包不行吗？)错误提示: libz.so.1: cannot open shared object file。
-	compression library - 32 bit development
-	zlib is a library implementing the deflate compression method found in gzip and PKZIP. This package includes the development support files for building 32 bit applications. 
-	lib32z1-dev 依赖 zlib1g-dev
-   显示安装3个包：lib32z1 lib32z1-dev zlib1g-dev
-9) gperf： generate a perfect hash function from a key set. (makeprop.pl调用)
-10) ia32-libs (这个包大有文章！)
-11) libncurses-dev (cannot find -lncurses  = new curses)
-	整个系统中有很多地方要用到这个库，尤其在external目录里。还有 ./system/core/adb/Android.mk
-	apt-get install libncurses-dev :  libncurses5-dev libtinfo-dev 两个，但还是提示找不到-lncurses
-	安装位置：usr/lib/x86_64-linux-gnu/libncurses.so 也执行了ldconfig。原因是用readelf -h看：
-	out/host/linux-x86/obj/EXECUTABLES/adb_intermediates/下面的adb.o 是ELF32（因编译参数又-m32） 而:	
-	/lib/x86_64-linux-gnu/libncurses.so.5 是ELF64
+	1) bison flex  2个工具配合使用，语法解释器（类似yacc），跟aidl有关
+	2) git-core
+	3) jdk 1.6 (见jdk专题)
+	4) libxml2-utils (xmllint: command not found)
+	5) xsltproc (xsltproc: command not found)
+	6) gnupg (GNU Privacy Guard 是一个用于加密或签名的软件，用于从google下载代码，如已下载好不用)
+	7) build-essential  主要是gcc  gcc库等 查看SystemConf.txt 试验发现没有必要这样安装，需要gcc4.4 可单独安装
+	8) lib32z1-dev (为何32位？为何dev版本？只安装lib32z1包不行吗？)错误提示: libz.so.1: cannot open shared object file。
+		compression library - 32 bit development
+		zlib is a library implementing the deflate compression method found in gzip and PKZIP. 
+		This package includes the development support files for building 32 bit applications. 
+		lib32z1-dev 依赖 zlib1g-dev
+		显示安装3个包：lib32z1 lib32z1-dev zlib1g-dev
+	9) gperf： generate a perfect hash function from a key set. (makeprop.pl调用)
+	10) ia32-libs (这个包大有文章！)
+	11) libncurses-dev (cannot find -lncurses  = new curses)
+		整个系统中有很多地方要用到这个库，尤其在external目录里。还有 ./system/core/adb/Android.mk
+		apt-get install libncurses-dev :  libncurses5-dev libtinfo-dev 两个，但还是提示找不到-lncurses
+		安装位置：usr/lib/x86_64-linux-gnu/libncurses.so 也执行了ldconfig。原因是用readelf -h看：
+		out/host/linux-x86/obj/EXECUTABLES/adb_intermediates/下面的adb.o 是ELF32（因编译参数又-m32） 而:	
+		/lib/x86_64-linux-gnu/libncurses.so.5 是ELF64
 
-最终证明，需要安装lib32ncurses5-dev 这个库，上次的12.04 肯定是装了。而不是libncurses5:i386
+		最终证明，需要安装lib32ncurses5-dev 这个库，上次的12.04 肯定是装了。而不是libncurses5:i386
 
-ubuntu64位下执行adb，或者启动Eclipse报libncurses.so.5找不到,具体错误提示
-    adb: error while loading shared libraries: libncurses.so.5: cannot open shared object file: No such file or directory  
-原因是因为我用的是64位的系统，而adb需要引用32位的包，需要安装ia32-libs包。
-执行以下命令：
-    sudo apt-get install ia32-libs  
+		ubuntu64位下执行adb，或者启动Eclipse报libncurses.so.5找不到,具体错误提示
+		adb: error while loading shared libraries: libncurses.so.5: cannot open shared object file: No such file or directory  
+		原因是因为我用的是64位的系统，而adb需要引用32位的包，需要安装ia32-libs包。
+		执行以下命令：
+		sudo apt-get install ia32-libs  
 
 我单独执行 sudo apt-get install libncurses5:i386  （从ia32-libs 里面取出的） 仍然找不到 （第一次安装的12.04没有遇到这个问题）
 执行 sudo apt-get install ia32-libs 
@@ -226,7 +227,9 @@ ubuntu 11.10的gcc版本是4.6.1，版本太高，编译android时失败，要�
 
 python-markdown
 
-This is a Python implementation of John Gruber’s Markdown. It is almost completely compliant with the reference implementation, though there are a few very minor differences. See John’s Syntax Documentation for the syntax rules.
+This is a Python implementation of John Gruber’s Markdown. It is almost completely 
+compliant with the reference implementation, though there are a few very minor 
+differences. See John’s Syntax Documentation for the syntax rules.
 
 Python-markdown2：完全用Python实现的Markdown （Markdown 是啥）
 Markdown是一个轻文本标记语言，它允许你在写的时候使用简单文本格式，然后转换为XHTML（HTML）。Python-markdown 是完全用Python实现的Markdown，与用Perl实现的 Markdown.pl非常接近，同时增加了一些扩展，包括语法高亮等
@@ -1712,24 +1715,6 @@ sdk tools 版本v6的时候 部分platform-tools（2.3.3以后才有 这个东�
 ADT android development tools 在eclipse->help中安装的
 
 
-Android SDK3.2 离线安装方法
-
-1.分析下载列表https://dl-ssl.google.com/android/repository/repository.xml
-2.用迅雷下载如下地址，上面分析得到的链接
-http://dl-ssl.google.com/android/repository/android-2.2_r03-linux.zip
-http://dl-ssl.google.com/android/repository/android-2.3.1_r02-linux.zip
-http://dl-ssl.google.com/android/repository/compatibility_r03.zip
-
-
-20111101
-Android 4.0发布了，可能是太火爆了吧，下载速度极其缓慢，找到了SDK的直接下载地址，不敢私藏，与大家分享
-plaform地址：https://dl-ssl.google.com/Android/repository/android-14_r01.zip
-sample地址：https://dl-ssl.google.com/Android/repository/samples-14_r01.zip
-docs地址：https://dl-ssl.google.com/Android/repository/docs-14_r01.zip
-
-https://dl-ssl.google.com/android/repository/platform-tools_r08-linux.zip
-https://dl-ssl.google.com/android/repository/platform-tools_r09-linux.zip
-
 下载android4.0后，提示ADT需要最新版本，更新到v15 发现SDK manager和 AVD manager 菜单项分开管理了
 创建AVD时候提示找不到 userdata.img什么的，需要在SDK manager里面更新 ARM EABI v7a System Image
 
@@ -1744,15 +1729,8 @@ https://dl-ssl.google.com/android/repository/platform-tools_r09-linux.zip
 在sdk r13 中 执行 ./android (一个脚本) 会打开Android SDK and AVD Manager 但是 跟从eclipse 中打开的不一样
 
 
-
 6 Fawn源码中的参考代码在 /development/samples 这个目录就是eclipse中可以单独下载的sample.tgz包
-
 WXGA：全称Wide Extended Graphics Array，按的16：10比例加宽了笔记本屏幕
-
-
-7 20111018
- 整个安卓的编译，C C++部分使用sdk编译的  java部分就是用jdk 1.5 或者1.6 编译
-
 
 
 8 关于ndk  用r6 实验

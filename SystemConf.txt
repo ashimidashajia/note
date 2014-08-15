@@ -1690,3 +1690,56 @@ Errors were encountered while processing:
 
 需要先删除旧版本
 
+目录解释：
+etc:
+早期UNIX贝尔实验室解释：etcetra directory 。 etc. 就是Et cetra。表示其他、等等什么的，英语里能常常看都这个缩写的。放不能归类到其他目录中的内容。
+后来FHS规定用来放配置文件，就解释为："Editable Text Configuration" 或者 "Extended Tool Chest"。
+
+opt:
+Optional application software packages
+optional 的前三个字母
+
+proc  process
+
+
+---------
+动态库：
+主版本号表明程序库版本之间的潜在不兼容性。
+次要版本号表明只是修正了缺陷。
+
+/lib  64位库
+/lib/x86_64-linux-gnu 64位库
+/lib/i386-linux-gnu 32位库
+/usr/lib 64位库
+/usr/lib/i386-linux-gnu 32位库
+/usr/lib/x86_64-linux-gnu 64位库
+/usr/lib32  32位库
+
+
+/lib32  32位库
+
+以lib32ncurses5_5.7_amd64.deb 为例子，解压缩后：
+/usr/lib32/libmenu.so.5
+ ...
+/usr/lib32/libform.so.5
+/lib32/libncurses.so.5
+ ...
+/lib32/libtic.so.5
+
+
+http://packages.ubuntu.com
+
+
+#dpkg --add-architecture i386  ？？
+#apt-get update
+#apt-get install ia32-libs
+
+
+synaptic 新立得包管理器
+
+11.10  oneiric
+
+
+https://help.ubuntu.com/community/UpgradeNotes
+
+
