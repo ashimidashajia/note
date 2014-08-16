@@ -1742,7 +1742,7 @@ Errors were encountered while processing:
 
 需要先删除旧版本
 
-<<<<<<< HEAD
+
 ubuntu 直接pppoe拨号：sudo pppoeconf
 设来设去，状态条eth的配置菜单消失了。在application菜单中能找到network connections，窗口出来了但都灰掉不能设置了
 sudo service network-manager restart 设置图标出来了，也能设置但还是连接不上局域网。查看connection information：
@@ -1757,7 +1757,7 @@ provider dsl-provider
 如果主機上所有的網路介面設備都列在 network/interfaces 設定的話，桌面上的 NetworkManager 小圖示就會顯示紅色錯誤圖示，提示沒有設備可以管理 (No valid active connections found!)。這是正常的。
 如果我們想由 NetworkManager 管理 eth0 的設定，那就要刪掉 network/interfaces 內關於 eth0的設定內容。注意， network/interfaces 內關於 lo 的那兩行設定是必要的，請勿刪除。
 重启电脑查看connection information正常（logout restart network都不行）
-=======
+
 目录解释：
 etc:
 早期UNIX贝尔实验室解释：etcetra directory 。 etc. 就是Et cetra。表示其他、等等什么的，英语里能常常看都这个缩写的。放不能归类到其他目录中的内容。
@@ -1774,6 +1774,9 @@ proc  process
 动态库：
 主版本号表明程序库版本之间的潜在不兼容性。
 次要版本号表明只是修正了缺陷。
+
+i386  i686 都是32位  x86_64 代表64位
+
 
 /lib  64位库
 /lib/x86_64-linux-gnu 64位库
@@ -1809,6 +1812,6 @@ synaptic 新立得包管理器
 
 
 https://help.ubuntu.com/community/UpgradeNotes
->>>>>>> 04849dc368c02c047062f7c1e42573a88acacaeb
+
 
 

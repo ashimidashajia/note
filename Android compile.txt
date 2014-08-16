@@ -1,72 +1,17 @@
 1 20140810 编译android环境：
-<<<<<<< HEAD
-1) bison flex  2个工具配合使用，语法解释器（类似yacc），跟aidl有关
-2) git-core
-3) jdk 1.6 (见jdk专题)
-4) libxml2-utils (xmllint: command not found)
-5) xsltproc (xsltproc: command not found)
-6) gnupg (GNU Privacy Guard 是一个用于加密或签名的软件，用于从google下载代码，如已下载好不用)
-7) build-essential  主要是gcc  gcc库等,试验发现没有必要这样安装，需要gcc4.4 可单独安装
-8) lib32z1-dev  32位版zlib开发库，依赖包zlib1g-dev会自动安装。只有主机工具编译会用到，而他们都是32位版本(gcc -m32)
-9) gperf： generate a perfect hash function from a key set. (makeprop.pl调用)
-10) ia32-libs (这个包大有文章！)
-11) lib32ncurses-dev (new curses)
-	因编译adb等host工具时使用-m32参数，所以需要32位库。libncurses5-dev是64位即便安装也会提示找不到-lncurses
-	与 libncurses5:i386 不同吗？ia32-libs会安装这个
-	“ubuntu64位下执行adb，或者启动Eclipse报libncurses.so.5找不到,具体错误提示
-    	adb: error while loading shared libraries: libncurses.so.5: cannot open shared object file: No such file or directory  
-	原因是因为我用的是64位的系统，而adb需要引用32位的包，需要安装ia32-libs包。”
-	我单独执行 sudo apt-get install libncurses5:i386  （从ia32-libs 里面取出的） 仍然找不到 
-
-
-	注：1.0.31版adb不依赖libncurses库了
-	12.04 ld版本2.22，编译4.0.4 host adb时候，明明有32位版libncurses.so 就是说找不到
-=======
 	1) bison flex  2个工具配合使用，语法解释器（类似yacc），跟aidl有关
 	2) git-core
 	3) jdk 1.6 (见jdk专题)
 	4) libxml2-utils (xmllint: command not found)
 	5) xsltproc (xsltproc: command not found)
 	6) gnupg (GNU Privacy Guard 是一个用于加密或签名的软件，用于从google下载代码，如已下载好不用)
-	7) build-essential  主要是gcc  gcc库等 查看SystemConf.txt 试验发现没有必要这样安装，需要gcc4.4 可单独安装
-	8) lib32z1-dev (为何32位？为何dev版本？只安装lib32z1包不行吗？)错误提示: libz.so.1: cannot open shared object file。
-		compression library - 32 bit development
-		zlib is a library implementing the deflate compression method found in gzip and PKZIP. 
-		This package includes the development support files for building 32 bit applications. 
-		lib32z1-dev 依赖 zlib1g-dev
-		显示安装3个包：lib32z1 lib32z1-dev zlib1g-dev
+	7) build-essential  主要是gcc  gcc库等,试验发现没有必要这样安装，需要gcc4.4 可单独安装
+	8) lib32z1-dev  32位版zlib开发库，依赖包zlib1g-dev会自动安装。只有主机工具编译会用到，而他们都是32位版本(gcc -m32)
 	9) gperf： generate a perfect hash function from a key set. (makeprop.pl调用)
-	10) ia32-libs (这个包大有文章！)
-	11) libncurses-dev (cannot find -lncurses  = new curses)
-		整个系统中有很多地方要用到这个库，尤其在external目录里。还有 ./system/core/adb/Android.mk
-		apt-get install libncurses-dev :  libncurses5-dev libtinfo-dev 两个，但还是提示找不到-lncurses
-		安装位置：usr/lib/x86_64-linux-gnu/libncurses.so 也执行了ldconfig。原因是用readelf -h看：
-		out/host/linux-x86/obj/EXECUTABLES/adb_intermediates/下面的adb.o 是ELF32（因编译参数又-m32） 而:	
-		/lib/x86_64-linux-gnu/libncurses.so.5 是ELF64
-
-		最终证明，需要安装lib32ncurses5-dev 这个库，上次的12.04 肯定是装了。而不是libncurses5:i386
-
-		ubuntu64位下执行adb，或者启动Eclipse报libncurses.so.5找不到,具体错误提示
-		adb: error while loading shared libraries: libncurses.so.5: cannot open shared object file: No such file or directory  
-		原因是因为我用的是64位的系统，而adb需要引用32位的包，需要安装ia32-libs包。
-		执行以下命令：
-		sudo apt-get install ia32-libs  
-
-我单独执行 sudo apt-get install libncurses5:i386  （从ia32-libs 里面取出的） 仍然找不到 （第一次安装的12.04没有遇到这个问题）
-执行 sudo apt-get install ia32-libs 
-
-1.0.31版adb不依赖libncurses库了
-
-12.04 ld版本2.22，编译4.0.4 host adb时候，明明有32位版libncurses.so 就是说找不到
->>>>>>> 04849dc368c02c047062f7c1e42573a88acacaeb
-
-
-系统中64位  32位的ncurses都有，怎么链接
-
-11.10上 adb 是32位，readelf显示依赖libncurses.so.5 在/lib32目录下
-
-i386  i686 都是32位  x86_64 代表64位
-
+	10) ia32-libs (这个包大有文章，他本身几十k，却要下载数百M，有没有安装的必要需要深究)
+	11) lib32ncurses-dev (new curses，与libncurses5:i386不同吗？)
+		编译 ./system/core/adb时使用此库32位版(因-m32参数，1.0.31版adb以不依赖此库)。
+ 
 
 2 jdk专题(以12.04为例)
 	1) jdk包含jre，分open和sun两个版本，提供：java（虚拟机）和javac（编译器）。open版安装：
@@ -131,27 +76,28 @@ i386  i686 都是32位  x86_64 代表64位
 	install g++-4.4-multilib 安装2个新包：g++-4.4-multilib lib32stdc++6
 
 
-
 	奇怪，android4.0 中要clang llvm 干什么用啊！ 难道不用gcc编译而是用clang了？
-
-
-
-
-
-
-
 	主机工具都用-m32参数编译32位版本，需要相应的32位库
-
-
-
-
-
-
 
 
 2）4.0.4不能用gcc4.6，要用gcc4.4
 3) 不推荐12.04编译Android，库兼容问题产生错误。实测发现编译m3平台4.0.4基本成功，仅在做ota zip包时出现boot_img变量的一个错误。
 在a20平台4.2.2中成功。
+
+
+
+
+
+4 提示找不到某某库的原因
+	1 确实没有安装
+	2 有-m32选项需要32位版但系统只有64位版(readelf -h可查看)
+
+
+
+
+
+
+
 
 怀疑是python版本问题，公司11.10上的版本是2.7.2+（官网找不到这个版本），12.04 是2.7.3。从官网下载2.7.2编译安装。出现新问题：
 AttributeError: 'NoneType' object has no attribute 'decompressobj'
