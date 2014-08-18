@@ -1,3 +1,5 @@
+Make & GCC & 他的朋友们
+
 一、Android的编译系统
 1 静态链接库 ./core/combo/TARGET_linux-arm.mk 中的
 
@@ -550,14 +552,21 @@ include $(BUILD_PREBUILT)
 -----------------
 我怎么才能用一个快捷方法做出预编译版本android呢？其实完全针对externel处理完就可以了。
 
-20120731 fuck! 太麻烦了！放弃!
-
-
 ---------------------------------------------------------------------------------
 20120823
 android的build系统很复杂强大，甚至有继承功能，体现了OO思想，比如inherit-product函数
 有一些字段的值，如果子文件赋值了，就用子文件的，如果没有赋值，就用父文件的。
 
 
+ndk
+1 ndk9 安装成standalone模式:
+/build/tools/make-standalone-toolchain.sh --platform=android-14 --install-dir=/tmp/jpegturbo
 
+
+
+关于configure
+1) If you meant to cross compile, use `--host'.
+
+
+readelf -A 显示architecture信息
 

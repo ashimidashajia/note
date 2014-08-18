@@ -1,3 +1,5 @@
+开发环境搭建以及编译问题
+
 1 20140810 编译android环境：
 	1) bison flex  2个工具配合使用，语法解释器（类似yacc），跟aidl有关
 	2) git-core
@@ -394,10 +396,11 @@ system.img 没有经过任何的压缩，只是把文件夹转换为yaffs映像�
   6) froyo的build/core/combo/arch/arm中有armv7-a.mk 和 armv7a-neon.mk
       注释分别为：
 	# Generating binaries for the ARMv7-a architecture and higher
-	# Generating binaries for the ARMv7-a architecture and higher with NEON  
+	# Generating binaries for the ARMv7-a architecture and higher with NEON
+  
 	arm官网上介绍Cortex-A9时候：
 	Optional NEON™ media and/or floating point processing engine
-	所以NXP很可能没有NEON单元，区别还有
+	所以NXP没有NEON，区别还有
 	-mfpu=vfpv3-d16
 	-mfpu=neon 【neon提供FPU所具有的性能和功能】
 	那么如何决定使用哪个文件呢？
@@ -1612,8 +1615,8 @@ LOCAL_ARM_MODE := arm
 我就在这个目录中的Android.mk中加上  LOCAL_ARM_MODE:= 空
 那么这个目录就用thumb编译了 target thumb c
 
-最终编译出来的init 148k 果然变大了！  但是仍然不能运行 还是segmentation fault 我疯了！
-readelf后
+最终编译出来的init 148k 果然变大了！  但是仍然不能运行 还是segmentation fault
+readelf -A 后
   Tag_CPU_name: "7-A"
   Tag_CPU_arch: v7
   Tag_CPU_arch_profile: Application
@@ -2029,8 +2032,6 @@ host C: acp <= build/tools/acp/acp.c
 
 在虚拟机中  cp -r sbin/  sbin-back
 cp: cannot create symbolic link `sbin-back/ueventd': Read-only file system
-
-
 
 
 
