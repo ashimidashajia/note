@@ -23,30 +23,33 @@
 	11) ts分析工具
 		apt-get install tstools
 
-2 基础知识
-	1) apt
-	Debian/Ubuntu采用deb软件包,通常用dpkg（package manager for Debian）或 apt（Advanced Package Tool）工具进行管理。对应RHEL/CentOS/Fedora中的使用yum管理系统中的rpm（Redhat Package Management）。
+2  APT
+	1) Debian/Ubuntu采用deb软件包,通常用dpkg（package manager for Debian）或 apt（Advanced Package Tool）工具进行管理。对应RHEL/CentOS/Fedora中的使用yum管理系统中的rpm（Redhat Package Management）。
 	2) apt-get install时候，Suggested packages: 部分默认是不安装的。若要让apt-get默认下载推荐的包，需要建立一个配置文件：/etc/apt/apt.conf：
 		APT::Install-Recommends "true";
 		APT::Install-Suggests "true";
 		如果不希望apt-get下载suggested的包：
 		apt-get --no-install-recommends install package
-	实例说明1：
-	apt-get install gcc-4.4
-	The following extra packages will be installed:
-	  cpp-4.4 gcc-4.4-base(这2个是本体的朋友)
-	Suggested packages:(不安装)
-	  gcc-4.4-locales gcc-4.4-multilib(这个建议安装，所以后面要手动安装才能用gcc) libmudflap0-4.4-dev gcc-4.4-doc libgcc1-dbg libgomp1-dbg libmudflap0-dbg libcloog-ppl0 libppl-c2 libppl7
-	The following NEW packages will be installed:
-	  cpp-4.4 gcc-4.4(这是本体) gcc-4.4-base （本体+朋友共3个）
-	0 upgraded, 3 newly installed, 0 to remove and 0 not upgraded.
+		实例说明1：
+		apt-get install gcc-4.4
+		The following extra packages will be installed:
+	  	cpp-4.4 gcc-4.4-base(这2个是本体的朋友)
+		Suggested packages:(不安装)
+	 	 gcc-4.4-locales gcc-4.4-multilib(这个建议安装，所以后面要手动安装才能用gcc) libmudflap0-4.4-dev gcc-4.4-doc libgcc1-dbg libgomp1-dbg libmudflap0-dbg libcloog-ppl0 libppl-c2 libppl7
+		The following NEW packages will be installed:
+		  cpp-4.4 gcc-4.4(这是本体) gcc-4.4-base （本体+朋友共3个）
+		0 upgraded, 3 newly installed, 0 to remove and 0 not upgraded.
 
-	实例说明2：
-	apt-get instal lib32z1-dev 显示安装3个包：lib32z1 lib32z1-dev zlib1g-dev
-	若先执行：
-	apt-get instal lib32z1则安装1个包：lib32z1
-	再次执行：
-	apt-get instal lib32z1-dev 显示安装2个包：lib32z1-dev zlib1g-dev
+		实例说明2：
+		apt-get instal lib32z1-dev 显示安装3个包：lib32z1 lib32z1-dev zlib1g-dev
+		若先执行：
+		apt-get instal lib32z1则安装1个包：lib32z1
+		再次执行：
+		apt-get instal lib32z1-dev 显示安装2个包：lib32z1-dev zlib1g-dev
+	3) 包只下载不安装如：apt-get -d install vim (前提是这个包尚未安装否则提示已经最新)。实测执行后立即打印：Download complete and in download only mode，并没有真正下载包数据。
+	4) apt-get下载的包默认在/var/cache/apt/archives，可在/etc/apt/source.list中修改存放位置。apt-get autoclean 命令可删除这些软件包。
+	   实测执行后，仅删除了个别包，没有全部删除，强制删除可能会有问题。
+		
 
 3 virtual Box相关
 	1) 在device菜单中执行“安装增强功能”鼠标可自由切换且可全屏显示 
@@ -70,7 +73,12 @@
 		开始以为kernel版本问题，显示grub(方法见grub专题)，选择老版本kernel，还是不行
 		最后查明，原因是我编译android的时候把gcc切换到4.4了，而这里需要4.6才能成功执行 /etc/init.d/vboxdrv setup （百度 Unknown symbol mcount）
 		(都是12.04升级惹的祸，以后不要升级ubuntu，装完啥样就啥样，升级带来风险，但同时也学到了不少)
-	6) 设置共享文件夹。背后隐藏的权限问题
+	6) 设置共享文件夹自动mount，文件系统类型vboxsf，默认不支持symbolic link，官网说处于安全考虑。
+		ln: creating symbolic link `xx': Read-only file system,拷贝软链接会直接变成文件，拷贝带软链接的目录提示： Read-only file system
+		执行：
+		VBoxManage setextradata VM_NAME VBoxInternal2/SharedFoldersEnableSymlinksCreate/SHARE_NAME 1
+		VM_NAME是虚拟机名，SHARE_NAME是共享文件夹名，重启即可。
+
 		
 
 
@@ -110,6 +118,51 @@ dpkg -r 删除一个包
 
 
 
+
+6 非dev和dev包的区别,以libncurses5和libncurses5-dev为例：
+	前者包含文件：
+	/lib/x86_64-linux-gnu/libncurses.so.5
+	...
+	/usr/lib/x86_64-linux-gnu/libpanel.so.5.9
+	/usr/share/doc/libncurses5/FAQ
+	/usr/share/doc/libncurses5/TODO.Debian
+	/usr/share/doc/libncurses5/changelog.Debian.gz
+	/usr/share/doc/libncurses5/copyright
+
+	后者包含文件：
+	/usr/include/curses.h
+	...
+	/usr/include/unctrl.h
+	/usr/lib/x86_64-linux-gnu/libcurses.a
+	/usr/lib/x86_64-linux-gnu/libcurses.so
+	...
+	/usr/lib/x86_64-linux-gnu/libpanel.a
+	/usr/lib/x86_64-linux-gnu/libpanel.so
+	/usr/lib/x86_64-linux-gnu/pkgconfig/form.pc
+	/usr/lib/x86_64-linux-gnu/pkgconfig/menu.pc
+	/usr/lib/x86_64-linux-gnu/pkgconfig/ncurses++.pc
+	/usr/lib/x86_64-linux-gnu/pkgconfig/ncurses.pc
+	/usr/lib/x86_64-linux-gnu/pkgconfig/panel.pc
+	/usr/share/doc/libncurses5-dev/changelog.Debian.gz
+	/usr/share/doc/libncurses5-dev/copyright
+	可见，主要是多了.h头文件和.a静态库。
+
+7 包管理网站(本文提到下载deb包都出自这些网站)
+	http://pkgs.org/
+	
+8 32位和64位库
+
+12.04 由于之前试验，卸载安装卸载使得libncurses库损坏，导致man xx无法使用：libncurses.so.5: No such file or directory
+查看10.04 在/lib下有此库64位版本，而12.04 /lib/x86_64-linux-gnu下只有libncursesw.so.5没有 libncurses.so.5
+apt-get install 显示已经是最新的版本。(apt-get remove 失败，否则重新安装应该也能解决)
+下载libncursesw5_5.9-4_amd64.deb，dpkg -i安装后/lib/x86_64-linux-gnu下出现此库，问题解决
+
+64位版本ubuntu：
+/lib  /lib64 代表64位库 (10.04 lib64 -> lib  12.04是2个独立目录)
+/lib32代表32位库
+
+
+	
 
 build-essential 包都包含啥？
 
@@ -1612,7 +1665,6 @@ ubuntu12.04  gnome 想删除不用的应用，在软件中心选择 "intalled" �
 12.04 软件更新提示：New Ubuntu release 14.04.1 LTS is available 这种12.04 到14.04 的升级不要选择
 
 
-
 /usr/bin/ld: cannot find -lncurses
 collect2: ld 返回 1
 
@@ -1632,7 +1684,7 @@ sudo apt-get install libncurses5-dev
 
 
 
-从http://pkgs.org/下载的 ia32-libs 是个 transitional package 这个包本身只有几k，
+下载的 ia32-libs 是个 transitional package 这个包本身只有几k，
 里面是一些控制脚本，检查系统的64位库，然后配上32位库下载之。
 
 /lib 都是64位库
@@ -1690,6 +1742,22 @@ Errors were encountered while processing:
 
 需要先删除旧版本
 
+
+ubuntu 直接pppoe拨号：sudo pppoeconf
+设来设去，状态条eth的配置菜单消失了。在application菜单中能找到network connections，窗口出来了但都灰掉不能设置了
+sudo service network-manager restart 设置图标出来了，也能设置但还是连接不上局域网。查看connection information：
+No valid active connections found!
+查看/etc/network/interfaces，发现增加了：
+auto dsl-provider
+iface dsl-provider inet ppp
+pre-up /sbin/ifconfig eth0 up # line maintained by pppoeconf
+provider dsl-provider
+重启后可以正常上网了网络连接也可以打开但是无法设置无法正常配置使用
+
+如果主機上所有的網路介面設備都列在 network/interfaces 設定的話，桌面上的 NetworkManager 小圖示就會顯示紅色錯誤圖示，提示沒有設備可以管理 (No valid active connections found!)。這是正常的。
+如果我們想由 NetworkManager 管理 eth0 的設定，那就要刪掉 network/interfaces 內關於 eth0的設定內容。注意， network/interfaces 內關於 lo 的那兩行設定是必要的，請勿刪除。
+重启电脑查看connection information正常（logout restart network都不行）
+
 目录解释：
 etc:
 早期UNIX贝尔实验室解释：etcetra directory 。 etc. 就是Et cetra。表示其他、等等什么的，英语里能常常看都这个缩写的。放不能归类到其他目录中的内容。
@@ -1706,6 +1774,9 @@ proc  process
 动态库：
 主版本号表明程序库版本之间的潜在不兼容性。
 次要版本号表明只是修正了缺陷。
+
+i386  i686 都是32位  x86_64 代表64位
+
 
 /lib  64位库
 /lib/x86_64-linux-gnu 64位库
@@ -1741,5 +1812,6 @@ synaptic 新立得包管理器
 
 
 https://help.ubuntu.com/community/UpgradeNotes
+
 
 
