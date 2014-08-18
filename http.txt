@@ -1,0 +1,12 @@
+wiki 保存修改后弹出 “Your edit was saved” 小标签。 怎么做到的。
+
+sessions and cookies
+
+
+----
+20140529
+使用浏览器下载apache服务器192.168.7.32/upgrade.json  wireshark抓包，有时显示200 ok
+有时显示 304 not modified （表示服务器上这个文件没有修改）
+浏览器有缓存后，向服务器发送的请求应该有所不同。
+
+

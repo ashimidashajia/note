@@ -1,0 +1,15 @@
+1 20140726
+首次执行：
+make xx_default_config
+
+将scripts/kconfig 下的c代码编译为 conf 程序
+
+直接执行 make xxx 提示：
+make: *** No rule to make target `xxx'.  Stop. 这是Make自己提示的.
+那么，make xx_default_config 说明 xx_default_config是一个目标，定义在
+
+scripts/kconfig/Makefile :
+
+%_defconfig: $(obj)/conf
+        $(Q)$< -D arch/$(SRCARCH)/configs/$@ $(Kconfig)
+

@@ -1,0 +1,4 @@
+cat  A20-galaxy.tar.bz2.a*  | tar xj 
+
+split lichee.tgz -b 1073741824 当前目录生成 xab xac ...
+
