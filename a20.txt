@@ -1,1 +1,87 @@
+华数
 galaxy: setting中按home，不出现多个launcher的选择，只会回到自己的launcher。
+
+D/PhoneWindowManager( 1683): keycode is 21 , and POWER is 26
+
+ GpioService::write()  file = /sys/class/gpio_sw/PH20/data  count = 1  data = 48
+
+
+D/CedarXPlayer
+
+OMX_EventBufferUpdate  用到了omx
+
+MediaPlayer
+
+WIMOSINK
+
+CedarXPlayer : getPosition positionUs = 4798652577373301344   这也太大了吧
+
+ChromiumHTTPDataSource  （难道用了chromuim？）
+华数版本 服务器视频是ts，抓包后可直接下载。完整地址：
+http://www.shyd.chinacache.net/000000000000/3000653668/20140717173958_yuqishu_930510681_930641356_188684711.ts?&channel-id=cmcc&isHD=0&isIpqam=0&mos=jbjhhzstsl&Contentid=3000653668&stbId=004401FF0005894023CA000000EC0B00&duration=4378000&version=1.0&owchid=cmcc&owsid=9028047081619175839&AuthInfo=8Zlf%2ff9%2fb9Ls7rY8ii4LBSY5DLqujm%2fPlmETBNpyl5QCQnckNTodqzT%2ftZMD2pKc4y4V2%2bbB9PiU7ftUA7lCSR7pYoLX6Jm7IcCpVG44Q5k%3d
+
+http://www.shyd.chinacache.net/000000000000/3000653668/20140717173958_yuqishu_930510681_930641356_188684711.ts使用
+VLC media player 2.0.8 Twoflower能直接播放。
+
+http://www.shyd.chinacache.net
+
+AudioRender_Component( 1191): audio first pts(1121.000)
+VideoRender_Component( 1191): video first pts(1122.544)
+
+有些打印在：
+./av/media/CedarX-Projects/CedarAndroidLib/LIB_JB42_F51/libcedarxcomponents.a
+./av/media/CedarX-Projects/CedarAndroidLib/LIB_JB42_F51/libcedarxplayer.a matches
+
+播放器部分完全是一些库。
+./av/media/CedarX-Projects/CedarX/include/include_omx/OMX_Core.h:   
+OMX_EventBufferUpdate
+
+
+正常播放时：
+V/CDX_Player( 1191): Demuxer [0x44ac8f78] Event handle:10 flags:0x0
+V/CDX_Player( 1191): OMX_EventBufferUpdate:19%
+V/CDX_Player( 1191): Demuxer [0x44ac8f78] Event handle:11 flags:0x0
+W/MediaPlayer( 5719): info/warning (705, 78522)
+I/MediaPlayer( 5719): Info (705,78522)
+V/CDX_Player( 1191): Demuxer [0x44ac8f78] Event handle:10 flags:0x0
+V/CDX_Player( 1191): OMX_EventBufferUpdate:19%
+V/CDX_Player( 1191): Demuxer [0x44ac8f78] Event handle:11 flags:0x0
+W/MediaPlayer( 5719): info/warning (705, 66823)
+I/MediaPlayer( 5719): Info (705,66823)
+V/CDX_Player( 1191): Demuxer [0x44ac8f78] Event handle:10 flags:0x0
+V/CDX_Player( 1191): OMX_EventBufferUpdate:19%
+V/CDX_Player( 1191): Demuxer [0x44ac8f78] Event handle:11 flags:0x0
+W/MediaPlayer( 5719): info/warning (705, 64241)
+I/MediaPlayer( 5719): Info (705,64241)
+V/CDX_Player( 1191): Demuxer [0x44ac8f78] Event handle:10 flags:0x0
+V/CDX_Player( 1191): OMX_EventBufferUpdate:19%
+V/CDX_Player( 1191): Demuxer [0x44ac8f78] Event handle:11 flags:0x0
+W/MediaPlayer( 5719): info/warning (705, 62957)
+I/MediaPlayer( 5719): Info (705,62957)
+V/ControlService(28448): not create control services
+V/CDX_Player( 1191): Demuxer [0x44ac8f78] Event handle:10 flags:0x0
+V/CDX_Player( 1191): OMX_EventBufferUpdate:19%
+V/CDX_Player( 1191): Demuxer [0x44ac8f78] Event handle:11 flags:0x0
+W/MediaPlayer( 5719): info/warning (705, 56467)
+I/MediaPlayer( 5719): Info (705,56467)
+I/NuCachedSource2( 1191): Cache full, done prefetching for now
+I/NuCachedSource2( 1191): restarting prefetcher, totalSize = 2490368
+V/CDX_Player( 1191): Demuxer [0x44ac8f78] Event handle:10 flags:0x0
+V/CDX_Player( 1191): OMX_EventBufferUpdate:19%
+V/CDX_Player( 1191): Demuxer [0x44ac8f78] Event handle:11 flags:0x0
+W/MediaPlayer( 5719): info/warning (705, 49974)
+I/MediaPlayer( 5719): Info (705,49974)
+
+
+华数服务器，高清片源跳转，正常情况下，速度非常快，1s以内（记住这个数字）
+
+跳转后会打印：
+D/CDX_Player( 1191): -------- play ok --------
+V/CDX_Player( 1191): -------- async command end --------
+
+V/CDX_Player( 1191): OMX_EventBufferStart
+D/DemuxSftNetwork_Component( 1191): @@@@@ notify buffer start, notify delay = 2018934.
+
+buffer状态上报的流程机制（xss）
+
+GpioService 是什么？

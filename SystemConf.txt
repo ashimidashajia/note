@@ -73,6 +73,7 @@
 		开始以为kernel版本问题，显示grub(方法见grub专题)，选择老版本kernel，还是不行
 		最后查明，原因是我编译android的时候把gcc切换到4.4了，而这里需要4.6才能成功执行 /etc/init.d/vboxdrv setup （百度 Unknown symbol mcount）
 		(都是12.04升级惹的祸，以后不要升级ubuntu，装完啥样就啥样，升级带来风险，但同时也学到了不少)
+		20140819又升级了内核，又遇到这个问题，sudo /etc/init.d/vboxdrv setup搞定。
 	6) 设置共享文件夹自动mount，文件系统类型vboxsf，默认不支持symbolic link，官网说处于安全考虑。
 		ln: creating symbolic link `xx': Read-only file system,拷贝软链接会直接变成文件，拷贝带软链接的目录提示： Read-only file system
 		执行：
@@ -1813,5 +1814,8 @@ synaptic 新立得包管理器
 
 https://help.ubuntu.com/community/UpgradeNotes
 
-
+在我的电脑上12.04 ：lspci显示：
+00:02.0 VGA compatible controller: Intel Corporation Xeon E3-1200 v2/3rd Gen Core processor Graphics Controller (rev 09)
+应该是没有正常识别显卡。电脑13年购买，12.04应该不含其驱动。 我的CPU i53470 集显HD2500
+intel官网有14.04版的的显卡驱动，没有12.04的。不能轻易尝试，弄不好系统起不来了。
 
