@@ -1,0 +1,5 @@
+logwrapper
+
+使用printf的问题
+a20 验证 printf可以直接使用，可以直接打印在adb shell的控制台上，也可以输出在串口控制台上。为什么？应该不输出啊。
+但是在adb shell里执行，不会在串口处输出。   

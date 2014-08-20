@@ -1,1 +1,5 @@
 galaxy: setting中按home，不出现多个launcher的选择，只会回到自己的launcher。
+
+
+
+phoenixcard sd卡工具百度上可以下载到，是个比较通用的工具。

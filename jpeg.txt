@@ -19,4 +19,4 @@ generate_jsimd_ycc_rgb_convert_neon extxrgb, 32, 1, 2, 3
 ./configure CC=arm-linux-androideabi-gcc --host=arm-linux
 
 
-
+cjpeg -bmp xx.jpg > xx.bmp
