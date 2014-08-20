@@ -153,6 +153,10 @@ dpkg -r 删除一个包
 	
 8 32位和64位库
 
+
+9 系统安装专题
+
+
 12.04 由于之前试验，卸载安装卸载使得libncurses库损坏，导致man xx无法使用：libncurses.so.5: No such file or directory
 查看10.04 在/lib下有此库64位版本，而12.04 /lib/x86_64-linux-gnu下只有libncursesw.so.5没有 libncurses.so.5
 apt-get install 显示已经是最新的版本。(apt-get remove 失败，否则重新安装应该也能解决)
@@ -1404,9 +1408,8 @@ libxxx.so  和  libxxx-dev.so 不同，后者用于开发，那么有什么不�
 我在调试 mysql 外网访问时候，执行了 ufw enable  结果导致所有web服务无法使用：apache wiki  gerrit ssh 等
 
 
----
 20140716
-家里电脑双盘raid0，安装win7。当安装ubuntu双系统时，出现麻烦：1 raid0，2 win7。这跟原来单盘，winxp的情形不同。
+2块硬盘组raid0，安装win7+ubuntu双系统时，出现麻烦：1 raid0，2 win7。这跟原来单盘，winxp的情形不同。
 主要原因是grub引导程序不支持raid0。
 方案1：另外安装一块笔记本硬盘用于ubuntu，安装时候把raid0双盘拔掉。独立安装，启动时候靠bios选择引导盘切换系统。
 问题：肯能是这块盘的性能太差，抑或是ubuntu14.04系统本身有问题，系统运行缓慢，软件打开也慢。换成gnome桌面也不行。
@@ -1814,8 +1817,42 @@ synaptic 新立得包管理器
 
 https://help.ubuntu.com/community/UpgradeNotes
 
+<<<<<<< HEAD
+
+删除gnome panel里的图标。10.04版本有删除菜单，11.10 以后没有，需要进入
+~/.config/gnome-panel/launchers  直接删除相应文件。
+
+ext3/4 文件系统 lost+found 目录存储删除的数据（垃圾箱）。如果是外部挂载，umount时会提示是否清除垃圾箱
+
+
+10. ubuntu tftp
+-------->安装
+	使用下面的命令来安置 tftpd-hpa 服务器：
+	$sudo apt-get install tftpd-hpa
+
+-------->配置
+	tftp-hpa 的配置文件为 /etc/default/tftpd-hpa 
+	
+	TFTP_USERNAME="tftp"
+	TFTP_DIRECTORY="/your/tftp/path/"
+	TFTP_ADDRESS="0.0.0.0:69"
+	TFTP_OPTIONS="-l -c -s"
+
+	-c为可创建新文件，若无此参数，put命令则可能出现错误提示，此时只能覆盖原有文件不能创建新文件； 
+
+-------->启动
+	$sudo  /etc/init.d/tftpd-hpa start
+
+-------->停止
+	$sudo /etc/init.d/tftpd-hpa stop
+
+-------->重启
+	$sudo /etc/init.d/tftpd-hpa restart
+
+=======
 在我的电脑上12.04 ：lspci显示：
 00:02.0 VGA compatible controller: Intel Corporation Xeon E3-1200 v2/3rd Gen Core processor Graphics Controller (rev 09)
 应该是没有正常识别显卡。电脑13年购买，12.04应该不含其驱动。 我的CPU i53470 集显HD2500
 intel官网有14.04版的的显卡驱动，没有12.04的。不能轻易尝试，弄不好系统起不来了。
+>>>>>>> fd714b105a1c4772d9428e7d54ca6477828f1d73
 

@@ -20,3 +20,5 @@ generate_jsimd_ycc_rgb_convert_neon extxrgb, 32, 1, 2, 3
 
 
 ycc转rgb的函数调用次数等于图片行数，output_width等于每行像素数。
+
+cjpeg -bmp xx.jpg > xx.bmp

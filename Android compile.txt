@@ -2014,13 +2014,10 @@ host C: acp <= build/tools/acp/acp.c
 /usr/include/gnu/stubs.h:7:27: error: gnu/stubs-32.h: No such file or directory
 原因：apt-get install g++-multilib
 
-<<<<<<< HEAD
-
 在虚拟机中  cp -r sbin/  sbin-back
 cp: cannot create symbolic link `sbin-back/ueventd': Read-only file system
 
-=======
 编译frameworks/base/tools/aapt/Android.mk时候要用到libpng，所以有 host C: libpng
->>>>>>> origin/master
 
+standalone模式，打印：
 

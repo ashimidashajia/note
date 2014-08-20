@@ -21,13 +21,14 @@ void open_devnull_stdio(void)
     mknod(name, S_IFCHR | 0600, (1 << 8) | 3); // 1,3是 /dev/null 设备
     fd = open(name, O_RDWR);
     unlink(name);  //删除 /dev/__null__ 文件
-    dup2(fd, 0);   //把stdin stdout stderr 全部duplicate成，以后所有进程（init是所有进程的父进程）向stdio写的内容全部进入“黑洞”
+	//把stdin stdout stderr 全部duplicate成，以后所有进程（init是所有进程的父进程）向stdio写的内容全部进入“黑洞”
+    dup2(fd, 0);   
     dup2(fd, 1);
     dup2(fd, 2);
     close(fd);
 }
 
-在此函数调用之前，是可以使用printf的（因为它输出到stdout），调用后printf就无效了。init的打印分级别，默认只打印 err 级的。可以在一个宏中调整。
+此函数调用前，可以使用printf(它输出到stdout)，调用后printf无效。init的打印分级别，默认只打印 err 级的。可以在一个宏中调整。
 
 
 3 与ICS比较，增加了文件mode安全检测，不允许group和other有写权限（flash运行后，root分区挂载成read only 就跟文件mode无关了）
