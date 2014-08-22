@@ -85,3 +85,10 @@ D/DemuxSftNetwork_Component( 1191): @@@@@ notify buffer start, notify delay = 20
 buffer状态上报的流程机制（xss）
 
 GpioService 是什么？
+
+编译lichee
+You must install 'msgfmt' on your build machine
+msgfmt is usually part of the gettext package in your distribution
+
+gettext 是什么
+
