@@ -570,3 +570,6 @@ ndk
 
 readelf -A 显示architecture信息
 
+库的链接原理，库存储路径，基本原则（ubuntu系统）
+
+

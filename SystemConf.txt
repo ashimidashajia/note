@@ -1,30 +1,23 @@
 1 Ubuntu系统常见软件包安装：
-	1) apache
-		apt-get install apache2
-	2) 目录打开终端
-		apt-get install nautilus-open-terminal
-	3) 串口 
-		apt-get install ckermit 或者 putty 或者 minicom
+	1) apache: apache2
+	2) 目录打开终端:nautilus-open-terminal
+	3) 串口: ckermit 或者 putty 或者 minicom
 		(minicom有时有问题，u-boot开发者推荐用ckermit)
-	4) 飞鸽
-		apt-get install iptux
-	5) svn工具
-		apt-get install subversion subversion-tools
+	4) 飞鸽:iptux
+	5) svn工具:subversion subversion-tools
 	6) vim (系统默认的vi不好用)
-		apt-get install vim
 	7) 64位系统运行32位程序提示找不到这个文件或目录，安装ia32库
 		apt-get install ia32-libs
-	8) openjdk6 
-		apt-get install openjdk-6-jdk
-	9) gnome桌面
-        apt-get install gnome-session-fallback
-	10) 命令行url工具
-    	apt-get install curl
-	11) ts分析工具
-		apt-get install tstools
+	8) openjdk6:openjdk-6-jdk
+	9) gnome桌面:gnome-session-fallback
+	10) 命令行url工具:curl
+	11) ts分析工具:tstools
+	12) 使用SIMD的jpeg库:libjpeg-turbo(软件中心)
+		普通jpeg库：libjpeg-dev(开发版)
 
 2  APT
-	1) Debian/Ubuntu采用deb软件包,通常用dpkg（package manager for Debian）或 apt（Advanced Package Tool）工具进行管理。对应RHEL/CentOS/Fedora中的使用yum管理系统中的rpm（Redhat Package Management）。
+	1) Debian/Ubuntu采用deb软件包,通常用dpkg（package manager for Debian）或 apt（Advanced Package Tool）工具进行管理。
+		对应RHEL/CentOS/Fedora中的使用yum管理系统中的rpm（Redhat Package Management）。
 	2) apt-get install时候，Suggested packages: 部分默认是不安装的。若要让apt-get默认下载推荐的包，需要建立一个配置文件：/etc/apt/apt.conf：
 		APT::Install-Recommends "true";
 		APT::Install-Suggests "true";
@@ -35,7 +28,8 @@
 		The following extra packages will be installed:
 	  	cpp-4.4 gcc-4.4-base(这2个是本体的朋友)
 		Suggested packages:(不安装)
-	 	 gcc-4.4-locales gcc-4.4-multilib(这个建议安装，所以后面要手动安装才能用gcc) libmudflap0-4.4-dev gcc-4.4-doc libgcc1-dbg libgomp1-dbg libmudflap0-dbg libcloog-ppl0 libppl-c2 libppl7
+		gcc-4.4-locales gcc-4.4-multilib(这个建议安装，所以后面要手动安装才能用gcc) 
+		libmudflap0-4.4-dev gcc-4.4-doc libgcc1-dbg libgomp1-dbg libmudflap0-dbg libcloog-ppl0 libppl-c2 libppl7
 		The following NEW packages will be installed:
 		  cpp-4.4 gcc-4.4(这是本体) gcc-4.4-base （本体+朋友共3个）
 		0 upgraded, 3 newly installed, 0 to remove and 0 not upgraded.
@@ -46,7 +40,8 @@
 		apt-get instal lib32z1则安装1个包：lib32z1
 		再次执行：
 		apt-get instal lib32z1-dev 显示安装2个包：lib32z1-dev zlib1g-dev
-	3) 包只下载不安装如：apt-get -d install vim (前提是这个包尚未安装否则提示已经最新)。实测执行后立即打印：Download complete and in download only mode，并没有真正下载包数据。
+	3) 包只下载不安装如：apt-get -d install vim (前提是这个包尚未安装否则提示已经最新)。
+		实测执行后立即打印：Download complete and in download only mode，并没有真正下载包数据。
 	4) apt-get下载的包默认在/var/cache/apt/archives，可在/etc/apt/source.list中修改存放位置。apt-get autoclean 命令可删除这些软件包。
 	   实测执行后，仅删除了个别包，没有全部删除，强制删除可能会有问题。
 		
@@ -155,7 +150,7 @@ dpkg -r 删除一个包
 
 
 9 系统安装专题
-
+	1) 用UltraISO制作的系统盘是FAT32系统
 
 12.04 由于之前试验，卸载安装卸载使得libncurses库损坏，导致man xx无法使用：libncurses.so.5: No such file or directory
 查看10.04 在/lib下有此库64位版本，而12.04 /lib/x86_64-linux-gnu下只有libncursesw.so.5没有 libncurses.so.5
@@ -1805,10 +1800,10 @@ ext3/4 文件系统 lost+found 目录存储删除的数据（垃圾箱）。如�
 -------->重启
 	$sudo /etc/init.d/tftpd-hpa restart
 
-=======
+
 在我的电脑上12.04 ：lspci显示：
 00:02.0 VGA compatible controller: Intel Corporation Xeon E3-1200 v2/3rd Gen Core processor Graphics Controller (rev 09)
 应该是没有正常识别显卡。电脑13年购买，12.04应该不含其驱动。 我的CPU i53470 集显HD2500
 intel官网有14.04版的的显卡驱动，没有12.04的。不能轻易尝试，弄不好系统起不来了。
->>>>>>> fd714b105a1c4772d9428e7d54ca6477828f1d73
+
 

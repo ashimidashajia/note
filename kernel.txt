@@ -1,5 +1,14 @@
 0  vmlinux,vm代表“Virtual Memory”。Linux 支持虚拟内存，支持mmu，不像DOS有640KB内存的限制
 
+显示内核打印信息：cat /proc/kmsg &   或者用dmesg命令
+内核信息打印有七个日志级别，数字越低，级别越高
+
+1-1.3:1.0的意思是，摄像头使用的根集线器编号为1，集线器端口号为1，集线器（摄像头使用）端口号为3，配置为1，接口为0
+
+UVC是在linux-2.6.38版本时加入内核的
+
+Documentation/video4linux/uvcvideo.txt”中，是有关于UVC的说明。驱动源码位置：./media/video/uvc/。
+
 1 kernel控制台
 
 kernel 控制台可以用fb显示。
