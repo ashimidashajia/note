@@ -2,6 +2,17 @@
 	1) 安装libsdl1.2-dev，否则ffplay不编译
 
 
+2 常用命令示例
+	1) 视频截取
+	ffmpeg -ss 00:00:30 -i test.ts -t 300  -acodec copy -vcodec copy  xx.ts
+
+3 错误信息
+	sub_packet_size is invalid
+
+
+一个rm视频，用视频截断出来新的rm，播放或者fprobe都提示sub_packet_size is invalid，然后终止运行。只有rm有问题，其他格式还好。
+
+
 -codecs 查看所有编解码器 -filters 查看所有可用的filter -pix_fmts查看所有支持的图片格式
 -sample_fmts 查看所有支持的像素格式
 ffprobe -i money.mp4 查看媒体信息
@@ -488,20 +499,12 @@ Format mp3 detected only with low score of 25, misdetection possible
 
 ffmpeg -i input.mp4 -c:v libx264 -profile:v high -level:v 4.0 -c:a copy output.mp4
 
-
------------
 --enable-libstagefright-h264  enable H.264 decoding via libstagefright [no]
 
-
----------
-视频截取：
-ffmpeg -ss 00:00:30 -i test.ts -t 300  -acodec copy -vcodec copy  cctv10-5min.ts
--acodec  -vcodec 必须加上否则出不来
--ss -t 参数在2.0.2中不灵啊！
-后来发现是那个流有问题，张纯用mediainfo（windows下的开源软件，看这个流只有30s）
+ 
+一个有问题的流-ss -t不好用，用mediainfo（windows下的开源软件，看这个流只有30s）
 后来仔细看看才发现，那个有问题的流，用vlc可以正常播放，但是ffplay播放不了
-这也解释了ffmpeg为啥不能正确截取了。
-张春把这个流处理了一下，把中间错误的删除了就好了。
+这也解释了ffmpeg为啥不能正确截取了。把这个流处理了一下，把中间错误的删除了就好了。
 
 
 提取es流
