@@ -760,8 +760,4 @@ ReviewDB.trace.db 文件记录着所有对数据库的操作命令。
 20140716 
 本地建好的仓库，把.git传到gerrit上，可以正常下载，但是gitweb无法看到。提示：
 500 - Unknown type of object 
-Unnamed repository; edit this file 'description' to name the repository
-
-
-
-
+Unnamed repository; edit this file 'description' to name the repositor

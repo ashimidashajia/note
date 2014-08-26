@@ -1,6 +1,13 @@
+1 编译
+	1) clean:删除一般性中间文件
+	   clobber: clean 和 .map .hex等更进一步的文件
+	   mrproper或distclean: clobber unconfig
+	   unconfig: 删除config.h等
 
 1 20140718 
 uboot执行 defenv 可以恢复默认配置
+
+需要加入ir的支持，替代recovery按键。
 
 2 uboot 专门有一个参数区域用来存储参数。 参数存储的格式为：
 
@@ -484,3 +491,107 @@ decompress finished
 a3 2a 38 76
 fb 44 1c 95
 b3 50 51 51等等，什么含义呢？
+
+
+----
+e3slp uboot跳转内核入口后串口1无启动信息，串口0有
+修改内核源码目录文件arch\mips\emma\nec-emma3slx\setup.c
+在函数emma3slx_sio_setup() 增加代码如下：
+	up.line		= 1;
+	up.mapbase		= EMMA_PUART1_BASE + 3;
+	up.membase		= ioremap_nocache(up.mapbase, 0x40 << up.regshift);
+	up.irq			= EMMA_IRQ_PUART1;
+	up.private_data	= (void *)(up.membase + (0x1F << up.regshift));
+	early_serial_setup(&up);
+	修改内核参数 COMMAND_LINE 中 “console=ttyS1 ...”
+-----
+
+3 uboot支持压缩内核，先把内核vmlinux（elf格式）转换成bin格式，再压缩
+4 u-boot本身是可以不依赖Glibc,字符处理等C语言的库函数自己实现
+
+http://www.denx.de/wiki/view/DULG/Manual  uboot帮助文档。
+
+3 mkimage
+2.6.35版本kernel编译需要用到mkimage命令, apt-get install uboot-mkimage
+并且这个命令还提供了man-page，就是uboot组织制作了这个软件发布包然后发布到ubuntu的仓库原里面。
+在u-boot 源码目录中有一个tools目录， 这里用host cc 编译生成mkimage 工具（也可以apt-get install uboot-mkimage）
+
+--nxp平台--
+12 新板写uldr.bin的方法
+   cat uldr.bin /dev/zero | dd bs=1 count=64k > uldr_padded_64k.bin
+   将uldr.bin后面填充0，扩展到64k。用ymodem下载 uldr_padded_64k.bin和uboot.bin(nxp特制的能在
+   RAM里面运行的uboot)。然后用tftp下载自己的uldr.bin uboot.bin vmlinux.bin rootfs.arm.jffs2
+   appfs.arm.jffs2 等
+   自己编译的uldr.bin 和u-boot.bin 分别写到Nor Flash 的地址0x00000000 和 0x00100000(1M位置)
+   erase 0 100000  起始地址+结束地址
+   dhcp
+
+	tftp uldr.bin(try this first to make sure TFTP is working)
+	nor erase 0x0 0x100000
+
+	tftp uldr.bin
+	nor write 0x0 0x100000
+
+	nor erase 0x100000 0x80000
+
+	tftp u-boot.bin
+	nor write 0x100000 0x80000
+
+	tftp vmlinux.bin
+	nor write kernel
+
+	tftp rootfs.arm.jffs2
+	nor write root
+
+	tftp appfs.jffs2
+	nor write appfs
+
+   uldr.bin最大64K，怎么留了1M空间呢？ 可能128M Flash 是1M的扇区吧。
+   (20101127补充)cpu内部最高地址位置有64k SRAM空间。插跳线启动系统打印CC，这应该是内部ROM中的程序。这时通过y-modem
+   将uldr.bin下载到内部64k ram区域，这个uldr.bin 不是在sdk里面编译的，而是nxp提供的bin文件，通过特殊处理正好64k
+   下载完成后，uldr自动运行,uldr中对ddr进行初始化,(不论ddr是256M还是512M,都可以用同一个uldr.bin,所以512M开始可能被
+   初始化成256M),再通过y-modem下载u-boot到外部DDR中,自动运行.然后就是上面的过程了.
+13 内核编译make vmlinux 转换成bin文件 
+   创建一个.sh文件：
+   arm-none-linux-gnueabi-objcopy -O binary -R .note.gnu.build-id ./vmlinux  ~/tftpboot/vmlinux.bin
+-----
+
+
+uboot里面的bootargs 参数 最终会转换成  ATAG_CMDLINE
+
+
+u-boot 不单单可以启动 linux 还可以用来启动其他的os，比如 vxworkx netbsd 的你 可以在 cmd_bootm.c中看出来。
+所以在用 mkimage 需要指定 arch  os  等参数。
+
+“本节介绍了U-boot使用go或bootm启动linux内核的方法”  看来还是可以用go启动的。
+
+uIamge是由mkimage制作而来
+
+内核编译（make）之后会生成两个文件，一个Image，一个zImage，其中Image为内核映像文件，而zImage为内核的一种映像压缩文件，Image大约为4M，而zImage不
+到2M。(也就是说我在nxp上 编译生成vmlinux elfm文件之后)
+
+#####海思平台 重大发现 强化记忆 以免以后又忘记了
+在arch/arm/boot 里面有
+.Image.cmd
+arm-eabi-objcopy -O binary -R .note -R .note.gnu.build-id -R .comment -S  vmlinux arch/arm/boot/Image
+这就是我在nxp平台上经常用的 elf转 bin的方法，可以用go命令启动的
+
+.zImage.cmd
+arm-eabi-objcopy -O binary -R .note -R .note.gnu.build-id -R .comment -S  arch/arm/boot/compressed/vmlinux arch/arm/boot/zImage
+
+命令一样，只是使用的elf文件不同，一个压缩的一个不压缩的。
+
+.uImage.cmd
+/bin/bash /home/gaojie/Work/Hisi/software/trunk/froyo/kernel/scripts/mkuboot.sh -A arm -O linux -T kernel -C none -a 0x80800000 -e 0x80800000 -n 'Linux-2.6.35.7_hi3716c' -d arch/arm/boot/zImage arch/arm/boot/uImage
+
+uImage一定要用zImage做吗？不就是加个头嘛，也可以用Image做吧
+
+Trident平台对u-boot做了修改，在bootm.c中增加了 patch_ataglist()  专门处理uloader的的补丁patch
+借助u-boot里面的环境变量 uboot_cmdline
+
+u-boot的正常逻辑是只要设置了 bootargs 就会作为kernle的 cmd_line 而nxp修改成了 uboot_cmdline 设置为1 才能如此。
+好像是他的patch 有若干cmd line 参数，再把u-boot里面设置的
+
+
+clobber
+

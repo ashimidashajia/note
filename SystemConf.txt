@@ -14,6 +14,8 @@
 	11) ts分析工具:tstools
 	12) 使用SIMD的jpeg库:libjpeg-turbo(软件中心)
 		普通jpeg库：libjpeg-dev(开发版)
+	
+	注：没有的命令直接执行，会给出安装包名的提示。
 
 2  APT
 	1) Debian/Ubuntu采用deb软件包,通常用dpkg（package manager for Debian）或 apt（Advanced Package Tool）工具进行管理。
