@@ -46,4 +46,4 @@ error的值为90
 
 用dvb-c工程机推送udp ts 流到192.168.1.87工作机，wireshark竟然识别了UDP中的TS包，为何？
 
-
+pppoe拨号，路由器不断电的情况下，wan口ip会变化。

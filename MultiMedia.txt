@@ -1722,4 +1722,6 @@ ffmpeg seek后要清buffer，重新下载数据。
 
 xuss buffer缓冲通知机制：
 
+罗技C270摄像头：
+UVC设备
 

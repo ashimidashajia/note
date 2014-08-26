@@ -1,3 +1,6 @@
+1 编译
+	1) 安装libsdl1.2-dev，否则ffplay不编译
+
 
 -codecs 查看所有编解码器 -filters 查看所有可用的filter -pix_fmts查看所有支持的图片格式
 -sample_fmts 查看所有支持的像素格式
@@ -37,7 +40,7 @@ libswscale 对于影像作缩放的函式库
 configure –disable-asm
 –disable-asm 不用yasm,x264解码效率会变低
 最后生成ffmpeg avconv ffprobe ffserver 
-没有生成ffplay 是因为没有sdl库
+ffplay需要sdl开发库
 
 2 有意思，ffmpeg里面可以配置使用 libstagefright 的h264解码程序。包含的路径也完全是
 android里面libstagefright的，搞笑啊
@@ -540,9 +543,6 @@ xss调试mx盒子时移功能，服务器设置6小时时移，每条2.4s，共8
 而一条才2.4s，也就是过2.4s就更新playlist，分析时间比更新时间还长，所以导致问题。
 
 
-新系统编译ffmpeg 不会编译 ffplay 因为没有sdl，需要安装libsdl1.2-dev包
-
-
 virtual box 虚拟机 ubuntu中 ffplay：
 No more channel combinations to try, audio open failed
 
@@ -569,4 +569,17 @@ vitamio 继续深化ffmpeg，作出8秒视频的应用。
 ffplay播放一个ts流小段落，提示
 non-existing SPS 0 referenced in buffering period
 
+c270摄像头：
+./ffplay  -f video4linux2  -i /dev/video0
+默认格式：yuyv422, 640x480, 147456 kb/s, 30 fps（640x480x16x30=147456000）
+如何提高分辨率
+
+
+ffmpeg -f alsa -i hw:1 -f video4linux2 -s 320x240 -i /dev/video0 out.mpg(没有试)
+用了一下cheese，再回头用ffplay显示：
+yuyv422, 1280x960, 589824 kb/s, 30 fps
+
+
+lsusb: ID 046d:0825 Logitech, Inc. Webcam C270
+cheese webcam booth软件(软件中心搜cheese)
 

@@ -79,6 +79,9 @@
 		执行：
 		VBoxManage setextradata VM_NAME VBoxInternal2/SharedFoldersEnableSymlinksCreate/SHARE_NAME 1
 		VM_NAME是虚拟机名，SHARE_NAME是共享文件夹名，重启即可。
+	7) 访问U盘需安装VirtualBox Extension Pack，并Add the user name to the vboxusers group. 
+		groups显示当前用户所在的组，没有vboxusers,执行sudo adduser gaojie vboxusers后，再执行groups显示了vboxusers
+		然后在虚拟机菜单->Devices->USB Devices看到U盘，选择之即可在xp中访问。
 
 		
 
@@ -1817,42 +1820,39 @@ synaptic 新立得包管理器
 
 https://help.ubuntu.com/community/UpgradeNotes
 
-<<<<<<< HEAD
 
 删除gnome panel里的图标。10.04版本有删除菜单，11.10 以后没有，需要进入
 ~/.config/gnome-panel/launchers  直接删除相应文件。
 
 ext3/4 文件系统 lost+found 目录存储删除的数据（垃圾箱）。如果是外部挂载，umount时会提示是否清除垃圾箱
 
-
 10. ubuntu tftp
 -------->安装
 	使用下面的命令来安置 tftpd-hpa 服务器：
 	$sudo apt-get install tftpd-hpa
-
 -------->配置
 	tftp-hpa 的配置文件为 /etc/default/tftpd-hpa 
-	
 	TFTP_USERNAME="tftp"
 	TFTP_DIRECTORY="/your/tftp/path/"
 	TFTP_ADDRESS="0.0.0.0:69"
 	TFTP_OPTIONS="-l -c -s"
-
 	-c为可创建新文件，若无此参数，put命令则可能出现错误提示，此时只能覆盖原有文件不能创建新文件； 
-
 -------->启动
 	$sudo  /etc/init.d/tftpd-hpa start
-
 -------->停止
 	$sudo /etc/init.d/tftpd-hpa stop
-
 -------->重启
 	$sudo /etc/init.d/tftpd-hpa restart
 
-=======
 在我的电脑上12.04 ：lspci显示：
 00:02.0 VGA compatible controller: Intel Corporation Xeon E3-1200 v2/3rd Gen Core processor Graphics Controller (rev 09)
 应该是没有正常识别显卡。电脑13年购买，12.04应该不含其驱动。 我的CPU i53470 集显HD2500
 intel官网有14.04版的的显卡驱动，没有12.04的。不能轻易尝试，弄不好系统起不来了。
->>>>>>> fd714b105a1c4772d9428e7d54ca6477828f1d73
+
+
+在软件中心搜索库的时候需要加上libxxx，比如libsdlxxx
+
+可以用ubuntu自带的 Startup Disk Creator 制作系统U盘，不用windows版的ultraiso。
+
+
 

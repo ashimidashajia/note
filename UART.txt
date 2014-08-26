@@ -20,3 +20,7 @@ lsusb显示：QinHeng Electronics HL-340 USB-Serial adapter
 直接在ubuntu下生成 /dev/ttyUSB0  直接可以使用 跟 1 中描述的一样。不错不错！
 
 7 在家找到一个几年前的串口小板，芯片ds14c535 经测试可用。
+
+网购usb-uart：CH340G芯片
+
+HPDL-1414微型米字显示器
