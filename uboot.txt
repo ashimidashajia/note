@@ -1,13 +1,29 @@
-1 编译
+1 开始
+	1) Uboot(Universal Boot Loader)由德国DENX软件工程中心开发，支持powerpc, arm, mips, x86等架构。
+	DENX还开发了比较有名的denx linux和ELDK(Embedded Linux Development Kit )。
+	uboot下载地址：http://ftp.denx.de/pub/u-boot/ 在1.3.4版(2008/08/12)后用日期表示版本。
+	帮助文档: http://www.denx.de/wiki/view/DULG/Manual
+
+	2) doc目录以README.xx形式描述各模块
+
+2 编译
 	1) clean:删除一般性中间文件
 	   clobber: clean 和 .map .hex等更进一步的文件
 	   mrproper或distclean: clobber unconfig
 	   unconfig: 删除config.h等
 
+
+
+3 Make系统与配置
+
 1 20140718 
 uboot执行 defenv 可以恢复默认配置
 
 需要加入ir的支持，替代recovery按键。
+
+
+等待按键进入命令行的时间：
+并不是按任意键进入，有的是空格，a20是s，实际可以任意设定
 
 2 uboot 专门有一个参数区域用来存储参数。 参数存储的格式为：
 
@@ -138,17 +154,6 @@ include 目录的头文件一般不能删除 比如ata.h竟然都回用到
 small后，网络，文件系统 usb等都被关闭了。
 
 注意了：从u-boot中看，使用nandFlash启动的时候，Nand使用的竟然是 CS1  而不是CS0  这跟上面的a2000000编译地址吻合了
-
-u-boot 全称Universal Boot Loader, 即通用bootloader，是德国的DENX软件工程中心开
-发的遵循GPL条款的开源项目，从它的名字就可以看出来u-boot的雄心，不过u-boot现在也
-确实是嵌入式平台上用的最多的bootloader了，其支持powerpc, arm, mips, x86等等架构（
-
-这里提一下DENX，uboot让DENX享誉全球，以前uboot还在sourceforge发布，不过现在新
-版本只能在DENX的网站上才能下到了，最新版本是09年3月发布的，除了u-boot之外，他们
-还开发了比较有名的denx linux（一种嵌入式linux的SDK包，支持平台powerpc, arm, mips，
-里面有完整的kernel, filesystem, uboot, 目前最新版本的内核为2.6.25），整合的很不错，
-现在有很多公司都推荐使用denx 的ELDK(Embedded Linux Development Kit ),  有兴趣的
-朋友可以试试。
 
 nand_spl
 支持从nand flash启动，但支持的cpu的种类也不是很多
@@ -305,18 +310,6 @@ VERSION = 2009
 PATCHLEVEL = 06
 SUBLEVEL =
 EXTRAVERSION = -emma3slp-01
-
-看看人家的版本管理！！！！
-
-u-boot去哪里下载呢？
-
-http://ftp.denx.de/pub/u-boot/ 可以下载
-从这里可以看出来u-boot之前的版本是用1.x.x表示的
-最后到了1.3.4 2008-8-12 日 以后就用日期表示版本了  nec用的是09年6月的版本。
-
-
-http://git.denx.de/?p=u-boot.git;a=summary这个网址是一些问题的修正。
-
 
 关闭串行Flash后 help死机 下载到82000000的help 就不死机
 
@@ -509,7 +502,7 @@ e3slp uboot跳转内核入口后串口1无启动信息，串口0有
 3 uboot支持压缩内核，先把内核vmlinux（elf格式）转换成bin格式，再压缩
 4 u-boot本身是可以不依赖Glibc,字符处理等C语言的库函数自己实现
 
-http://www.denx.de/wiki/view/DULG/Manual  uboot帮助文档。
+
 
 3 mkimage
 2.6.35版本kernel编译需要用到mkimage命令, apt-get install uboot-mkimage
@@ -595,3 +588,16 @@ u-boot的正常逻辑是只要设置了 bootargs 就会作为kernle的 cmd_line 
 
 clobber
 
+
+
+
+a20：
+boot-v1.0 目录下有个uboot
+brandy下还有一个
+最终使用的是brandy/u-boot-2011.09 
+编译器用的是brandy/gcc-linaro目录
+
+HELLO! BOOT0 is starting!
+
+配置文件在：
+./buildroot/configs/sun7i_defconfig
