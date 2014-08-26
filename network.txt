@@ -17,3 +17,5 @@ Content-Type:video/x-flv
 Content-Length:1874642
 
 
+8.8.8.8是Google提供的免费DNS服务器
+

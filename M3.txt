@@ -149,6 +149,7 @@ E/StandByService(  556): execMCU() start
 短按都是真待机。经孙科提醒才想到是遥控器。经验证确实说的是遥控器。遥控器和盒子都有待机
 按键，怎么就不会多想一想，所以关键时刻大脑还不够清晰。
 
+
 这里开关 ota是否带uboot
 #MTC:Liuese 2013-03-08 Don't need pack uboot +++
 #TARGET_AMLOGIC_BOOTLOADER := $(PRODUCT_OUT)/u-boot-aml-ucl.bin

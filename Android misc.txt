@@ -1,3 +1,0 @@
-1 a20 home默认回自己的launcher，install新launcher不弹出选择菜单(不标准),进入shell，root，remount，删除原launcher，
-  重启，可以引导到data/app里新安装的。
- 

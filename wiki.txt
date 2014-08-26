@@ -1,3 +1,46 @@
 注意看 xbmc的wiki首页，设计得很好看。
 他用的也是标准的mediawiki，但是左边的导航是怎么做出来的呢？
 
+PDF 功能由 PDF Handler 提供 （在特殊也  versione 里面看到）
+ PdfHandler extension for MediaWiki software
+在服务器上可以用wget下载
+http://upload.wikimedia.org/ext-dist/PdfHandler-MW1.18-r92186.tar.gz
+
+require_once("$IP/extensions/PdfHandler/PdfHandler.php");
+
+Ubuntu Note: You must have already installed the following 3 packages:
+imagemagick ghostscript xpdf-utils
+
+$wgPdfProcessor = 'gs';
+$wgPdfPostProcessor = $wgImageMagickConvertCommand;
+$wgPdfInfo = 'pdfinfo';
+
+Set $wgLogo to the URL path to your own logo image  怎么搞定？
+
+在 Preferences 页面里面有很多设置
+
+可用 Printable Version 产生可打印的版本,缺点：左右页面都靠边开始的没有任何空隙。
+使用 Download as PDF 可以产生格式非常棒的pdf 文档，这正是我想要的啊！
+
+好像还挺复杂的 不过mediawiki上都有说明了
+说是要 require_once("extensions/PdfExport/PdfExport.php");  
+但是查看mediawiki的version 没有看到有PdfExport这个扩展啊
+
+用PdfExport可以生成pdf，但不支持中文，并且跟mediawiki也不一样，人家那个 extension里
+面没有PdfExport 照样行。mediawiki 中是由 Collection 组建完成的。
+require_once("$IP/extensions/Collection/Collection.php"); Print/export 出来了 也
+有 Download as PDF 
+接下来又悲剧了 点击Download as PDF 没有页面。需要安装:Extension:PDF Writer
+
+Make sure, you have the needed environment. On Debian systems:
+apt-get install g++ perl python python-dev python-setuptools python-imaging python-lxml
+
+Simply download and install mwlib with easy_install:
+
+easy_install mwlib && rehash [easy_install 是个命令] 【ubuntu10.04.3 server执行失败】
+
+RPM
+RPM based Distros that have yum - just do : yum search mwlib , then do : yum install mwlib
+fyi: mwlib has some depedencies which makes it more hard to compile from scratch.
+
+

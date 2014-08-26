@@ -14,3 +14,9 @@ wireshark 识别.pacp文件
 
 执行tcpdump -i eth1 -w  xx.pacp 然后用wireshark分析文件会得到更多信息
 为啥直接tcpdump -i eht1 没多少打印
+
+
+
+netlink专题
+netlink是linux用户态与内核态交流的主要方法之一。
+

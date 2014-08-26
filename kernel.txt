@@ -1,4 +1,51 @@
+1 编译
+  clean           - Remove most generated files but keep the config and
+                    enough build support to build external modules
+  mrproper        - Remove all generated files + config + various backup files
+  distclean       - mrproper + remove editor backup and patch files(distribution)
+
+
+
+注：
+mrproper这个诡异的名字是什么意思呢? Wiki页 http://en.wikipedia.org/wiki/Mr._Clean提到：
+"make mrproper" is a command in the Linux kernel build system, used to "clean up" 
+all files from past builds and restore the build directory to its original clean state. 
+The reason "make mrproper" is used instead of "make mrclean" is because Linus Torvalds, 
+the father of Linux, was familiar with the name "Mr. Proper" as this is the brand 
+widely known in Europe."
+意思是说：Mr.Proper在欧洲是一个清洁产品的商标，Linux借用这个词表示彻底清除编辑记录。
+
+1 20140726
+首次执行：
+make xx_default_config
+
+将scripts/kconfig 下的c代码编译为 conf 程序
+
+直接执行 make xxx 提示：
+make: *** No rule to make target `xxx'.  Stop. 这是Make自己提示的.
+xx_default_config是一个目标，定义在
+
+scripts/kconfig/Makefile :
+
+%_defconfig: $(obj)/conf
+        $(Q)$< -D arch/$(SRCARCH)/configs/$@ $(Kconfig)
+
+
+
+------------------
+
+
+
 0  vmlinux,vm代表“Virtual Memory”。Linux 支持虚拟内存，支持mmu，不像DOS有640KB内存的限制
+
+显示内核打印信息：cat /proc/kmsg &   或者用dmesg命令
+内核信息打印有七个日志级别，数字越低，级别越高
+
+1-1.3:1.0的意思是，摄像头使用的根集线器编号为1，集线器端口号为1，集线器（摄像头使用）端口号为3，配置为1，接口为0
+
+UVC是在linux-2.6.38版本时加入内核的
+
+Documentation/video4linux/uvcvideo.txt”中，是有关于UVC的说明。驱动源码位置：./media/video/uvc/。
 
 1 kernel控制台
 

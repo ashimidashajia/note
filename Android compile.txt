@@ -2021,3 +2021,19 @@ cp: cannot create symbolic link `sbin-back/ueventd': Read-only file system
 
 standalone模式，打印：
 
+--
+全新apk强制拷贝到/system/app目录可以运行，如果此目录原有apk，再用一个同名（同包名）替换，会因签名问题不能运行，需要把它
+放到prebuilt目录“编译”一下重新签名，再从out目录拷贝到system/app 即可。
+
+
+20120823
+android的build系统很复杂强大，甚至有继承功能，体现了OO思想，比如inherit-product函数
+有一些字段的值，如果子文件赋值了，就用子文件的，如果没有赋值，就用父文件的。
+
+
+ndk
+1 ndk9 安装成standalone模式:
+/build/tools/make-standalone-toolchain.sh --platform=android-14 --install-dir=/tmp/jpegturbo
+
+
+

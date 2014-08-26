@@ -1,5 +1,7 @@
 20121011
 
+所有进程的父进程都是init
+
 1
 int main(int argc, char **argv)
 {
