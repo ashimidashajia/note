@@ -1,15 +1,12 @@
 待明确问题：
 1 ts如何统计时长
 
-1 20111101邮件
-各位：
-  Trident平台多媒体功能开发历时1年半，贯穿NGB项目始终，现在做一个阶段性总结。
-支持文件格式: mkv、mp4、flv/f4v、avi、mpg/mpeg、mov、ts，后续要支持格式：trp、m2ts
-支持视频解码格式：h.264、mpeg1/2、asp/divx/xvid 共3种（vc-1，rmvb能支持但无许可，软
-解码全面放弃）
-支持音频解码格式：aac、mp3、ac3、pcm(dts等目前无法支持)
-软件整体结构：
-经过长时间实践，最后采用：
+
+文件格式: mkv、mp4、flv/f4v、avi、mpg/mpeg、mov、ts，trp、m2ts
+解码格式：h.264、mpeg1/2、asp/divx/xvid 共3种（vc-1，rmvb能支持但无许可）
+音频解码格式：aac、mp3、ac3、pcm(dts等目前无法支持)
+
+最后采用：
 android2.2 Stagefright+ffmpeg+openmax
 多媒体播放分为 Parser和Decoder2部分，Parser全部由ffmpeg完成，Decoder全部由openmax完成
 软件部分存在争议的2点：
@@ -20,13 +17,6 @@ android2.2 Stagefright+ffmpeg+openmax
 引入很多问题。曾考虑剥离pipeline，
   自己实现openmax。这种做法难度很大，且难于得到nxp的支持，加之当时的严重bug逐步解决，
 故此想法放弃。
-
-后续工作：
-1 继续解决sdk3.1上面的若干问题，开始研发trp，m2ts格式的支持 
-2 加大基于SDK3.1 的多媒体测试，建立多媒体库
-3 多媒体不能无限期拖延了，以上功能全部稳定后此模块就要定版结项！
-
-2 20111102 与候讨论多媒体今后走向以及1年半研发的得失。
 
 需求	需求描述	备注
 Network Protocols	"RTSP (RTP, SDP)
@@ -40,7 +30,6 @@ Decoder(Profile&Level)	"1 海斯3716: H.264 MPEG-2 MPEG4 SP/ASP DivX4/5/6 VC-1 A
 3716C、7231支持音频透传
 ASP兼容Divx？兼容h.263?
 "
-==================================
 关于容器和解码格式的总结（）
 
 多媒体技术 错综复杂！ 要搞清楚
@@ -48,8 +37,6 @@ ASP兼容Divx？兼容h.263?
 1 各种组织
   ITU:国际电信联盟  ISO：国际标准化组织 IEC 国际电工委员会
 活动图像和电视工程师协会(SMPTE) The Society of Motion Picture and Television Engineers
-
-
 
 H.262 是ITU-T的一个数字视频编码标准，属于视频编解码器。H.262在技术内容上和ISO／IEC的MPEG-2视频标准（正式名称是ISO/IEC 13818-2）一致。
 H.262是由ITU-T的VCEG组织和ISO／IEC的MPEG组织联合制定的  【ISO/IEC总是在一起】

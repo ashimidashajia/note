@@ -77,8 +77,9 @@
 		VBoxManage setextradata VM_NAME VBoxInternal2/SharedFoldersEnableSymlinksCreate/SHARE_NAME 1
 		VM_NAME是虚拟机名，SHARE_NAME是共享文件夹名，重启即可。
 	7) 访问U盘需安装VirtualBox Extension Pack，并Add the user name to the vboxusers group. 
-		groups显示当前用户所在的组，没有vboxusers,执行sudo adduser gaojie vboxusers后，再执行groups显示了vboxusers
-		然后在虚拟机菜单->Devices->USB Devices看到U盘，选择之即可在xp中访问。
+		groups显示当前用户所在的组，没有vboxusers,执行adduser gaojie vboxusers，再groups显示了vboxusers
+		在虚拟机菜单->Devices->USB Devices看到U盘，选择之即可在xp中访问。
+	8) 个别程序需将文件拷至虚拟机目录，在共享ubuntu目录执行异常。已知的：winrar直接提示错误，Phoenixcard，uboot部分烧不进入。
 
 		
 
@@ -156,6 +157,29 @@ dpkg -r 删除一个包
 
 9 系统安装专题
 	1) 用UltraISO制作的系统盘是FAT32系统
+
+
+
+10 apache配置
+	1 /etc/init.d/apache2 restart 
+	2 网页地址在 /var/www 默认有index.html内容：It works! 如果无index文件显示目录和文件列表。
+	3 /etc/apache2/httpd.conf
+	4 /etc/apache2/sites-available/default 设置网站地址
+	/etc/init.d/apache2  restart
+	<Directory /var/www>   <Directory /home/rimke/www>
+	apache 服务终止，导致wiki,mantis,testlink无法工作。
+	vcs:/home/vca/git# /etc/init.d/apache2 restart
+	Restarting web server: apache2apache2: Syntax error on line 185 of /etc/apache2/apache2.conf: 
+	Syntax error on line 1 of /etc/apache2/mods-enabled/php5.load: Cannot load /usr/lib/apache2/modules/libphp5.so 
+	into server: /usr/lib/apache2/modules/libphp5.so: cannot open shared object file: No such file or directory failed!
+	ubuntu服务器  /usr/lib/apache2/modules/ 下面有一个libphp5.so 但是debian同目录变成了libphp5filter.so
+	copy libphp5filter.so 为libphp5.so 这样做完，ldap 又能安装了.
+
+
+
+
+11 Nginx配置
+
 
 12.04 由于之前试验，卸载安装卸载使得libncurses库损坏，导致man xx无法使用：libncurses.so.5: No such file or directory
 查看10.04 在/lib下有此库64位版本，而12.04 /lib/x86_64-linux-gnu下只有libncursesw.so.5没有 libncurses.so.5
@@ -977,21 +1001,6 @@ www 不是一个账户，只是一个文件夹而已
 vca 用户是干什么的呢？上面运行着 wiki  mantis  testlink 等
 vcs是 root用户
 
-ldap最新版本在192.168.1.4上没有安装成功。
-
-apache 服务终止，导致wiki,mantis,testlink无法工作。
-vcs:/home/vca/git# /etc/init.d/apache2 restart
-Restarting web server: apache2apache2: Syntax error on line 185 of /etc/apache2/apache2.conf: 
-Syntax error on line 1 of /etc/apache2/mods-enabled/php5.load: Cannot load /usr/lib/apache2/modules/libphp5.so 
-into server: /usr/lib/apache2/modules/libphp5.so: cannot open shared object file: No such file or directory
- failed!
-
-ubuntu服务器  /usr/lib/apache2/modules/ 下面有一个libphp5.so 但是debian同目录变成了libphp5filter.so
-copy libphp5filter.so 为libphp5.so 
-这样做完，ldap 又能安装了.
-
-通过 192.168.1.4/lam 可以访问了（神奇） 那么他安装到哪里了呢？
-登录上，账户怎么得到呢，admin账户的密码竟然还是123456 看来是在ldap服务里面保存好的。
 ===============
 Darwin Streaming Server
 6.0.3 版本，却换到root用户 密码 yinjiezoule  执行 ./Install
@@ -1077,7 +1086,6 @@ sys	0m34.930s
 iostat（apt-get install sysstat）
 
 
-
 R810 远程开关机：
 IPMI OVER LAN
 
@@ -1085,22 +1093,6 @@ IPMI OVER LAN
 -----------------------------
 red hat 系统用rpm格式，Debian系列（比如ubuntu）用deb格式。Ubuntu安装rpm需先用alien
 转换软件转换成deb格式。
-
---------------
-20130327 Wowza 配置
-注册码：
----------------
-apache 服务配置
-1 /etc/init.d/apache2 restart 
-2 网页地址在 /var/www 默认有index.html内容：It works! 如果无index文件显示目录和
-  文件列表。默认端口80
-3 /etc/apache2/httpd.conf
-4 /etc/apache2/sites-available/default  设置网站地址
-
-/etc/init.d/apache2  restart
-
-
-<Directory /var/www>   <Directory /home/rimke/www>
 
 ---MySQL-----------
 
@@ -1132,18 +1124,6 @@ vim /etc/mysql/my.cnf
 
 errno 111 is ECONNREFUSED
 ----------------
-Nginx 服务配置
-
-
-
------------
-配置SKYUC
-
-先在1.87工作机器上配置，不能运行php代码，是apache环境问题。在1.52上就可以，前提是安
-装了ZendGuardLoader.so
-在/etc/php5/apache2/php.ini 中添加
-zend_extension=/lib/ZendGuardLoader.so
-zend_loader.enable=1
 
 配置过程中检测到某些文件/目录不可写，在服务器上 对这些文件的其他用户加写权限即可。
 
@@ -1164,7 +1144,6 @@ zend_loader.enable=1
 apt-get update
 apt-get install php5-gd
 
-重启apache2 显示 图像处理库......GD
 
 mysql 使用root：123456 账户登录，搜出来2个db :performance_schema   test 
 我创建一个新的，显示不能成功，选择test，安装成功了！
