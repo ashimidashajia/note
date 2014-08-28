@@ -1,22 +1,40 @@
-20110322 
+1 基本命令 
+	1) pull = fetch + merge
+	2) -f参数 --force
+	3) 本地与远程同名分支才能互相合并跟踪
+	4) push:Updates remote refs using local refs
 
-1 2011-02-28 
-关于git pull 和git fetch
-  git fetch <options> <repository> <refspec> ...
+2 配置
+	1 git config
+	--system选项创建并操作/etc/gitconfig针对所有用户
+	--global选项创建并操作~/.gitconfig针对当前用户
+	无选项操作.git/config针对当前项目	
+	后面的会覆盖前级同名配置，例如.git/config覆盖/etc/gitconfig中同名变量
 
-  <repository>
-  The "remote" repository that is the source of a fetch or pull operation.
-  This parameter can be either a URL (see the section GIT URLS below) or the
-  name of a remote (see the section REMOTES below).
+	git config --global core.editor vim
+	git config --global user.name "xx"
+	git config --global user.email xx@xx.com
+	git config --global merge.tool vimdiff
 
-还可以直接url？常规是使用config文件里面的地址
 
---all   Fetch all remotes. 
+Git 可以理解 kdiff3，tkdiff，meld，xxdiff，emerge，vimdiff，gvimdiff，ecmerge，和 opendiff 等合并工具的输出信息。
+
+3 基础原理
+	1 Delta压缩算法用于计算一个新文件和一个已经存储在系统中的参考文件之间的Delta编码。
+	当两文件间的相似性超过了预先设定的阀值时，就计算出一个 Delta编码，而且只须把这个Delta
+	编码存储在系统里即可。在存储具有相似性的文件集时，使用Delta编码进行文件压缩，可以极大
+	地减少存储空间的占有率。 
+
+	2 http://progit.org/book/ 这是一本 Pro Git 的书
+
+
 
 如果.git/refs/remotes/下面只有一个目录 就不需要指定参数 直接git fetch 即可 并且这个
 m目录在remote目录中显示 ref: refs/remotes/vc/fawn
+
 也就是说他只是简单指向我用的另外一个远程仓库。那建立这个的作用是什么呢？ git_refs.py 
 定义 R_M     = 'refs/remotes/m/'
+
 
 在framework/base中 执行了git pull url 结果把仓库搞坏了，执行git checkout -f 强制切
 换到其他分支 再git fetch 才好。
@@ -26,19 +44,6 @@ m目录在remote目录中显示 ref: refs/remotes/vc/fawn
 注意：我先git checkout ngb/newbox 再 git pull  ngb omx-dev-zzq-new 结果把
 omx-dev-zzq-new分支合并到了newbox了！
 
-注意：正常情况下，本地分支不会提交到服务器，所以我repo sync下来后，也不会有别人的本地
-分支在本地切换到一个远程分支后，git branch 不会显示这个分支而是显示 no branch
-问题是这时候能提交到服务器吗？
-
-2 2011-02-28 git checkout 的 -f参数
-
--f, --force
-   When switching branches, proceed even if the index or the working tree differs 
-from HEAD. This is used to throw away local changes.
-   When checking out paths from the index, do not fail upon unmerged entries; 
-instead, unmerged entries are ignored.
-
-index 是啥东西？
 
 3 git-rm - Remove files from the working tree and from the index
   实验发现，git rm 后 index文件发生变化，index最开头有一个字段记录文件总数，后面是相
@@ -86,7 +91,7 @@ git push --mirror 好像把base仓库搞坏了，把refs/heads里面的分支，
 注：好像是refs/heads　里面有哪几个分支就保留哪个分支，其他的远程分支全部删除。本地分
 支怎么提交到服务器啊
 
-【网络】
+
 To always push all branches and tags, you can update .git/config  like so:
 
 [remote "origin"]
@@ -117,9 +122,6 @@ git push
 在远程版本库中删除分支
 git push <remote repository> :<remote branch>
 
-【网络】：如果想对这个分支做点什么，必须建立一个本地分支与之相对应建一个与远程分支同
-名的本地分支 【证明了我的想法，必须有本地同名分支】
-
 2011-03-01 04:10 framework/base终于恢复。 步骤：
 a 我在好的目录中，把所有的远程分支全部创建一遍本地分支，然后git push --mirror
 b 在我这里再删除base目录，同时删除.repo里面的base.git[可能是这个操作起了作用吧！不知
@@ -138,24 +140,14 @@ or thousands of tags, this one-file-per-ref format both wastes storage and hurts
 
 git pack-refs refs/heads下面的本地分支就都消失了，进入packed-refs 文件中
 
-12 回想一下之前关于openmax的git操作，很神奇：
-stagefright有2个版本，r1.1 和 r4 
 
-13 想明白的几个问题
-   a 分支1合并到2，和分支2合并到1，情况是不一样的
-   b 在gitg上 看到分支合并，并且没有多余的分支名，并且就是简单的分、合没有多余的分叉，message：
-     Merge branch 'master' of git://github.com/gaojie/Test-repo2 这标明同是在master分支上的操作
-      无非一个是本地修改，一个是远程的。而不是2个不同名字的分支。
-
-
-14 注意：git push --mirror 是使用ref/heads里面的branch更新远程的分支。这跟“修改远程分支必须建立本地同名分支”
-   一脉相承。看看push的解释吧： Updates remote refs using local refs
+14 注意：git push --mirror 是使用ref/heads里面的branch更新远程的分支。
    push --all
    Instead of naming each ref to push, specifies that all refs under refs/heads/ be pushed.
    push /refs/heads下面的分支，但是此目录下没有的分支也不会在远程删除。而mirror则会！害死我了这个参数。
    可以确定的是mirror 只把ref/heads里面的分支提交上去，远程的其他分支会被删除，并且在本地执行了push --mirror后
    本地仓库立刻变成远程仓库的样子【可怕】。因为本地分支没有提交到远程，所以每个人的本地目录的本地分支都不同。
-  【*】再看看--mirror的注释：
+
 
 15 猜测：git的服务端应该没有 ref/heads目录吧，因为他不需要本地分支。也可能有，因为如果把本地分支提交上去
    需要确认：本地分支能push上去吗？
@@ -163,11 +155,6 @@ stagefright有2个版本，r1.1 和 r4
 16  git clone --mirror
 17  ~/.gitconfig
     
-18 
-Delta压缩算法用于计算一个新文件和一个已经存储在系统中的参考文件之间的Delta编码。
-当两文件间的相似性超过了预先设定的阀值时，就计算出一个 Delta编码，而且只须把这个Delta
-编码存储在系统里即可。在存储具有相似性的文件集时，使用Delta编码进行文件压缩，可以极大
-地减少存储空间的占有率。 
 
 19 *网络上的一段讨论*
 Git: how to unpack packed-refs?
@@ -218,8 +205,6 @@ objects contained in the pack into "one-file one-object" format; this is typical
  done by the smart-pull commands when a pack is created on-the-fly for efficient
  network transport by their peers.
 
-20 The Refspec【网络】 http://progit.org/book/ch9-5.html
-    http://progit.org/book/ 这是一本 Pro Git 的书
 
 21 git push [--all | --mirror | --tags]
    --all 是把refs/heads/里面的分支全部push上去
@@ -1777,37 +1762,6 @@ git push origin :refs/tags/gaojie
 git push origin :refs/heads/itvision-1.2.0-stb-eng  也需要 force push 权限
 需要把我加入的相应组中，不加的话，管理员也不灵。
 
-
-
-ubuntu 12.04 初始 没有/etc/gitconfig 和~/.gitconfig 文件，需要手动建立
-编辑的时候可以配合  git config 命令
-
-git config --global core.editor vim 会建立 ~/.gitconfig 文件
-
-配置存放在三个不同的地方：
-
-/etc/gitconfig 文件：系统中对所有用户都普遍适用的配置。若使用 git config 时用 --system 选项，读写的就是这个文件。
-~/.gitconfig 文件：用户目录下的配置文件只适用于该用户。若使用 git config 时用 --global 选项，读写的就是这个文件。
-当前项目的 Git 目录中的配置文件（也就是工作目录中的 .git/config 文件）：这里的配置仅仅针对当前项目有效。每一个级别的配置都会覆盖上层的相同配置，所以 .git/config 里的配置会覆盖 /etc/gitconfig 中的同名变量。
-在 Windows 系统上，Git 会找寻用户主目录下的 .gitconfig 文件。主目录即 $HOME 变量指定的目录，一般都是 C:\Documents and Settings\$USER。此外，Git 还会尝试找寻 /etc/gitconfig 文件，只不过看当初 Git 装在什么目录，就以此作为根目录来定位。
-
-用户信息
-第一个要配置的是你个人的用户名称和电子邮件地址。这两条配置很重要，每次 Git 提交时都会引用这两条信息，说明是谁提交了更新，所以会随更新内容一起被永久纳入历史记录：
-
-$ git config --global user.name "John Doe"
-$ git config --global user.email johndoe@example.com
-如果用了 --global 选项，那么更改的配置文件就是位于你用户主目录下的那个，以后你所有的项目都会默认使用这里配置的用户信息。如果要在某个特定的项目中使用其他名字或者电邮，只要去掉 --global 选项重新配置即可，新的设定保存在当前项目的 .git/config 文件里。
-
-文本编辑器
-接下来要设置的是默认使用的文本编辑器。Git 需要你输入一些额外消息的时候，会自动调用一个外部文本编辑器给你用。默认会使用操作系统指定的默认编辑器，一般可能会是 Vi 或者 Vim。如果你有其他偏好，比如 Emacs 的话，可以重新设置：
-
-$ git config --global core.editor emacs
-差异分析工具
-还有一个比较常用的是，在解决合并冲突时使用哪种差异分析工具。比如要改用 vimdiff 的话：
-
-$ git config --global merge.tool vimdiff
-Git 可以理解 kdiff3，tkdiff，meld，xxdiff，emerge，vimdiff，gvimdiff，ecmerge，和 opendiff 等合并工具的输出信息。当然，你也可以指定使用自己开发的工具，具体怎么做可以参阅第七章。
-
 查看配置信息
 要检查已有的配置信息，可以使用 git config --list 命令：
 
@@ -1826,7 +1780,6 @@ color.diff=auto
 $ git config user.name
 Scott Chacon
 
-20140805
 
 出现error: Exited sync due to gc errors错误
 原因： repo 升级，不兼容GIT  1.7.2 以下的版本。

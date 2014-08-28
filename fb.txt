@@ -1,0 +1,12 @@
+可以用命令: #dd if=/dev/zero of=/dev/fb 清空屏幕.
+如果显示模式是 1024x768-8 位色，用命令：$ dd if=/dev/zero of=/dev/fb0 bs=1024 count=768 清空屏幕；
+用命令: #dd if=/dev/fb of=fbfile 可以将fb中的内容保存下来；
+可以重新写回屏幕: #dd if=fbfile of=/dev/fb；
+
+int fb;
+unsigned char* fb_mem;
+fb = open ("/dev/fb0", O_RDWR);
+fb_mem = mmap (NULL, 1024*768, PROT_READ|PROT_WRITE,MAP_SHARED,fb,0);
+memset (fb_mem, 0, 1024*768); //这个命令应该只有在root可以执行
+
+FrameBuffer 设备还提供了若干 ioctl 命令，通过这些命令，可以获得显示设备的一些固定信息（比如显示内存大小）、与显示模式相关的可变信息（比如分辨率、象素结构、每扫描线的字节宽度），以及伪彩色模式下的调色板信息等等。

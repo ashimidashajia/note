@@ -181,6 +181,9 @@ dpkg -r 删除一个包
 11 Nginx配置
 
 
+12 ssh服务
+	如果配置了端口，登录命令是 ssh xxx@x.x.x.x -p xxx 而不是 ssh xxx@x.x.x.x:xxx
+
 12.04 由于之前试验，卸载安装卸载使得libncurses库损坏，导致man xx无法使用：libncurses.so.5: No such file or directory
 查看10.04 在/lib下有此库64位版本，而12.04 /lib/x86_64-linux-gnu下只有libncursesw.so.5没有 libncurses.so.5
 apt-get install 显示已经是最新的版本。(apt-get remove 失败，否则重新安装应该也能解决)
