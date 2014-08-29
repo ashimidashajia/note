@@ -1,3 +1,14 @@
+android原生不支持Ethernet，实现来自 The Android-X86 Open Source Project
+a20在framework/base/ethernet
+EthernetDataTracker.java(这是android原生文件 不知为何移动到这里)
+EthernetDevInfo.aidl
+IEthernetManager.aidl
+EthernetDevInfo.java
+EthernetManager.java (主要文件)
+
+
+
+
 物理连接 wifi,3G,bluetooth,ethernet
 控制协议 PAN个人局域网 PPP 点对点  
 

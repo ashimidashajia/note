@@ -567,3 +567,18 @@ make的调试方法
 
 
 
+$(wordlist s,e,text)
+Returns the list of words in text starting with word s and ending with word e (inclusive).
+
+
+make 调试方法，如何快速实验一个函数
+
+makefile：
+test:=$(wordlist 3,5, 1 2 3 4 5 6 7 8 9)
+all:
+	echo $(test)
+
+输出3 4 5
+
+
+

@@ -90,3 +90,6 @@ msgfmt is usually part of the gettext package in your distribution
 
 gettext 是什么
 
+
+os/display/DisplayManager.java 厂家编辑
+
