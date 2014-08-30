@@ -586,3 +586,9 @@ yuyv422, 1280x960, 589824 kb/s, 30 fps
 lsusb: ID 046d:0825 Logitech, Inc. Webcam C270
 cheese webcam booth软件(软件中心搜cheese)
 
+
+如何修复一个损坏的视频dsdb
+
+格式转换
+ffmpeg  -i xxx.wmv  xxx-1.mp4 可以转换，但是原片分辨率有损失。但是查看转后mp4文件，分辨率仍然是之前的1280x720，为何？
+
