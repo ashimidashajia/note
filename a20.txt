@@ -1,3 +1,30 @@
+1 系统升级
+
+	1) galaxy
+	build.prob ro.product.ota.host=x.x.x.x 配置升级服务器ip
+	http://111.1.56.50/hansun/update.zip
+	由com.example.serverupdata 这个apk负责
+
+2 硬件
+	1) axp209 锂电池和电源系统管理芯片
+	Nanya NT5CB256M16CP 16bit  4Gb SDRAM   256M标称是16bit单位  2片共1GByte内存
+	TOSHIBA TC58TEG5DCJT 容量4GB
+	IP101GA 10/100自适应网络芯片，台湾ICPLUS(网络芯片生产商) 应该是个phy芯片
+	MiniSD卡槽旁边是电源控制用的MCU芯片：JL4605
+		pin4 3.3V，很偏门芯片，查不到资料（里面的程序怎么写入?2款遥控器主cpu兼容没问题，power也能兼容吗？）
+	lm1117 电源芯片
+	wifi rtl8188 
+	av线旁边是个音频芯片，汉辰和海克做的用的芯片不同
+
+	（8190是更新方案）
+
+这种小规模电路板，protel足矣
+
+正常待机 蓝色灯一直亮着，TF卡升级完指示灯被关闭。
+控制指示灯有2处：主cpu（status led  PD16引脚）和 mcu pin8（Power-led）
+
+BAT54C：肖特基二极管，是三脚双二极管，IR通过他一分为2，一个接到主cpu A13引脚，另一个接到MCU pin7
+
 华数
 galaxy: setting中按home，不出现多个launcher的选择，只会回到自己的launcher。
 
@@ -42,35 +69,6 @@ V/CDX_Player( 1191): Demuxer [0x44ac8f78] Event handle:10 flags:0x0
 V/CDX_Player( 1191): OMX_EventBufferUpdate:19%
 V/CDX_Player( 1191): Demuxer [0x44ac8f78] Event handle:11 flags:0x0
 W/MediaPlayer( 5719): info/warning (705, 78522)
-I/MediaPlayer( 5719): Info (705,78522)
-V/CDX_Player( 1191): Demuxer [0x44ac8f78] Event handle:10 flags:0x0
-V/CDX_Player( 1191): OMX_EventBufferUpdate:19%
-V/CDX_Player( 1191): Demuxer [0x44ac8f78] Event handle:11 flags:0x0
-W/MediaPlayer( 5719): info/warning (705, 66823)
-I/MediaPlayer( 5719): Info (705,66823)
-V/CDX_Player( 1191): Demuxer [0x44ac8f78] Event handle:10 flags:0x0
-V/CDX_Player( 1191): OMX_EventBufferUpdate:19%
-V/CDX_Player( 1191): Demuxer [0x44ac8f78] Event handle:11 flags:0x0
-W/MediaPlayer( 5719): info/warning (705, 64241)
-I/MediaPlayer( 5719): Info (705,64241)
-V/CDX_Player( 1191): Demuxer [0x44ac8f78] Event handle:10 flags:0x0
-V/CDX_Player( 1191): OMX_EventBufferUpdate:19%
-V/CDX_Player( 1191): Demuxer [0x44ac8f78] Event handle:11 flags:0x0
-W/MediaPlayer( 5719): info/warning (705, 62957)
-I/MediaPlayer( 5719): Info (705,62957)
-V/ControlService(28448): not create control services
-V/CDX_Player( 1191): Demuxer [0x44ac8f78] Event handle:10 flags:0x0
-V/CDX_Player( 1191): OMX_EventBufferUpdate:19%
-V/CDX_Player( 1191): Demuxer [0x44ac8f78] Event handle:11 flags:0x0
-W/MediaPlayer( 5719): info/warning (705, 56467)
-I/MediaPlayer( 5719): Info (705,56467)
-I/NuCachedSource2( 1191): Cache full, done prefetching for now
-I/NuCachedSource2( 1191): restarting prefetcher, totalSize = 2490368
-V/CDX_Player( 1191): Demuxer [0x44ac8f78] Event handle:10 flags:0x0
-V/CDX_Player( 1191): OMX_EventBufferUpdate:19%
-V/CDX_Player( 1191): Demuxer [0x44ac8f78] Event handle:11 flags:0x0
-W/MediaPlayer( 5719): info/warning (705, 49974)
-I/MediaPlayer( 5719): Info (705,49974)
 
 
 华数服务器，高清片源跳转，正常情况下，速度非常快，1s以内（记住这个数字）
@@ -91,4 +89,7 @@ You must install 'msgfmt' on your build machine
 msgfmt is usually part of the gettext package in your distribution
 
 gettext 是什么
+
+
+os/display/DisplayManager.java 厂家编辑
 

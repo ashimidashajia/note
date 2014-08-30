@@ -9,3 +9,14 @@ pkg-config
 readelf -A 显示architecture信息
 
 
+cat xx.bin /dev/zero | dd bs=1 count=64k > xx_64k.bin 将uldr.bin后面填充0，扩展到64k
+
+cat /dev/zero >test.bin  迅速生成几百M test.bin 文件 内容全为0
+
+dd if=/dev/zero bs=512 count=10  of=dd.bin  拷贝512x10个字节0到dd.bin
+bs=512 不写即：
+dd if=/dev/zero count=10  of=dd.bin 默认是512，此例拷贝51200字节
+如果
+dd if=/dev/zero bs=0 conout=100M of=dd.bin 执行得会很慢，因为一次读写1个字节
+dd if=/dev/zero conout=1M of=dd.bin 可迅速生成512M文件
+

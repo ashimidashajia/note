@@ -1,0 +1,128 @@
+1 framework/base 目录下的 Android.mk 引用 FRAMEWORKS_BASE_SUBDIRS
+生成 framework.jar 包含了 framework/base 目录下的所有java文件
+2 build/core/pathmap.mk 
+
+FRAMEWORKS_BASE_SUBDIRS := \
+        $(addsuffix /java, core graphics location media media/mca/effect \
+            media/mca/filterfw media/mca/filterpacks drm opengl sax telephony \
+            wifi keystore icu4j voip)
+
+3 apk的class.dex可分离出.odex文件（Optimized DEX）做预处理可加快运行速度，ICS 默认 LOCAL_DEX_PREOPT 为 true
+改为false生成完整apk。如果编译某个apk，可在其android.mk里： LOCAL_DEX_PREOPT := false 生成完整apk
+
+错误提示
+external/bluetooth/bluedroid/Android.mk:8: NO BOARD_BLUETOOTH_BDROID_BUILDCFG_INCLUDE_DIR, using only generic configuration
+
+frameworks/base/core/java/android/os/display/DisplayManager.java:58: warning: unmappable character for encoding UTF8
+原来是gb2312有汉字，另存为UTF8即可
+
+能否有1个命令或一个脚本把所有非utf8编码文件修正。并修改windows为linux编码
+
+编译 framework/base/ethernet
+
+
+在out/.../common/R  or  common/obj目录下有大量java文件（应该是生成的）
+
+out/target/common/obj/JAVA_LIBRARIES/framework_intermediates
+framework目录编译的中间目录。把这里的 class.jar 解压缩可以查到
+EthernetManager.class
+
+
+注意，编译靠这个文件
+java-source-list
+
+
+修改了framework目录下的某个文件的编译过程(技巧：故意将java源码改错助于露出端倪)：
+以下路径前缀默认： out/target/common/obj/JAVA_LIBRARIES
+
+mkdir -p ./framework_intermediates/
+mkdir -p ./framework_intermediates/classe
+
+unzip framework_intermediates/classes
+rm    framework_intermediates/classes/META-INF
+
+if [ -d "./framework_intermediates/src" ]; then 
+	find ./framework_intermediates/src -name '*.java' >> ./framework_intermediates/classes/java-source-list; 
+fi
+
+tr ' ' '\n' < ./framework_intermediates/classes/java-source-list | sort -u > ./framework_intermediates/classes/java-source-list-uniq
+
+
+如果framework_intermediates/classes/java-source-list-uniq存在且非0，则 
+javac 
+-J-Xmx512M 
+-target 1.5 
+-Xmaxerrs 9999999 
+-encoding UTF-8 
+-g  
+-bootclasspath 
+out/target/common/obj/JAVA_LIBRARIES/core_intermediates/classes.jar 
+-classpath out/target/common/obj/JAVA_LIBRARIES/bouncycastle_intermediates/classes.jar:out/target/common/obj/JAVA_LIBRARIES/core_intermediates/classes.jar:out/target/common/obj/JAVA_LIBRARIES/core-junit_intermediates/classes.jar:out/target/common/obj/JAVA_LIBRARIES/ext_intermediates/classes.jar  
+-extdirs "" 
+-d ./framework_intermediates/classes
+@./framework_intermediates/classes/java-source-list-uniq
+#不论javac命令是否成功，都会删除classes目录
+|| ( rm -rf out/target/common/obj/JAVA_LIBRARIES/framework_intermediates/classes ; exit 41 )
+
+
+target Dex: framework
+out/host/linux-x86/bin/dx  靠这个命令
+
+java-source-list这个文件是如何生成的？
+framework_intermediates/classes 这个目录的内容会变化，我修改了framework下的某个文件，然后编译make systemimage
+然后盯着framework_intermediates这个目录，classes一出现就立即复制，捕捉到了java-source-list这个文件
+这个文件包含了framework目录下2100多个java文件，怎么生成的？
+仅仅解压class.jar 并没有这个文件啊。 后面的部分是靠：
+find ./framework_intermediates/src -name '*.java' >> ./framework_intermediates/classes/java-source-list; 
+追加的，那么前面的呢？
+在./core/definitions.mk 这里处理
+找到根源了：# Common definition to invoke javac on the host and target.
+看定义：
+
+define compile-java
+$(hide) rm -f $@
+$(hide) rm -rf $(PRIVATE_CLASS_INTERMEDIATES_DIR)
+$(hide) mkdir -p $(dir $@)
+$(hide) mkdir -p $(PRIVATE_CLASS_INTERMEDIATES_DIR)
+$(call unzip-jar-files,$(PRIVATE_STATIC_JAVA_LIBRARIES),$(PRIVATE_CLASS_INTERMEDIATES_DIR))
+$(call dump-words-to-file,$(PRIVATE_JAVA_SOURCES),$(PRIVATE_CLASS_INTERMEDIATES_DIR)/java-source-list)
+$(hide) if [ -d "$(PRIVATE_SOURCE_INTERMEDIATES_DIR)" ]; then \
+	    find $(PRIVATE_SOURCE_INTERMEDIATES_DIR) -name '*.java' >> $(PRIVATE_CLASS_INTERMEDIATES_DIR)/java-source-list; \
+fi
+$(hide) tr ' ' '\n' < $(PRIVATE_CLASS_INTERMEDIATES_DIR)/java-source-list \
+    | sort -u > $(PRIVATE_CLASS_INTERMEDIATES_DIR)/java-source-list-uniq
+$(hide) if [ -s $(PRIVATE_CLASS_INTERMEDIATES_DIR)/java-source-list-uniq ] ; then \
+    $(1) -encoding UTF-8 \
+    $(strip $(PRIVATE_JAVAC_DEBUG_FLAGS)) \
+    $(if $(findstring true,$(LOCAL_WARNINGS_ENABLE)),$(xlint_unchecked),) \
+    $(2) \
+    $(addprefix -classpath ,$(strip \
+        $(call normalize-path-list,$(PRIVATE_ALL_JAVA_LIBRARIES)))) \
+    $(if $(findstring true,$(LOCAL_WARNINGS_ENABLE)),$(xlint_unchecked),) \
+    -extdirs "" -d $(PRIVATE_CLASS_INTERMEDIATES_DIR) \
+    $(PRIVATE_JAVACFLAGS) \
+    \@$(PRIVATE_CLASS_INTERMEDIATES_DIR)/java-source-list-uniq \
+    || ( rm -rf $(PRIVATE_CLASS_INTERMEDIATES_DIR) ; exit 41 ) \
+fi
+$(hide) rm -f $(PRIVATE_CLASS_INTERMEDIATES_DIR)/java-source-list
+$(hide) rm -f $(PRIVATE_CLASS_INTERMEDIATES_DIR)/java-source-list-uniq
+$(if $(PRIVATE_JAR_EXCLUDE_FILES), $(hide) find $(PRIVATE_CLASS_INTERMEDIATES_DIR) \
+    -name $(word 1, $(PRIVATE_JAR_EXCLUDE_FILES)) \
+    $(addprefix -o -name , $(wordlist 2, 999, $(PRIVATE_JAR_EXCLUDE_FILES))) \
+    | xargs rm -rf)
+$(hide) jar $(if $(strip $(PRIVATE_JAR_MANIFEST)),-cfm,-cf) \
+    $@ $(PRIVATE_JAR_MANIFEST) -C $(PRIVATE_CLASS_INTERMEDIATES_DIR) .
+endef
+注释：$(PRIVATE_JAVA_SOURCES) 是framework/base(或其他编译目录) 目录下的所有java文件
+可用 $(info $(PRIVATE_JAVA_SOURCES)) 打印
+define dump-words-to-file
+        @rm -f $(2)
+        @$(call emit-line,$(wordlist 1,200,$(1)),$(2))
+        @$(call emit-line,$(wordlist 201,400,$(1)),$(2))
+....
+这里为啥分多次写入，一次写入不行吗？
+
+靠dump-words-to-file 生成 java-source-list
+
+
+

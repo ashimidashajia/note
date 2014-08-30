@@ -363,3 +363,5 @@ make distclean
 make clean
 
 
+---
+除了拆开盒子，如何迅速查出板子内存配置

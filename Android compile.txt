@@ -6,7 +6,7 @@
 	3) jdk 1.6 (见jdk专题)
 	4) libxml2-utils (xmllint: command not found)
 	5) xsltproc (xsltproc: command not found)
-	6) gnupg (GNU Privacy Guard 是一个用于加密或签名的软件，用于从google下载代码，如已下载好不用)
+	6) gnupg (GNU Privacy Guard:加密或签名软件，用于从google下载代码，如已下载好不用)
 	7) build-essential  主要是gcc  gcc库等,试验发现没有必要这样安装，需要gcc4.4 可单独安装
 	8) lib32z1-dev  32位版zlib开发库，依赖包zlib1g-dev会自动安装。只有主机工具编译会用到，而他们都是32位版本(gcc -m32)
 	9) gperf： generate a perfect hash function from a key set. (makeprop.pl调用)
@@ -16,7 +16,7 @@
  
 
 2 jdk专题(以12.04为例)
-	1) jdk包含jre，分open和sun两个版本，提供：java（虚拟机）和javac（编译器）。open版安装：
+	1) jdk包含jre，分open和sun两个版本提供：java（虚拟机）和javac（编译器）。open版安装：
 	apt-get install openjdk-6-jdk 或 openjdk-7-jdk （12.04默认不含）
 	安装完成直接使用了update-alternative, 有：
 	/usr/bin/java -> /etc/alternatives/java
@@ -26,14 +26,14 @@
 
 	2) sun版现无法通过源安装，需在oracal官网注册下载bin文件，如jdk-6u35-linux-x64.bin（jdk1.6 第35个版本）执行：
 	./jdk-6u35-linux-x64.bin
-	在当前位置生成jdk1.6.0_35目录，接着把他拷贝到合适的位置(如/usr/lib/jvm 与openjdk并列)，然后设置环境变量。
+	生成jdk1.6.0_35目录，拷贝到合适位置(如/usr/lib/jvm 与openjdk并列)，设置环境变量。
 	更好做法是使用：
 	update-alternatives: --install needs <link> <name> <path> <priority>
 	最终效果：
 	/usr/bin/java -> /etc/alternatives/java  -> /usr/lib/jvm/java-6-openjdk-amd64/jre/bin/java
 	执行：
-	sudo update-alternatives  --install "/usr/bin/java" "java" "/usr/lib/jvm/jdk1.6.0_35/jre/bin/java" 1
-	sudo update-alternatives  --install "/usr/bin/javac" "java" "/usr/lib/jvm/jdk1.6.0_35/bin/javac" 1
+	sudo update-alternatives --install "/usr/bin/java" "java" "/usr/lib/jvm/jdk1.6.0_35/jre/bin/java" 1
+	sudo update-alternatives --install "/usr/bin/javac" "java" "/usr/lib/jvm/jdk1.6.0_35/bin/javac" 1
 
 
 	设置环境变量，修改~/.profile(当前用户)或/etc/profile(全局用户)
@@ -95,6 +95,73 @@
 	2 有-m32选项需要32位版但系统只有64位版(readelf -h可查看)
 
 
+5 Build系统
+  1) . envsetup.sh help会出现命令提示
+	- croot:   Changes directory to the top of the tree.
+	- m:       Makes from the top of the tree.
+	- mm:      Builds all of the modules in the current directory.【当前目录】
+	- mmm:     Builds all of the modules in the supplied directories.【指定目录参数】
+	- cgrep:   Greps on all local C/C++ files.【grep检索目标行命令】
+	- jgrep:   Greps on all local Java files.
+	- resgrep: Greps on all local res/*.xml files.
+	- godir:   Go to the directory containing a file.
+	tapas是envsetup产生的shell环境函数,执行完evnsetup之后就在当前shell下有了.
+  2) showcommands显示命令详情
+  3) 顶层目录有Makefile文件,其他的每个component都使用统一标准的 Android.mk
+  4) $(info xxx） 输出信息
+  5) 改变编译器之方法。android提供2套编译器，在linux-arm.mk文件中
+	# You can set TARGET_TOOLS_PREFIX to get gcc from somewhere else
+	ifeq ($(strip $($(combo_target)TOOLS_PREFIX)),)
+	$(combo_target)TOOLS_PREFIX := \
+		prebuilt/$(HOST_PREBUILT_TAG)/toolchain/arm-eabi-4.4.0/bin/arm-eabi-
+	endif
+
+  6) froyo的build/core/combo/arch/arm中有armv7-a.mk 和 armv7a-neon.mk
+      注释分别为：
+	# Generating binaries for the ARMv7-a architecture and higher
+	# Generating binaries for the ARMv7-a architecture and higher with NEON
+  
+	arm官网上介绍Cortex-A9时候：
+	Optional NEON™ media and/or floating point processing engine
+	所以NXP没有NEON，区别还有
+	-mfpu=vfpv3-d16
+	-mfpu=neon 【neon提供FPU所具有的性能和功能】
+	那么如何决定使用哪个文件呢？
+	core/combo/TARGET_linux-arm.mk中有：
+
+	ifeq ($(strip $(TARGET_ARCH_VARIANT)),)
+	TARGET_ARCH_VARIANT := armv5te
+	endif
+	TARGET_ARCH_SPECIFIC_MAKEFILE := $(BUILD_COMBOS)/arch/$(TARGET_ARCH)/$(TARGET_ARCH_VARIANT).mk
+	所以我要去设置 TARGET_ARCH_VARIANT 变量，注意这个文件的注释：
+	# Configuration for Linux on ARM.
+	# Included by combo/select.mk
+	# You can set TARGET_ARCH_VARIANT to use an arch version other
+	# than ARMv5TE. Each value should correspond to a file named
+	# $(BUILD_COMBOS)/arch/<name>.mk which must contain
+	# makefile variable definitions similar to the preprocessor
+	# defines in system/core/include/arch/<combo>/AndroidConfig.h. Their
+	# 跟AndroidConfig.h有屁关系?!
+	# purpose is to allow module Android.mk files to selectively compile
+	# different versions of code based upon the funtionality and
+	# instructions available in a given architecture version.
+	#
+	# The blocks also define specific arch_variant_cflags, which
+	# include defines, and compiler settings for the given architecture
+	# version.
+	#
+	
+	同时在这个文件里会include armv5te.mk ,下面还会判断armv5te.mk中的宏定义
+	TARGET_ARCH_VARIANT应该可以设定在你的 product.mk中	
+	make TARGET_ARCH_VARIANT=armv7-a 也行！
+	那么 product.mk这个文件怎么使用呢？ ？
+	显然直接修改 TARGET_linux-arm.mk 文件是最方便的
+
+   7)初次运行 . /build/envsetup.sh 
+	including device/htc/dream/vendorsetup.sh
+	including device/htc/passion/vendorsetup.sh
+	including device/htc/sapphire/vendorsetup.sh
+
 
 
 
@@ -114,25 +181,8 @@ host C++: obbtool <= frameworks/base/tools/obbtool/Main.cpp
 <built-in>:0:0: note: this is the location of the previous definition
 cc1plus: all warnings being treated as errors
 
-
-
-===================================================================================================
-
-当你不知道某个命令在哪个包里的时候，可以直接执行之，会自动给出提示，例如：
-# javac
-The program 'javac' can be found in the following packages:
- * default-jdk
- * openjdk-6-jdk
- * gcj-4.5-jdk
- * openjdk-7-jdk
-
-
-
 注意gcc4.4.3  安装的时候是gcc-4.4
 不能指定小版本号
-
-
-=================================================================================================
 
 4）host C: acp <= build/tools/acp/acp.c
 <command-line>:0:0: warning: "_FORTIFY_SOURCE" redefined [enabled by default]
@@ -143,8 +193,6 @@ In file included from /usr/include/stdlib.h:25:0,
 compilation terminated.
 
 “bits/predefs.h: No such file or directory”  需要安装: g++-multilib
-
-
 
 
 6）空out目录，直接 make systemimage 
@@ -356,74 +404,6 @@ system.img 没有经过任何的压缩，只是把文件夹转换为yaffs映像�
 
 
 -----------------
-
-1 Build系统
-  1) . envsetup.sh help会出现命令提示
-	- croot:   Changes directory to the top of the tree.
-	- m:       Makes from the top of the tree.
-	- mm:      Builds all of the modules in the current directory.【当前目录】
-	- mmm:     Builds all of the modules in the supplied directories.【指定目录参数】
-	- cgrep:   Greps on all local C/C++ files.【grep检索目标行命令】
-	- jgrep:   Greps on all local Java files.
-	- resgrep: Greps on all local res/*.xml files.
-	- godir:   Go to the directory containing a file.
-	tapas是envsetup产生的shell环境函数,执行完evnsetup之后就在当前shell下有了.
-  2) showcommands显示命令详情
-  3) 顶层目录有Makefile文件,其他的每个component都使用统一标准的 Android.mk
-  4) $(info xxx） 输出信息
-  5) 改变编译器之方法。android提供2套编译器，在linux-arm.mk文件中
-	# You can set TARGET_TOOLS_PREFIX to get gcc from somewhere else
-	ifeq ($(strip $($(combo_target)TOOLS_PREFIX)),)
-	$(combo_target)TOOLS_PREFIX := \
-		prebuilt/$(HOST_PREBUILT_TAG)/toolchain/arm-eabi-4.4.0/bin/arm-eabi-
-	endif
-
-  6) froyo的build/core/combo/arch/arm中有armv7-a.mk 和 armv7a-neon.mk
-      注释分别为：
-	# Generating binaries for the ARMv7-a architecture and higher
-	# Generating binaries for the ARMv7-a architecture and higher with NEON
-  
-	arm官网上介绍Cortex-A9时候：
-	Optional NEON™ media and/or floating point processing engine
-	所以NXP没有NEON，区别还有
-	-mfpu=vfpv3-d16
-	-mfpu=neon 【neon提供FPU所具有的性能和功能】
-	那么如何决定使用哪个文件呢？
-	core/combo/TARGET_linux-arm.mk中有：
-
-	ifeq ($(strip $(TARGET_ARCH_VARIANT)),)
-	TARGET_ARCH_VARIANT := armv5te
-	endif
-	TARGET_ARCH_SPECIFIC_MAKEFILE := $(BUILD_COMBOS)/arch/$(TARGET_ARCH)/$(TARGET_ARCH_VARIANT).mk
-	所以我要去设置 TARGET_ARCH_VARIANT 变量，注意这个文件的注释：
-	# Configuration for Linux on ARM.
-	# Included by combo/select.mk
-	# You can set TARGET_ARCH_VARIANT to use an arch version other
-	# than ARMv5TE. Each value should correspond to a file named
-	# $(BUILD_COMBOS)/arch/<name>.mk which must contain
-	# makefile variable definitions similar to the preprocessor
-	# defines in system/core/include/arch/<combo>/AndroidConfig.h. Their
-	# 跟AndroidConfig.h有屁关系?!
-	# purpose is to allow module Android.mk files to selectively compile
-	# different versions of code based upon the funtionality and
-	# instructions available in a given architecture version.
-	#
-	# The blocks also define specific arch_variant_cflags, which
-	# include defines, and compiler settings for the given architecture
-	# version.
-	#
-	
-	同时在这个文件里会include armv5te.mk ,下面还会判断armv5te.mk中的宏定义
-	TARGET_ARCH_VARIANT应该可以设定在你的 product.mk中	
-	make TARGET_ARCH_VARIANT=armv7-a 也行！
-	那么 product.mk这个文件怎么使用呢？ ？
-	显然直接修改 TARGET_linux-arm.mk 文件是最方便的
-
-   7)初次运行 . /build/envsetup.sh 
-	including device/htc/dream/vendorsetup.sh
-	including device/htc/passion/vendorsetup.sh
-	including device/htc/sapphire/vendorsetup.sh
-
 
 2 关于EABI
   In computer software, an application binary interface (ABI) describes the low-level
@@ -2035,5 +2015,8 @@ ndk
 1 ndk9 安装成standalone模式:
 /build/tools/make-standalone-toolchain.sh --platform=android-14 --install-dir=/tmp/jpegturbo
 
+
+---
+java如何最终生成一个jar包
 
 

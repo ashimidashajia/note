@@ -186,6 +186,8 @@ find . -name "*.png" | xargs tar czf test.tgz  然后再解压缩，因为tar命
 2 cp命令默认是覆盖同名文件的，除非加上 -n (--no-clobber) 选项
 
 
+-s file
+True if file exists and has a size greater than zero. 
 
 
 

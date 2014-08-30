@@ -14,13 +14,14 @@
 	11) ts分析工具:tstools
 	12) 使用SIMD的jpeg库:libjpeg-turbo(软件中心)
 		普通jpeg库：libjpeg-dev(开发版)
+	13) synaptic 新立得包管理器
 	
 	注：没有的命令直接执行，会给出安装包名的提示。
 
 2  APT
 	1) Debian/Ubuntu采用deb软件包,通常用dpkg（package manager for Debian）或 apt（Advanced Package Tool）工具进行管理。
 		对应RHEL/CentOS/Fedora中的使用yum管理系统中的rpm（Redhat Package Management）。
-	2) apt-get install时候，Suggested packages: 部分默认是不安装的。若要让apt-get默认下载推荐的包，需要建立一个配置文件：/etc/apt/apt.conf：
+	2) apt-get install时候，Suggested packages:部分默认不安装。若要apt-get默认下载推荐包，需建立配置文件：/etc/apt/apt.conf：
 		APT::Install-Recommends "true";
 		APT::Install-Suggests "true";
 		如果不希望apt-get下载suggested的包：
@@ -46,6 +47,7 @@
 		实测执行后立即打印：Download complete and in download only mode，并没有真正下载包数据。
 	4) apt-get下载的包默认在/var/cache/apt/archives，可在/etc/apt/source.list中修改存放位置。apt-get autoclean 命令可删除这些软件包。
 	   实测执行后，仅删除了个别包，没有全部删除，强制删除可能会有问题。
+	5) apt-get remove删除包
 		
 
 3 virtual Box相关
@@ -65,60 +67,52 @@
 		Starting VirtualBox kernel modules ...failed!
   		(modprobe vboxdrv failed. Please use 'dmesg' to find out why)
 		sudo modprobe vboxdrv
-		FATAL: Error inserting vboxdrv (/lib/modules/3.13.0-33-generic/misc/vboxdrv.ko): Unknown symbol in module, or unknown parameter (see dmesg)
+		FATAL: Error inserting vboxdrv (/lib/modules/3.13.0-33-generic/misc/vboxdrv.ko): 
+		Unknown symbol in module, or unknown parameter (see dmesg)
 		查看dmesg：有 vboxdrv: Unknown symbol mcount。（找不到mcount符号）
 		开始以为kernel版本问题，显示grub(方法见grub专题)，选择老版本kernel，还是不行
-		最后查明，原因是我编译android的时候把gcc切换到4.4了，而这里需要4.6才能成功执行 /etc/init.d/vboxdrv setup （百度 Unknown symbol mcount）
+		最后查明，编译android的时候把gcc切换到4.4了，而这里需要4.6才能成功执行 /etc/init.d/vboxdrv setup(百度 Unknown symbol mcount）
 		(都是12.04升级惹的祸，以后不要升级ubuntu，装完啥样就啥样，升级带来风险，但同时也学到了不少)
 		20140819又升级了内核，又遇到这个问题，sudo /etc/init.d/vboxdrv setup搞定。
 	6) 设置共享文件夹自动mount，文件系统类型vboxsf，默认不支持symbolic link，官网说处于安全考虑。
-		ln: creating symbolic link `xx': Read-only file system,拷贝软链接会直接变成文件，拷贝带软链接的目录提示： Read-only file system
-		执行：
+		ln: creating symbolic link `xx': Read-only file system,拷贝带软链接的目录提示：Read-only file system,执行：
 		VBoxManage setextradata VM_NAME VBoxInternal2/SharedFoldersEnableSymlinksCreate/SHARE_NAME 1
 		VM_NAME是虚拟机名，SHARE_NAME是共享文件夹名，重启即可。
 	7) 访问U盘需安装VirtualBox Extension Pack，并Add the user name to the vboxusers group. 
-		groups显示当前用户所在的组，没有vboxusers,执行sudo adduser gaojie vboxusers后，再执行groups显示了vboxusers
-		然后在虚拟机菜单->Devices->USB Devices看到U盘，选择之即可在xp中访问。
+		groups显示当前用户所在的组，没有vboxusers,执行adduser gaojie vboxusers，再groups显示了vboxusers
+		在虚拟机菜单->Devices->USB Devices看到U盘，选择之即可在xp中访问。
+	8) 个别程序需将文件拷至虚拟机目录，在共享ubuntu目录执行异常。已知的：winrar直接提示错误，Phoenixcard，uboot部分烧不进入。
 
 		
 
 
 
 4 dpkg
-dpkg -l
-dpkg -i packagename.deb  可以安装！！！
-但是提示
- python-numpy 依赖于 libc6 (>= 2.14)；然而：
-系统中 libc6 的版本为 2.13-20ubuntu5。
-dpkg：处理 python-numpy (--install)时出错：
-说明需要低版本的numpy
-
-sudo apt-get -f install  可以卸载依赖错误的软件包
-再次执行 apt-get install python-numpy :
-错误 http://cn.archive.ubuntu.com/ubuntu/ oneiric/main python-numpy amd64 1:1.5.1-2ubuntu2
-说明需要 1.5.1 这个版本
-但是没有1.5.1这个版本，用了1.3.0  
- python-numpy 依赖于 python (<< 2.7)；然而：
-系统中 python 的版本为 2.7.2-7ubuntu2。
-
-而ubuntu中也没有提供13.10 的支持，这就是不用04版本的后遗症。
-
-dpkg -r 删除一个包
+	dpkg -l
+	dpkg -i packagename.deb  可以安装！！！
+	但是提示
+	python-numpy 依赖于 libc6 (>= 2.14)；然而：
+	系统中 libc6 的版本为 2.13-20ubuntu5。
+	dpkg：处理 python-numpy (--install)时出错：
+	说明需要低版本的numpy
+	sudo apt-get -f install  可以卸载依赖错误的软件包
+	再次执行 apt-get install python-numpy :
+	错误 http://cn.archive.ubuntu.com/ubuntu/ oneiric/main python-numpy amd64 1:1.5.1-2ubuntu2
+	说明需要 1.5.1 这个版本
+	但是没有1.5.1这个版本，用了1.3.0  
+	python-numpy 依赖于 python (<< 2.7)；然而：
+	系统中 python 的版本为 2.7.2-7ubuntu2。
+	而ubuntu中也没有提供13.10 的支持，这就是不用04版本的后遗症。
+	dpkg -r 删除一个包
 
 
 5 grub
 	1) 单ubuntu系统不显示grub菜单,可一直按住shift键显示
-
     打开/etc/default/grub文件，找到
         GRUB_HIDDEN_TIMEOUT=0 注释掉
-
     保存后，执行命令
         sudo update-grub
-
-可以选择旧版本的kernel
-
-
-
+	可以选择旧版本的kernel
 
 6 非dev和dev包的区别,以libncurses5和libncurses5-dev为例：
 	前者包含文件：
@@ -157,6 +151,59 @@ dpkg -r 删除一个包
 9 系统安装专题
 	1) 用UltraISO制作的系统盘是FAT32系统
 
+
+10 服务配置
+	1) apache配置
+		1 /etc/init.d/apache2 restart 
+		2 网页地址在 /var/www 默认有index.html内容：It works! 如果无index文件显示目录和文件列表。
+		3 /etc/apache2/httpd.conf
+		4 /etc/apache2/sites-available/default 设置网站地址
+		/etc/init.d/apache2  restart
+		<Directory /var/www>   <Directory /home/rimke/www>
+		apache 服务终止，导致wiki,mantis,testlink无法工作。
+		vcs:/home/vca/git# /etc/init.d/apache2 restart
+		Restarting web server: apache2apache2: Syntax error on line 185 of /etc/apache2/apache2.conf: 
+		Syntax error on line 1 of /etc/apache2/mods-enabled/php5.load: Cannot load /usr/lib/apache2/modules/libphp5.so 
+		into server: /usr/lib/apache2/modules/libphp5.so: cannot open shared object file: No such file or directory failed!
+		ubuntu服务器  /usr/lib/apache2/modules/ 下面有一个libphp5.so 但是debian同目录变成了libphp5filter.so
+		copy libphp5filter.so 为libphp5.so 这样做完，ldap 又能安装了.
+
+	2) samba
+		a 安装samba 
+		sudo apt-get install samba
+		sudo apt-get install smbfs
+		b 配置samba sudo vi /etc/samba/smb.conf
+		c 重启samba服务器
+		#/etc/init.d/samba restart
+		1  samba
+		每个用户开一个samba连接。在 /etc/init.d 中有一个samba程序
+		/etc/samba/smb.conf 这个是配置文件。配置每个用户的读写权限等。
+		修改权限后，要执行 /etc/init.d/samb restart 重启动samba服务。
+		建立samba服务 我在 ubuntu 上直接打开网络 就可以访问
+
+
+	3) Nginx配置
+
+
+	4) ssh服务
+		如果配置了端口，登录命令是 ssh xxx@x.x.x.x -p xxx 而不是 ssh xxx@x.x.x.x:xxx
+
+	5) tftp
+		apt-get install tftpd-hpa
+		tftp-hpa 的配置文件为 /etc/default/tftpd-hpa 
+		TFTP_USERNAME="tftp"
+		TFTP_DIRECTORY="/your/tftp/path/"
+		TFTP_ADDRESS="0.0.0.0:69"
+		TFTP_OPTIONS="-l -c -s"
+		-c为可创建新文件，若无此参数，put命令则可能出现错误提示，此时只能覆盖原有文件不能创建新文件； 
+		$sudo  /etc/init.d/tftpd-hpa start
+		$sudo /etc/init.d/tftpd-hpa stop
+		$sudo /etc/init.d/tftpd-hpa restart
+
+
+11 错误收集
+	1 装完显卡驱动，声卡驱动不工作了。
+
 12.04 由于之前试验，卸载安装卸载使得libncurses库损坏，导致man xx无法使用：libncurses.so.5: No such file or directory
 查看10.04 在/lib下有此库64位版本，而12.04 /lib/x86_64-linux-gnu下只有libncursesw.so.5没有 libncurses.so.5
 apt-get install 显示已经是最新的版本。(apt-get remove 失败，否则重新安装应该也能解决)
@@ -183,9 +230,6 @@ apt-get autoremove  可以自动删除系统中没用的包。比如我在软件
 
 3 Ubuntu版本
 11.10 oneiric
-
-
-apt-get remove
 
 安装java6： 写入.bashrc
 export PATH=/usr/lib/jvm/java-1.6.0-openjdk/bin:$PATH
@@ -977,21 +1021,6 @@ www 不是一个账户，只是一个文件夹而已
 vca 用户是干什么的呢？上面运行着 wiki  mantis  testlink 等
 vcs是 root用户
 
-ldap最新版本在192.168.1.4上没有安装成功。
-
-apache 服务终止，导致wiki,mantis,testlink无法工作。
-vcs:/home/vca/git# /etc/init.d/apache2 restart
-Restarting web server: apache2apache2: Syntax error on line 185 of /etc/apache2/apache2.conf: 
-Syntax error on line 1 of /etc/apache2/mods-enabled/php5.load: Cannot load /usr/lib/apache2/modules/libphp5.so 
-into server: /usr/lib/apache2/modules/libphp5.so: cannot open shared object file: No such file or directory
- failed!
-
-ubuntu服务器  /usr/lib/apache2/modules/ 下面有一个libphp5.so 但是debian同目录变成了libphp5filter.so
-copy libphp5filter.so 为libphp5.so 
-这样做完，ldap 又能安装了.
-
-通过 192.168.1.4/lam 可以访问了（神奇） 那么他安装到哪里了呢？
-登录上，账户怎么得到呢，admin账户的密码竟然还是123456 看来是在ldap服务里面保存好的。
 ===============
 Darwin Streaming Server
 6.0.3 版本，却换到root用户 密码 yinjiezoule  执行 ./Install
@@ -1077,7 +1106,6 @@ sys	0m34.930s
 iostat（apt-get install sysstat）
 
 
-
 R810 远程开关机：
 IPMI OVER LAN
 
@@ -1085,22 +1113,6 @@ IPMI OVER LAN
 -----------------------------
 red hat 系统用rpm格式，Debian系列（比如ubuntu）用deb格式。Ubuntu安装rpm需先用alien
 转换软件转换成deb格式。
-
---------------
-20130327 Wowza 配置
-注册码：
----------------
-apache 服务配置
-1 /etc/init.d/apache2 restart 
-2 网页地址在 /var/www 默认有index.html内容：It works! 如果无index文件显示目录和
-  文件列表。默认端口80
-3 /etc/apache2/httpd.conf
-4 /etc/apache2/sites-available/default  设置网站地址
-
-/etc/init.d/apache2  restart
-
-
-<Directory /var/www>   <Directory /home/rimke/www>
 
 ---MySQL-----------
 
@@ -1132,18 +1144,6 @@ vim /etc/mysql/my.cnf
 
 errno 111 is ECONNREFUSED
 ----------------
-Nginx 服务配置
-
-
-
------------
-配置SKYUC
-
-先在1.87工作机器上配置，不能运行php代码，是apache环境问题。在1.52上就可以，前提是安
-装了ZendGuardLoader.so
-在/etc/php5/apache2/php.ini 中添加
-zend_extension=/lib/ZendGuardLoader.so
-zend_loader.enable=1
 
 配置过程中检测到某些文件/目录不可写，在服务器上 对这些文件的其他用户加写权限即可。
 
@@ -1164,7 +1164,6 @@ zend_loader.enable=1
 apt-get update
 apt-get install php5-gd
 
-重启apache2 显示 图像处理库......GD
 
 mysql 使用root：123456 账户登录，搜出来2个db :performance_schema   test 
 我创建一个新的，显示不能成功，选择test，安装成功了！
@@ -1422,25 +1421,7 @@ Virtual Machine host
 2 每个用户可以设置别人访问自己的权限。比如是否可以写和删除。
 3 关于权限设置  Operation not permitted (1) 没有解决
 
-4 关于分辨率设置问题
-在AMD 网站上找到了一个驱动 ati-driver-installer-10-3-x86.x86_64.run
-安装后分辨率增加了！ 哈哈。
-其实在安装的过程中出现了一个错误。但是注销了一次root用户。竟然分辨率就提高了！真晕
-哈哈，说明这个驱动是找对了，并且也安装上了，真不错！！
 
-其中1600x1200 4;3的效果最好！ 基本实现了点对点！
-1280x720 反而不是真清晰
-
-root目录 System->Preferences->ATI Catalyst Control Center
-里面可以设置显示效果， 甚至能够识别 [AMOI-LCD TV] ATI Radeon HD 4200
-Refresh 项里面显示 1280x720(perfected) 但是说实话 1280x720 没有1600x1200显示效果好。
-显然1280x720 没有1600x1200高
-没有1920x1080 的分辨率啊！
-
-显然系统检测到了 HDMI显示器！ 很好啊！
-显示最大分辨率1900x1200 但是分辨率选项里面没有
-
-哈哈！解决了！！
 System->Preferences->ATI Catalyst Control Center
 找到 Display Manager 下面显示一个DTV(2) 当然前提是HDMI上连接我的这个AMOI大电视。
 右侧选项卡里面有一个“HDTV”进入后 下面列表里面有 1080P50的选项。
@@ -1449,15 +1430,9 @@ System->Preferences->ATI Catalyst Control Center
 但是保存不住，重启后又恢复成原来老样子了。
 
 
-但是，装完显卡驱动后，声卡没有了 声卡设备都找不到了！奇怪吧。
-aplay -l 命令
-aplay 是关于声卡的一个命令。
-【ALSA】
 
 
-并且 多媒体也播不了了 说GStreamer出错了。
-之前都是可以播放音视频的了 怎么GStreamer又不行了呢?
-但到是装了新的显卡驱动后  Gstreamer要重新安装？
+
 
 cat /proc/asound/card0$/codec#0 |grep Codec   
 Codec:VIA ID 397
@@ -1473,8 +1448,7 @@ chown root:root /etc/sudoers
 chmod 440 /etc/sudoers 
 
 5 关于ubuntu里面的网络。很多时候，直接在控制台里面通过网络下载。
-
-aplay -l
+aplay -l alsa声卡命令
 如果成功显示类似内容：
 card 0: IXP [ATI IXP], device 0: ATI IXP AC97 [ATI IXP AC97]
 Subdevices: 1/1
@@ -1495,10 +1469,6 @@ sudo apt-get install gdm ubuntu-desktop
 Xubuntu的用户输入：
 sudo apt-get install gdm xubuntu-desktop
 重启一下。
-
-配置声卡的时候，到一个选择ok的选项，按 enter键没用。这时候按 Alt+O  会出现一个列表。
-
-选择了一堆东西后仍然是个哑巴。没有声音。
 
 并且重新下载了一个 图形之类的登录工具（在装声卡的过程中的一个过程） 导致这个登录界面无法登陆root用户了。
 
@@ -1529,22 +1499,6 @@ sudo apt-get upgrade
 6 系统安装完事没有smb服务的，需要另外安装。
 
 7 在ubuntu上 测试gstreamer 的开发 20100511  64位的那个不知道怎么搞的 没有声音了，好像是声卡驱动给搞坏了。现在在32位环境下测试。
-
-
-20100524
-1 samba 管理 
-a 安装samba 
-sudo apt-get install samba
-sudo apt-get install smbfs
-b 配置samba sudo gedit /etc/samba/smb.conf  或者用vi
-c 重启samba服务器
-#/etc/init.d/samba restart
-1  samba
-   每个用户开一个samba连接。在 /etc/init.d 中有一个samba程序
-/etc/samba/smb.conf 这个是配置文件。配置每个用户的读写权限等。
-修改权限后，要执行 /etc/init.d/samb restart 重启动samba服务。
-建立samba服务 我在 ubuntu 上直接打开网络 就可以访问
-
 
 
 2 ubuntu 8.1 升级到9.10  升级方法：
@@ -1760,59 +1714,25 @@ i386  i686 都是32位  x86_64 代表64位
 
 http://packages.ubuntu.com
 
-
 #dpkg --add-architecture i386  ？？
 #apt-get update
 #apt-get install ia32-libs
 
-
-synaptic 新立得包管理器
-
-11.10  oneiric
-
-
 https://help.ubuntu.com/community/UpgradeNotes
-
 
 删除gnome panel里的图标。10.04版本有删除菜单，11.10 以后没有，需要进入
 ~/.config/gnome-panel/launchers  直接删除相应文件。
 
 ext3/4 文件系统 lost+found 目录存储删除的数据（垃圾箱）。如果是外部挂载，umount时会提示是否清除垃圾箱
 
-10. ubuntu tftp
--------->安装
-	使用下面的命令来安置 tftpd-hpa 服务器：
-	$sudo apt-get install tftpd-hpa
--------->配置
-	tftp-hpa 的配置文件为 /etc/default/tftpd-hpa 
-	TFTP_USERNAME="tftp"
-	TFTP_DIRECTORY="/your/tftp/path/"
-	TFTP_ADDRESS="0.0.0.0:69"
-	TFTP_OPTIONS="-l -c -s"
-	-c为可创建新文件，若无此参数，put命令则可能出现错误提示，此时只能覆盖原有文件不能创建新文件； 
--------->启动
-	$sudo  /etc/init.d/tftpd-hpa start
--------->停止
-	$sudo /etc/init.d/tftpd-hpa stop
--------->重启
-	$sudo /etc/init.d/tftpd-hpa restart
-
-<<<<<<< HEAD
-=======
-
->>>>>>> a0bc1395651cfe169959c28c242b16534a887899
 在我的电脑上12.04 ：lspci显示：
 00:02.0 VGA compatible controller: Intel Corporation Xeon E3-1200 v2/3rd Gen Core processor Graphics Controller (rev 09)
 应该是没有正常识别显卡。电脑13年购买，12.04应该不含其驱动。 我的CPU i53470 集显HD2500
 intel官网有14.04版的的显卡驱动，没有12.04的。不能轻易尝试，弄不好系统起不来了。
 
-<<<<<<< HEAD
-
 在软件中心搜索库的时候需要加上libxxx，比如libsdlxxx
-
 可以用ubuntu自带的 Startup Disk Creator 制作系统U盘，不用windows版的ultraiso。
 
+geidt 搜索框右击选择区分大小写
 
-=======
->>>>>>> a0bc1395651cfe169959c28c242b16534a887899
 
