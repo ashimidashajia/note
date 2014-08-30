@@ -74,7 +74,6 @@ fatal:   caused by org.h2.jdbc.JdbcSQLException: Database may be already in use:
 fatal: null/1432263210642c8fca74c3f4d112af40f04851e4ae1 [90020-147]
 -------------
 
-
 java -jar bin/gerrit.war gsql （本地登录，下面是远程登录）
 ssh -p 29418 192.168.7.32 gerrit gsql （无需密码，只能靠只给管理员开通数据库访问控制）
 Welcome to Gerrit Code Review 2.7
@@ -721,7 +720,14 @@ Unnamed repository; edit this file 'description' to name the repositor
 通过repo下载仓库，repo sync 不会自动合并本地和远程master分支呢怎么并且执行完，分支就被切换到了 a20/master 即远程master分支，而不会自动合并
 也就是说sync 不能做merge操作。本地各仓库的修改也不能自动提交。应该是版本问题。全部用新版本（repo  和 repo仓库）试试，并且有时repo sync执行后不退出。
 
+[gerrit]
+        basePath = git
+        canonicalWebUrl = http://192.168.1.4:8088  //2.4.2 中这行很重要 必须这样写才行，怪！
+[ldap]
+        server = ldap://localhost
+        groupBase = ou=group,dc=vision-com,dc=com
+        accountBase = ou=People,dc=vision-com,dc=com
+        accountFullName = cn
 
-
-
+ldap 和 LDAP Account Manager
 

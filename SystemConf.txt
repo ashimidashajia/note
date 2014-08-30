@@ -15,6 +15,7 @@
 	12) 使用SIMD的jpeg库:libjpeg-turbo(软件中心)
 		普通jpeg库：libjpeg-dev(开发版)
 	13) synaptic 新立得包管理器
+	14) wireshark 抓包工具
 	
 	注：没有的命令直接执行，会给出安装包名的提示。
 
@@ -47,7 +48,9 @@
 		实测执行后立即打印：Download complete and in download only mode，并没有真正下载包数据。
 	4) apt-get下载的包默认在/var/cache/apt/archives，可在/etc/apt/source.list中修改存放位置。apt-get autoclean 命令可删除这些软件包。
 	   实测执行后，仅删除了个别包，没有全部删除，强制删除可能会有问题。
-	5) apt-get remove删除包
+	5) apt-get remove删除包，apt-get autoremove 自动删除没用的依赖包。
+	6) apt-get update 这个命令什么作用？
+	7) 加源 add-apt-repository "deb http://us.archive.ubuntu.com/ubuntu/ hardy multiverse" ;sudo apt-get update
 		
 
 3 virtual Box相关
@@ -113,6 +116,12 @@
     保存后，执行命令
         sudo update-grub
 	可以选择旧版本的kernel
+
+	调整磁盘分区，然后
+	sudo update-grub
+	sudo grub-install /dev/sdb
+	系统正常启动
+
 
 6 非dev和dev包的区别,以libncurses5和libncurses5-dev为例：
 	前者包含文件：
@@ -189,7 +198,8 @@
 		如果配置了端口，登录命令是 ssh xxx@x.x.x.x -p xxx 而不是 ssh xxx@x.x.x.x:xxx
 
 	5) tftp
-		apt-get install tftpd-hpa
+		apt-get install tftpd-hpa (RFC 783)
+
 		tftp-hpa 的配置文件为 /etc/default/tftpd-hpa 
 		TFTP_USERNAME="tftp"
 		TFTP_DIRECTORY="/your/tftp/path/"
@@ -201,103 +211,84 @@
 		$sudo /etc/init.d/tftpd-hpa restart
 
 
-11 错误收集
-	1 装完显卡驱动，声卡驱动不工作了。
+		apt-get install xinetd
+		vi /etc/xinetd.d/tftp
+		service tftp
+		{
+				socket_type = dgram
+				protocol = udp
+				wait = yes
+				user = root
+				server = /usr/sbin/in.tftpd   //tftpd 的可执行程序
+				server_args = -s /home/username/tftpboot  路径
+				disable = no
+				per_source = 11
+				cps = 100 2
+				flags =IPv4
+		}
+		
+		然后 /etc/init.d/xinetd restart
+
+		This program is run from a terminal: in.tftpd
+		TFTP mainly to serve boot images over the network to other machines(PXE网络启动)
+		tftp-hpa is an enhanced version of the BSD TFTP server.
+		最终的可执行程序为 in.tftpd
+
+		xinetd : replacement for inetd with many enhancements 
+		(eXtended InterNET services daemon)
+		这个是用来管理 tftp服务以及其他服务的
+
+	6) nfs
+		$sudo apt-get install nfs-common  客户端
+		$sudo aptitude install nfs-kernel-server 服务端
+		The NFS kernel server is currently the recommended NFS serer for use with Linux,
+		featuring features such as NFSv3 and NFSv4,
+
+		配置 /etc/exports 文件
+		man exports：
+		exports - NFS server export table
+		比如：
+		/home/username/NFS/fawn    *(rw,sync,no_subtree_check,no_root_squash)
+
+	7) wiki
+		wiki导出pdf做过很多尝试，始终没有配置成功
+
+11 错误报告
+	1) 装完显卡驱动，声卡驱动不工作了。安装一个3D桌面的东西，桌面显示不正常了。
+	2) ubuntu12.04配套wireshark1.6.7_1，浏览器看视频同时抓包wireshark会卡死，top显示cpu占用100%。不知是ubuntu的bug还是wireshark的。
+	xp安装wireshark1.11,和ubuntu 11.10的版本（？查看一下）没有问题。
+	3) 由11.04升级到11.10成功(以前这样升级都是失败的，进不了桌面)
+	4) ubuntu 11.10  evolution 的目录不在  ~/.evolution 了 而是 ~/.local/share/evolution 
+	5) unity 问题挺多，新产品出来需要很多时间磨合
+
+
+12 Ubuntu版本
+	1) LTS版本：
+		lucid (10.04LTS)
+		precise (12.04LTS)
+		trusty (14.04LTS)
+	   其他	
+		oneiric (11.10)
+
+13 系统安装
+	sudo passwd root；su root 进root用户 
 
 12.04 由于之前试验，卸载安装卸载使得libncurses库损坏，导致man xx无法使用：libncurses.so.5: No such file or directory
 查看10.04 在/lib下有此库64位版本，而12.04 /lib/x86_64-linux-gnu下只有libncursesw.so.5没有 libncurses.so.5
 apt-get install 显示已经是最新的版本。(apt-get remove 失败，否则重新安装应该也能解决)
 下载libncursesw5_5.9-4_amd64.deb，dpkg -i安装后/lib/x86_64-linux-gnu下出现此库，问题解决
 
-64位版本ubuntu：
-/lib  /lib64 代表64位库 (10.04 lib64 -> lib  12.04是2个独立目录)
-/lib32代表32位库
 
-
-	
-
-build-essential 包都包含啥？
-
-
-
+build-essential包含:
 The following extra packages will be installed:
   dpkg-dev g++ g++-4.6 libalgorithm-diff-perl libalgorithm-diff-xs-perl libalgorithm-merge-perl libdpkg-perl libstdc++6-4.6-dev libtimedate-perl
 The following NEW packages will be installed:
   build-essential dpkg-dev g++ g++-4.6 libalgorithm-diff-perl libalgorithm-diff-xs-perl libalgorithm-merge-perl libdpkg-perl libstdc++6-4.6-dev libtimedate-perl
 
+.bashrc
 
-apt-get autoremove  可以自动删除系统中没用的包。比如我在软件中心installede里面卸载了一个游戏，但是相关包没有删除掉，执行此命令时相关包被彻底删除。
-
-3 Ubuntu版本
-11.10 oneiric
-
-安装java6： 写入.bashrc
-export PATH=/usr/lib/jvm/java-1.6.0-openjdk/bin:$PATH
-export JAVA_HOME=/usr/lib/jvm/java-1.6.0-openjdk
-export CLASSPATH=.:/usr/lib/jvm/java-1.6.0-openjdk/lib
-
-ubuntu迁移到64位，拷贝原.ssh目录到新系统，可访问git服务器
-
-执行$ ssh-keygen -t rsa 生成 ~/.ssh/  id_rsa id_rsa.pub 
-
-1 配置tftp 和nfs
-tftp:
-apt-get install tftpd-hpa   (RFC 783)
-apt-get install xinetd
-编辑
-cd /etc/xinetd.d/
-vi tftp
-输入
-service tftp
-{
-        socket_type = dgram
-        protocol = udp
-        wait = yes
-        user = root
-        server = /usr/sbin/in.tftpd   //tftpd 的可执行程序
-        server_args = -s /home/username/tftpboot  路径
-        disable = no
-        per_source = 11
-        cps = 100 2
-        flags =IPv4
-}
-4、从新启动服务
-     /etc/init.d/xinetd restart
-
-This program is run from a terminal: in.tftpd
-TFTP mainly to serve boot images over the network to other machines(PXE网络启动)
-tftp-hpa is an enhanced version of the BSD TFTP server.
-最终的可执行程序为 in.tftpd
-
-xinetd : replacement for inetd with many enhancements 
-(eXtended InterNET services daemon)
-这个是用来管理 tftp服务以及其他服务的
-
-
-nfs:
-$sudo apt-get install nfs-common  客户端
-$sudo aptitude install nfs-kernel-server 服务端
-The NFS kernel server is currently the recommended NFS serer for use with Linux,
-featuring features such as NFSv3 and NFSv4,
-
-人后配置 /etc/exports 文件
-man exports：
-exports - NFS server export table
-
-比如：
-/home/username/NFS/fawn    *(rw,sync,no_subtree_check,no_root_squash)
-
-Ubuntu串口卡驱动的安装
-
-1 制作 Ubuntu11.04 USB启动盘成功安装。
 2 设置软件源：系统设置->Update Manager->Setting->Ubuntu Software->Server for China 
 确认一下 就可更新。此后就可以apt-get软件包了
-  系统设置->语言设置 设置输入法
-  应用程序->ubuntu软件中心 搜索 7zip rar gitg chromium  pdf eclipse
-
-  按照android首页说明 安装java 以及其他git等包    
-4 apt-get  update 这个命令是干什么用的？
-5 22:19 悲崔了，安装一个3D桌面的东西，桌面显示不正常了
 
 6 ubuntu11.04 信使无法显示中文无法设置，使用经典桌面（相对11.04 新推出的桌面 可在启
 动登录时选择）可以：首选项-system-上面两行修改为gb18030 panel font 改为文泉驿 即可。
@@ -305,30 +296,6 @@ Ubuntu串口卡驱动的安装
 桌面，飞鸽来消息图标不会闪烁。 chromium 浏览器 使用11.04 新桌面 最小化就是关闭的问题 
 用经典桌面就没有问题 
 
-7 安装2个java版本后，切换命令 
-  sudo update-alternatives --config java
-  sudo update-alternatives --config javac
-
-20120112 编译sdk的时候  make PRODUCT-sdk-sdk 提示错误
-javadoc: error - In doclet class DroidDoc,  method start has thrown an exception 
-java.lang.reflect.InvocationTargetException
-com.sun.tools.javac.code.Symbol$CompletionFailure: class file for 
-sun.util.resources.OpenListResourceBundle not found
-
- sudo update-alternatives --config javadoc
-这个也要选择成1.5版本
-
-
-8 软件中心安装 wine 然后设置 在desktop integration 选项卡中 设置 Folder 中第二项 把
-默认 /home/username 改为 /home/username/Work
-  上面的方法不灵  安装sourceinsight的时候遇到问题（问题真的是无处不在啊）菜单里面没有
-选项，并且找到其安装目录也不能打开，只有安装完的时候可以打开一次
-
-10 20111110 由11.04 升级到11.10 相当的成功 （以前这样升级都是失败的，进不了桌面） 速
-度有所提升
-
-11 20111111 
-ubuntu 11.10  evolution 的目录不在  ~/.evolution 了 而是 ~/.local/share/evolution 
 
 12 系统右上角 的系统托盘 叫做 Notification Area
 比如 iptux 信使 在ubuntu 10.10 以前可以显示在托盘区域，但是到11.10 使用unity 2D后，
@@ -341,13 +308,8 @@ dconf is a low-level key/value datrabase degigned for storing desktop environmen
 或者也可以执行命令行（不需要安装dconf程序）：
 gsettings set com.cononical.Unity.Panel systray-whitelist "[....]" 与UI方式一样的
 
-有意思的是事情发生了：修改完后，unity上有效果  unity 2D上没有效果。
-unity 问题挺多，新产品出来需要很多时间磨合
 
-
-4 20100707 10:36 
-使用 minicom -s  配置串口为 ttyS0 （主机自带的串口） 盒子上电 打印出uboot
-下面需要考察 如何使用pci卡的串口，
+使用pci卡的串口，
 lspci -v 可以看到
 03:01.0 Communication controller: NetMos Technology PCI 9835 Multi-I/O Controller (rev 01)
 	Subsystem: LSI Logic / Symbios Logic Device 0012
@@ -364,18 +326,6 @@ lspci -v 可以看到
 
 /dev下面有很多tty是被  minicom打开后也是默认tty  而串口是ttySx
 
-7 邮箱有自带的  msn也有  安装后右上角就有一个信封标志，可以设置邮件 Evolution
-一步一步设置，就可以打开 Evolution 邮箱 效果还是非常好的。 在编辑-》首选项 里面设置账户
-在“账户编辑器”里面选择 发送电子邮件 选择服务器需要认证 身份验证类型是Login 用户名
-username@cyclecentury.com 选择记住密码  [outlook中 是 使用收件箱相同的设置]
-但是不知道收下来的邮件能否用outlook打开 
-
-13 下载了subversion命令行方式，checkout命令可以实现 但是commit命令不能提交
-又下载了 rapidsvn GUI的svn客户端  安装完成后在 应用程序 编程 项目中
-
-右击书签 有一个删除标签 可以删除以前签出的副本
-使用rapidsvn  可以commit成功  右击书签  最后一项 commit
-快点弄懂 svn的使用方法啊！
 
 17 在上面板上选择了“新建面板” 结果左右出现了空白  网上解决办法 删除username目录下的一堆 .
 开头的文件夹
@@ -401,26 +351,15 @@ ubuntu10.04 是 4.4.3  ubuntu11.10 是4.6.1  由于这个版本对语法要求�
 功能更加强大，可以从网络上随意下载主题。
 软件中心搜索 Gnome Tweak Tool 这是一个高级设置工具，可以设置Theme。这个工具装完后为 
 Advanced Settings 可以设置的项很多很多
-这说明，gnome shell 是一个相当开放的系统 （估计都是基于xml 等什么新技术 哎， android
- 也是日新月异啊）
+这说明，gnome shell 是一个相当开放的系统
 
-“5个非常漂亮的gnome-shell主题”  为什么叫做gnome-shell 主题而不是gnome注意呢？
-难道 gnome3 也叫做 gnome shell？ 
-
-ubuntu的源 就是会实时更新！
-
-15 关于git的权限，只要把原来10.04 上  .ssh目录下的文件拷贝即可
-
-16 Ubuntu Software Center(11.10) 搜索 bcompare  （原来我是下载了deb安装包）  不对 
-中心里没有这个软件 只是用软件中心程序 打开了这个deb文件而已
+ gnome3 ? gnome shell？ 
 
 
 17 使用ubuntu11.10  gnome3 应用靠搜索，常用 disk utility   system monitor
 source insight 3.5 在11.04上安装有问题，在11.10正常，并且比10.04 上运行的还要好。
 菜单都可以直接点了。
 
-
-18 ubuntu root用户问题：默认没有开启root用户，需要这行sudo passwd root 然后su root 
 
 19 20111126 系统由10.04 升级到11.10 后，带来了无穷进的烦恼。所以，变就代表着不稳定。
 在别人都用10.04 的时候我非得要用11.10，这不是找死嘛。最可气的是tftp 设置双ip竟然有问
@@ -454,9 +393,6 @@ minicom中上下左右按键不能用
 
 backspace按键的设置 ctrl+a+t B- backspace key sends ：DEL /  BS  选择 DEL  工作正常
 
-23
-android的toobox的shell 就是不支持 上下左右建  依次显示为^[[A ^[[B ^[[C ^[[D  这些是什么意思呢？
-
 
 24 ubuntu修改MAC地址
 
@@ -466,26 +402,6 @@ sudo ifconfig eth0 up
 
 此法重启无效，可以写在 /etc/init.d/rc.local 里面，但是偶尔不灵，启动后需要停止网络
 再开始。就没有像windows那样直接改网卡ROM的方法？
-
-
-25 20111216 把老机器的磁盘分区重新整理了一下，使用
-sudo update-grub
-sudo grub-install /dev/sdb
-成功保证了系统正常启动。
-
-那么，原来的系统是10.04 怎么升级到最新的10.04.3这个文档版本？
-
-
-26 wireshark 网络抓包工具
-
-27 我的ubuntu10.04 升级后在system monitor中并没有显示10.04.3 怎么回事？
-记得11.04 到 11.10 就是在升级管理器里面升级成功的
-但是我的10.04 上却没有显示10.10 的更新提示。也许在那个窗口期里面会有提示，但是我没有
-在意，过了那个村就没有那个店了
-
-
-28 ubuntu11.10 文件查看器，使用多个选项卡的时候，有时竟然不能复制粘贴，关闭再打开就
-好了，bug啊！ 使用新版本有风险的！
 
 
 29 20111229 U盘安装ubuntu 10.04.3 server 无法挂在光驱的问题：
@@ -502,18 +418,6 @@ mount -t iso9660 -o loop /mnt/usb/ubuntu-10.10-server-amd64.iso /mnt/iso
 下面让输入命令，输入 install cdrom-detect/try-usb=true 回车可以进入安装界面了，一路
 GoGoGo就不会出现上次的问题。
 
-整个安装过程都是字符的，没有界面。
-
-
-
-【yum 是什么命令？！需要单独安装】
-怎么样让ubuntu支持fedora的yum ？  什么意思？
-
-Yum是Federo的，Debian/Ubuntu是用Apt的，而且Debian/Ubuntu的源更多，速度也更快些  
-
-
-download as pdf 还是没有搞定，
-做服务器，最好还是debina系统吧！
 
 显示安装 gevent 库的时候出错
 
@@ -523,222 +427,6 @@ libevent 同步事件通知库
 但是还是不行！
 
 
-=====================================================================
-从MediaWiki导出PDF
-搞了一早上才琢磨出怎么将MediaWiki中的文章导出PDF，一开始在CentOS玩，由于yum源上的
-python版本比较低，有些python库装不上，之后就在自己本的Debian上玩，还算比较顺利，将
-方法总结一下
-最开始用了一个Extension叫“Pdf Export”，使用htmldoc来转成pdf，对于英文的文章看起来还
-不错，无奈遇到中文就全乱码了，查了一下，说是htmldoc暂时还不支持亚洲的unicode编码。
-
-于就是试其它的Extension了，有个Collection看着不错，不过装完后进去wiki就直接给我报
-HTTP 500错误，这样就不能在wiki界面上导出，只能找工具线下导出，先试Collection中用到
-的mwlib。
-
-先准备python环境
-apt-get install g++ perl python python-dev python-setuptools python-imaging libxslt-dev
-安装mwlib及可用的writer
-easy_install mwlib mwlib.rl mwlib.xhtml
-
-装好mwlib后，就可以使用mw-render来导出
-
-执行 mw-render --config=http://lingcloud.org/wiki/en/ -w rl -o "test.pdf"  Requirements
-提示找不到 libevent.so
-
-vi i /etc/ld.so.conf  添加 /usr/local/lib  这里有 libevent.so
-ldconfig  刷新
-
-再执行，提示No such writer u'-r1'
-mw-render --list-writers 只显示： odf OpenDocument Test 没有pdf
-
-注意： 应该安装 easy_install mwlib mwlib.rl  mwlib.xhtml  (注意是 字母l  不是数字 1 )
-但是 mwlib.rl 这个包下不了
-这些是python的包， 整个python.org 无法访问，难道被和谐了？ 后来又可以访问了
-再执行 mw-render --config  提示没有 pyfribidi 安装之
-
-看来，必须要安装debian才行啊！ ubuntu server 运行mediawiki有问题，运行
-
-使用mediawiki上说明的 Extension:Pdf Export  也可以生成pdf  但是格式和显示效果没有 Collection的好，差了很多
-
-关注这几个网址：
-http://pediapress.com/code/
-http://mwlib.readthedocs.org/en/latest/index.html
-http://mwlib.readthedocs.org/en/latest/collection.html
-http://pypi.python.org/pypi/mwlib
-http://blog.jeoygin.org/archives/404#more-404
-
-
-解决第一个问题可以安装字体，执行mw-render –list-writers这个命令后提示找不到字体，把
-这些字体装上，并做软连接就可以了。
-
-=====================================================================
-
-不过:就算是wikipedia.org 中文版本的也不支持download as pdf。
-
-服务器上要善于使用wget命令
-
-明白了 Collection 默认使用 tools.pediapress.com/mw-serve  渲染文件，但是我的服务器
-外网是访问不到的，所以不行！那么我就必须搭建自己的mw-serve了
-
-
-mediawiki 就是php源码，里面的语言支持有中文 在language文件夹
-
-======Git Server============
-git-core, gitosis, openssh-server, openssh-client 
-gitosis:git repository hosting application
-服务器上的git仓库只有 .git目录
-$ git init - -bare      注：这是在服务器上运行的，是为了初始化一个根级的git仓库
-企业级Git Server服务器架设，使用Gitolite管理权限    比gitosis 呢？
-
-imagemagick 图像魔法师  用于编辑各种图片的工具库
--------------------------
-collection 终于配置成功，但是测试：
-mw-zip -c :en -o test.zip Acdc Number
-mw-render -c test.zip -o test.pdf -w rl
-生成的pdf 但是没有目录。
-
-【奇怪】这2条命令什么意思？会去连接 
-http://en.wikipedia.org/w/index.php?title=Help:Books/License&action=raw&templates=expand  
-但这是一个wiki text 用浏览器打开会直接下载这个wikitext文件
-内容在生成的test.pdf 的最后一页。
-
-
-然后，最关键的：启动mw server 这时需要
-
-$ nserve.py
-$ mw-qserve
-$ nslave.py --cachedir ~/cache/
-$ postman.py
-
-None of the programs has the ability to run as a daemon. We recommend using 【runit】 for process supervision
- daemontools is similar solution. Another alternative is to use supervisor.
-runit - a UNIX init scheme with service supervision
-安装方法：
- # mkdir -p /package
- # chmod 1755 /package
-
-Download runit-2.1.1.tar.gz into /package and unpack the archive
-
- # cd /package
- # gunzip runit-2.1.1.tar
- # tar -xpf runit-2.1.1.tar
- # rm runit-2.1.1.tar
- # cd admin/runit-2.1.1
-
-Now compile and install the runit programs
- # package/install
-【糟糕，编译失败！】
-
-换daemontools 试试
-
-步骤跟上面类似，也是编译错误
-
-再试试 supervisor
-这个好！ easy_install supervisor 就搞定了
-
-
-服务起来了，在浏览器上输入 http://192.168.1.52:8899/ 显示 no command given
-这跟输入 http://tools.pediapress.com/mw-serve/ 的显示一样
-但是在LocalSettings.php中加入
-$wgCollectionMWServeURL = "192.168.1.52:8899";
-还是无法导出pdf。崩溃啊！
-
-可能还是 服务启动得不对 再仔细研究一下 supervisor
-我知道了，因为没有安装 curl  这个server需要curl下载wiki页面的！
-如果是这个原因，为什么  mw-zip -c :en -o test.zip Acdc Number 能成功呢？他也去下载页面了
-
-按照说明，编译了支持curl的php 还是不行搞不定
-
-wiki服务器可以直接在终端设置语言
-
-0.0.0.0  就是 127.0.0.1
-
-
-好！那就再实验一下 手动生成 不用页面生成的
-mw-zip -c http://192.168.1.52/mediawiki -o test.zip About:Flash
-mw-render -c test.zip -o test.pdf -w rl
-成功！
-注意：网址必须是http开头  文章名字跟 mediawiki 分开写在后面（About:Flash）
-汉字仍然不支持，乱码！
-但是有目录了，奇怪的是：目录里面的中文竟然支持！
-
-mw-render 执行的打印：
-Missing fonts:'AR PL Uming HK' 等一堆字体
-start rendering: u'/usr/share/fonts/truetype/tmp8i34ce.'
-
-
-可以安装字体，执行mw-render –list-writers这个命令后提示找不到字体，把这些字体装上，
-并做软连接就可以了。
-
-mw-render 在 usr/local/lib/python2.6/dist-packages/mwlib/mwlib/apps/render (python源码)
-
-生成的pdf文件放到 /var/www 可以在客户端浏览器中直接下载（前提是chmod 777 否则会告知没有权限）
-
---------------------
-mediawiki 与 ldap 整合
-下载  LdapAuthentication extension 
-
-===========下面这个管用===========
-解决第一个问题可以安装字体，执行mw-render –list-writers这个命令后提示找不到字体，把这些字体装上，并做软连接就可以了。
-apt-get install ttf-indic-fonts ttf-unfonts-core ttf-farsiweb ttf-arphic-uming ttf-gfs-artemisia ttf-sil-ezra ttf-thai-arundina
-ln -s /usr/share/fonts/truetype/* /usr/local/lib/python2.6/dist-packages/mwlib.rl-0.12.8-py2.6.egg/mwlib/fonts/
-支持中文了！ 20120101
-
-
-打印出来的文档都是A4 的有点大，pdf电子书一般是 7x9.19 inch
-A4 太大了，看起来不方便
-
------------------
-理解一下字体和编码方式
-桌面出版系统使用的字库有两种标准： postscript字库和truetype字库
-
-你说，pdf最终显示出来的字体效果是跟系统有关还是生成的时候就确定了呢？
-
-上面生成的About:Flash pdf 显示的时候，通过比对，确定用的字体是 /usr/share/fonts/truetype/freefont/FreeSerifBold.ttf
-每个字母显示的都一模一样！
-
-系统中，那么多的字体，是怎么区分管理的呢？
-
-mwlib/rl/fontconfig.py 
-这里定义了字体  从源码中看出，要检测 ~/mwlibfonts/
-======================
-但是我不知道怎么启动服务器，有意思的事情发生了，在http://groups.google.com/ 找到一篇文章
-
-Hello, 
-I'd installed several internal servers for mediawiki and the 
-Collection extension with own render server. 
-Two days ago I had to install a new one, but now I saw, that with the 
-update of mwlib 1.13 the mw-serve is replaced with three or four other 
-processes. 
-I did play around with runit, but I can't get the processes running as 
-expected. 
-Do you plan to publish a sample script for runit or something else, 
-where I am able to start one script like mw-serve in older versions, 
-and all given parameters will be passed through to the one of the four 
-files. 
-I know you have several reasons to do this step to delete mw-serve, 
-but I am not confirm in python to find what it means if I take a look 
-to the mw-serve-file. 
-Thank you in advance for help, because http://mwlib.readthedocs.org/en/latest/renderserver.html【就是官方介绍server安装方法的文章】
-not really helped me, how to start the render server like before. 
-Daniel 
-
-这个人跟我遇到的问题一模一样啊,哈哈，但是没有人回复
-
-==================
-Wiki 还支持 talk 讨论  这很好啊！
-localhost 代表自己
-
-======================
-mediawiki中 render的时候 bookcmd=rendering 而我的 bookcmd=render_article 这会不会是问题所在呢？
-
-mwlib/ext/reportlab/rl_config.py  有 defaultPageSize = 'A4'
-
-又时间再研究一下打印，把海思平台总结出来的经典文档打印成手册。
-ubuntu11.10  采用十进制
-
-20120517
-重装系统，貌似没有什么事情，但是实际一做发现很多问题：比如gwb，git的密钥忘记备份了。
 
 fingerprint 是什么
 
@@ -765,53 +453,6 @@ Original contents retained as /home/username/.ssh/known_hosts.old
 
 
 
-username@username:/$ ssh username@192.168.1.52 -p 29418
-The authenticity of host '[192.168.1.52]:29418 ([192.168.1.52]:29418)' can't be established.
-RSA key fingerprint is 08:7b:ca:a4:b7:31:87:3b:81:93:f6:b5:c2:d9:9c:61.
-Are you sure you want to continue connecting (yes/no)? yes
-Warning: Permanently added '[192.168.1.52]:29418' (RSA) to the list of known hosts.
-
-  ****    Welcome to Gerrit Code Review    ****
-
-  Hi username, you have successfully connected over SSH.
-
-  Unfortunately, interactive shells are disabled.
-  To clone a hosted Git repository, use:
-
-  git clone ssh://username@ubuntu:29418/REPOSITORY_NAME.git
-
-Connection to 192.168.1.52 closed.
-
-这回就好了
-然后 ssh -p 29418 username@192.168.1.52 gerrit create-project --empty-commit --name test-proj 创建工程
-
-
------------------
-git push ssh://username@192.168.1.4:29418/BCM7231/BCM7231-DD *:*
-可以推送已经存在的仓库，但是提示
-remote: ERROR:  In commit c0819bdd1caa831c3ad5bd398ba4501fd7d5b53d
-remote: ERROR:  committer email address wuzg@cyclecentury.com
-remote: ERROR:  does not match your user account.
-remote: ERROR:
-remote: ERROR:  The following addresses are currently registered:
-remote: ERROR:    username@cyclecentury.com
-remote: ERROR:
-remote: ERROR:  To register an email address, please visit:
-remote: ERROR:  http://192.168.1.4:8088/#/settings/contact
-
-
-可能因为伍志刚还没有添加rsa key 吧，周一再试试
-结果wuzg 粘贴了rsa key 还是不行，注意To register an email address, please visit:
-添加了forge author   forge commiter 就可以了  意思是这些提交我不是作者
-然后出现：
- ! [remote rejected] master -> master (you are not allowed to upload merges)
- ! [remote rejected] origin/master -> origin/master (can not create new references)
-加了所有权限都不行，后来把Reference 从refs/head/* 改为 refs/* 就可以了
-提交完成再改回来吧。
-
-
-
-
 ----------------
  git push  origin master 
 Counting objects: 4, done.
@@ -830,7 +471,6 @@ error: failed to push some refs to 'ssh://192.168.1.52:29418/test-proj.git'
 
 比如我把Administrator组设置为可以对refs/heads/* 可以push。就可以直接提交了
 
-能否创建一个分支都可以控制！
 
 能够review需要很多设置，这些设置要inherit frome all-projects
 
@@ -846,67 +486,11 @@ HEAD:refs/for/master 或者写成 master:refs/for/master  ：前后不能有空�
 
 需要Code-Review 和 Verified 2个状态都打勾才可以。
 
-彻底明白了。
 
-------------------
-目前服务器上的gerrit 配置比较复杂，王永杰当时还是做了不少的工作的，比如跟LDAP，跟mantis的联系等等。
-
-----
-20120823
-我直接在2.1的版本机器上运行 java -jar gerrit-2.4.2.war init -d review_site
-覆盖成新版本，没有成功
-Exception in thread "main" com.google.gwtorm.server.OrmException: Cannot upgrade from schema 47; 
-manually run init from Gerrit Code Review 2.1.7 and restart this version to continue.
-需要先升级到2.1.7 再升级到2.4.2
-
-java -jar gerrit-2.1.7.war init -d review_site
-
-Upgrading database schema from version 47 to 48 ...
-Upgrading database schema from version 48 to 49 ...
-Upgrading database schema from version 49 to 50 ...
-Upgrading database schema from version 50 to 51 ...
-Upgrading database schema from version 51 to 52 ...
-Initialized /home/gerrit2/review_site
-很顺利
-
-但是 再升级2.4.2 在重建仓库的时候还是遇到了问题。
+known_hosts干什么的？
 
 
-review的信息都是没有用的，但是账户和分组信息有用! 否则需要所有人再次提交ssh key可就麻烦了啊！
-
-[database]
-        type = H2
-        database = db/ReviewDB
-
-
-那么多的组信息，提交信息 如何才能保存呢？ 无法升级。
-
-提交的那些review信息都存储在哪里呢？ 数据库文件，我看才60M多，这么少？
-
-
-[gerrit]
-        basePath = git
-        canonicalWebUrl = http://192.168.1.4:8088  //2.4.2 中这行很重要 必须这样写才行，怪！
-
-
-[ldap]
-        server = ldap://localhost
-        groupBase = ou=group,dc=vision-com,dc=com
-        accountBase = ou=People,dc=vision-com,dc=com
-        accountFullName = cn
-
-
-20120824 
-gerrit2 升级没有成功，后来又恢复到2.1.6 但是有人反映不能git了，赵毅辉发现：
-针对现在git不能使用的问题，做如下修改：
-    执行rm ~/.ssh/known_hosts命令（只执行一次），然后再进行git操作就ok. 
-
-known_hosts干什么的呢？
-
-ldap安装在了 192.168.1.4 上，但是LDAP Account Manager 安装在了另外一个机器上。
-
-------------
-Generating SSH Keys。 key是rsa算法（三个人名缩写）  ssh 是secure shell
+Generating SSH Keys。 key是rsa算法  ssh 是secure shell
 
 ssh-keygen -t rsa -C "username@cyclecentury.com"
 Generating public/private rsa key pair.
@@ -1011,25 +595,8 @@ SSH服务端的配置使用的配置文件是“/etc/ssh/sshd_config”
 删除，我只能用root用户进入，在服务器上直接删除。vca 用户里面有 mantis，mediawiki
 
 
-
-
 vi /etc/passwd 可以看到很多用户
 
-www 不是一个账户，只是一个文件夹而已
-/home/www/repos 是svn仓库
-
-vca 用户是干什么的呢？上面运行着 wiki  mantis  testlink 等
-vcs是 root用户
-
-===============
-Darwin Streaming Server
-6.0.3 版本，却换到root用户 密码 yinjiezoule  执行 ./Install
-enter a new administrator user name:username
-password:123456
-
-web 地址 192.168.1.52:1220
-
-提示：qtss 用户创建失败
 
 从提示信息上看，应该是qtss用户未能创建造成的，查看了一下Install脚本，发现创建用户的脚本是这样的：
 if [ $INSTALL_OS = "Linux" ]; then
@@ -1066,15 +633,6 @@ nameserver 202.96.128.143
 设置网关
 route add default gw 10.65.1.2
 
-
-Ubuntu 10.04 LTS 安装sun-java6-jdk ，出现错误
-国外某个论坛看到说，这个包已经从2012-2-26就移走了
-最后实现办法
-
-1、加源
-sudo add-apt-repository "deb http://us.archive.ubuntu.com/ubuntu/ hardy multiverse" 
-2、sudo apt-get update
-3、sudo apt-get install sun-java6-jdk
 
 R810 配了RAID5 拷贝android out目录 16177M 用时6分钟，折合44M/s。改成4盘 RAID0，硬盘
 写入速度大幅提升，但是编译仍然需16分钟。（原raid5 16-17分钟）。现在还有一个内存的主频
@@ -1614,10 +1172,6 @@ adb: error while loading shared libraries: libncurses.so.5: wrong ELF class: ELF
 ubuntu包管理网站：
 http://packages.ubuntu.com/
 
-LTS版本：
-lucid (10.04LTS)
-precise (12.04LTS)
-trusty (14.04LTS)
 
 问题解决：
 1 20140812
