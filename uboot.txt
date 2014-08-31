@@ -304,10 +304,9 @@ nand write memAddress NandAddress size
 
 现在一开机显示全部是坏块，下载到内存在运行就显示正常了。
 
-怎么看到u-boot的版本呢？ version命令得到的是 U-Boot 2009.06-emma3slp-01 (Jun 03 2010 - 20:04:41)
-好像u-boot就是用日期表示版本号的哎！
-比如 U-Boot 2010.06-rc1 release  那么rc1表示什么意思呢？
-哈哈 果然啊 在Makefile中 有 
+u-boot版本: 
+version命令： U-Boot 2009.06-emma3slp-01 (Jun 03 2010 - 20:04:41)
+Makefile中有： 
 VERSION = 2009
 PATCHLEVEL = 06
 SUBLEVEL =

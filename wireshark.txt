@@ -44,5 +44,22 @@ http://media.cntv.duokanbox.com/tvservice/getmediadetail2?mediaid=976146&pageno=
 sudo groupadd wireshark
 sudo adduser  gaojie wireshark
 
+1台pc装apache浏览器播放视频无法抓包。但可以在虚拟机中抓。即ubuntu+apache，然后虚拟机winxp+firefox
+可以抓，选择lo即可
+
+在xp安装完1.11.3 后出现 Qt版和Gtk+版，样式不同。
+ubuntu12.04 软件中心提供gtk+版本。
+
+如果是gzip的，wireshark会解压缩。
+
+sudo dpkg-reconfigure wireshark-common
+press the right arrow and enter for yes
+sudo chmod +x /usr/bin/dumpcap
+you should now be able to run it without root
+
+
+
+
+ 
 
 

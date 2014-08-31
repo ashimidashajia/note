@@ -20,3 +20,7 @@ dd if=/dev/zero count=10  of=dd.bin 默认是512，此例拷贝51200字节
 dd if=/dev/zero bs=0 conout=100M of=dd.bin 执行得会很慢，因为一次读写1个字节
 dd if=/dev/zero conout=1M of=dd.bin 可迅速生成512M文件
 
+
+给每个空目录里面添加一个.tmp文件
+find ./ -type d -empty | grep -v \.git | xargs -i touch {}/.tmp
+

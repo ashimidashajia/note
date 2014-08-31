@@ -177,7 +177,7 @@ output/imgs/sonoma-singlehd_license_free-gnu-4.4.0-linux-retail/retail/lib/modul
 magic version 都带有dirty字符  可以用Hex编译工具修改 正常运行
 最终生成的都加了dirty字符
 关键在于 内核配置的时候，关键在General setup Automatically append version information to the version string  要关闭
-哈哈  kernel配置里面关闭也没有用 那就Hex修改吧
+kernel配置里面关闭也没有用 那就Hex修改吧
 
 fb分配内存1280*720*4*2 = 7372800 这个在init的时候就已经分配完成了
 难道是先把内存分配完成，然后再 通过android 设置565格式
@@ -227,8 +227,7 @@ static int cnxtfb_hdheight = 720;
 image_caps.pPage[uIndex].puPlanes[]  ：  pPage[0] pPage[1] 分别代表的是 2个 page 
 那么puPlanes 有IMAGE_MAX_PLANES 个元素 之用了0  在framebuffer驱动中就是之用 元素0 
 
-
-哈哈 最大尺寸 光在程序里面改还不行  insmod 的时候 是可以指定参数的  棒子指定成了 1280*720 所以我不论怎么改成1920 还是1280
+最大尺寸 光在程序里面改还不行  insmod 的时候 是可以指定参数的  棒子指定成了 1280*720 所以我不论怎么改成1920 还是1280
 
 framebuffer 要0x1000 (4k) 对齐
 

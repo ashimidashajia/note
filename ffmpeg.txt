@@ -54,14 +54,11 @@ configure –disable-asm
 ffplay需要sdl开发库
 
 2 有意思，ffmpeg里面可以配置使用 libstagefright 的h264解码程序。包含的路径也完全是
-android里面libstagefright的，搞笑啊
+android里面libstagefright的
 enabled libstagefright_h264  && require_cpp libstagefright_h264 "binder/ProcessState.h media/stagefright/MetaData.h
     media/stagefright/MediaBufferGroup.h media/stagefright/MediaDebug.h media/stagefright/MediaDefs.h
     media/stagefright/OMXClient.h media/stagefright/OMXCodec.h" android::OMXClient -lstagefright -lmedia -lutils -lbinder
-哈哈，这俨然是要在android环境下才可以编译通过，不知到ffmpeg的人是怎么想的，用这么下贱
-的去应付android吗？
-
-终于把ffplay编译出来了，有意思的是，鼠标点击屏幕某个位置可以实现跳转。
+这俨然是要在android环境下才可以编译通过
 
 3
 FFmpeg from the repository does not include some encoders for formats such as: H.263, aac (libfaac)

@@ -20,6 +20,9 @@
 
 这种小规模电路板，protel足矣
 
+3 串口顺序 空 红 橙 酱
+
+
 正常待机 蓝色灯一直亮着，TF卡升级完指示灯被关闭。
 控制指示灯有2处：主cpu（status led  PD16引脚）和 mcu pin8（Power-led）
 

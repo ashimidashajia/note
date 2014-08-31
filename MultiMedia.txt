@@ -997,35 +997,10 @@ PNX8471 能够做到 H264高清输出的同时，输出3D 1280x720p 30Hz的 rand
 Imagination Technologies PowerVR SGX 2D/3D graphics processor supporting dual independent displays
 
 
-omap3503 COTEX-A8 + 外设
-omap3515 COTEX-A8 + 外设 + 3D加速
-omap3525 COTEX-A8 + 外设 + DSP及视频硬件加速
-omap3530 COTEX-A8 + 外设 + DSP及视频硬件加速 + 3D加速 
-
-视频有两种方式，一种是直接用ARM或NEON加速软解码，另一种是启动DSP以及视频硬加速做媒体加速 [NEON的加速软解码？？！！！ ARM的？？  DSP的NXP就是TriMedia了]
-而 NXP支持的H264 文件 ASP 文件  比如我有一个divx 或者MKV 那么有怎么使用硬件加速呢？
-
-虽然硬件解码器成本低功耗小，但是格式支持有限。 
+视频有两种方式，一种是直接用ARM或NEON加速软解码，另一种是启动DSP以及视频硬加速做媒体加速
+硬件解码器成本低功耗小，但是格式支持有限。 
 
 而beagleboard不同，CPU内置的硬件加速部件是通用的，属于“软解码”，
-
-
-RFC3984  - RTP Payload Format for H.264 Video
-
-Real-time Transport Protocol (RTP) 
-
-RTSP（Real Time Streaming Protocol），实时流传输协议，是TCP/IP协议体系中的一个应用层协议，由哥伦比亚大学、
-网景和RealNetworks公司提交的IETF RFC标准。该协议定义了一对多应用程序如何有效地通过IP网络传送多媒体数据。RTSP在体系结构上位于RTP和RTCP之上，
-
-RTSP（Real Time Streaming Protocol）
-
-The transmission of streaming data itself is not a task of the RTSP protocol. Most RTSP servers use the
- Real-time Transport Protocol (RTP) for media stream delivery, however some vendors implement proprietary 
-transport protocols. The RTSP server from RealNetworks, for example, also features RealNetworks' proprietary 
-RDT stream transport.
-
-The Real-Time Transport Control Protocol (RTCP) is a sister protocol of the Real-time Transport Protocol (RTP).
-
 
 android git里面的一个注释
 OMX support for VC-1 simple, main, and advanced profiles
@@ -1063,7 +1038,7 @@ and Blu-ray Disc.[3][4]
 
 WiKi上：
 Filename extension：.wmv
-Internet media type： video/x-ms-wmv 【为什么这个名字跟opencorel里面一样呢？ 哈哈 网络媒体类型用的就是MIME】
+Internet media type： video/x-ms-wmv 【为什么这个名字跟opencorel里面一样呢？ 网络媒体类型用的就是MIME】
 
 MIME的英文全称是"Multipurpose Internet Mail Extensions" 多功能Internet 邮件扩充服务，
 它是一种多用途网际邮件扩充协议，在1992年最早应用于电子邮件系统，但后来也应用到浏览器。
@@ -1711,4 +1686,71 @@ xuss buffer缓冲通知机制：
 
 罗技C270摄像头：
 UVC设备
+
+
+============
+mp3库移植：
+1 源文件里面有两个mad.h不知道是什么意思
+
+ecommip: warning: secondary license obtained; to avoid poor performance,
+        set GHS_LMWHICH environment variable to "elan"
+
+huffman.h中的位定义方式  编译器竟然不支持
+
+负电数到定点数转换的问题
+请看下面的定义  mad.h
+/*
+ * Fixed-point format: 0xABBBBBBB
+ * A == whole part      (sign + 3 bits)
+ * B == fractional part (28 bits)
+ *
+ * Values are signed two's complement, so the effective range is:
+ * 0x80000000 to 0x7fffffff
+ *       -8.0 to +7.9999999962747097015380859375
+ *
+ * The smallest representable value is:
+ * 0x00000001 == 0.0000000037252902984619140625 (i.e. about 3.725e-9)
+ *
+ * 28 bits of fractional accuracy represent about
+ * 8.6 digits of decimal accuracy.
+ *
+ * Fixed-point numbers can be added or subtracted as normal
+ * integers, but multiplication requires shifting the 64-bit result
+ * from 56 fractional bits back to 28 (and rounding.)
+ *
+ * Changing the definition of MAD_F_FRACBITS is only partially
+ * supported, and must be done with care.
+ */
+
+注意这里的定点表示方式
+位区域的定义GreenHill的支持有些特殊
+
+在int为4个字节的系统上
+mad_fixed_t 就是unsigned int 类型
+---
+
+1 关于解绕 Descrambler  支持 DES  3DES  和 AES
+2 H.264/AVC   AVC叫做高级视频编码  属于mpeg4-10标准 mpeg4标准号为 iso 14496
+3 MPEG4:ASP    divx   VC-1  
+
+音频方面:
+mpeg2 AAC  也就是 13818-7   高级音频编码
+mpeg4 AAC   MPEG4 HE-AAC  这两个有什么区别呢?
+DD+  DD(AC3)
+
+video 解码器
+mpeg4 asp  符合 iso/iec 14496-2(mpeg4 part2) 最大尺寸640x480
+h.264/AVC  最大尺寸 1920x1080
+
+VC-1  最大尺寸 1920x1080
+
+jpeg baseline
+最大尺寸 30720x17280
+驱动只能支持 2048以内的解码. thinning modes  1/2 1/4 1/8 
+(从这里可以看出,jpeg解码是硬件支持的)
+要不然为什么 使用jpeg库的时候 要先初始化 video呢!
+
+音频:mpeg1 mpeg2 layer1 layer2  mpeg2-aac  mpeg4-aac mpeg4-he-aac
+dd(ac-3)   dd+   lpcm
+
 

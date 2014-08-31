@@ -122,7 +122,7 @@ VLC probably does not support this sound or video format.
 
 
 
-看看人家ubuntu系统各个库的版本控制！！太牛逼了！
+看看ubuntu系统各个库的版本控制！
 
 
 ---------------------------------------------------

@@ -133,7 +133,7 @@ W/IMediaDeathNotifier( 7437): Media player service not published, waiting...
 
 ./av/media/libmedia/IMediaDeathNotifier.cpp:   ALOGW("Media player service not published, waiting...");
 
-那么人家做这个第三方rom的时候是怎么搞的呢？牛逼啊
+那么人家做这个第三方rom的时候是怎么搞的呢？
 
 ------------
 我靠：终于在模拟器上把 omxcode里面的verbos e信息打出来了

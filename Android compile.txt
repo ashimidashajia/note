@@ -573,7 +573,7 @@ static int load(const char *id,
 
     /* Get the address of the struct hal_module_info. */
     const char *sym = HAL_MODULE_INFO_SYM_AS_STR;  //被定义成“HMI”
-    hmi = (struct hw_module_t *)dlsym(handle, sym); //查找HMI这个导出符号 哈哈 并获取其 地址
+    hmi = (struct hw_module_t *)dlsym(handle, sym); //查找HMI这个导出符号并获取其地址
     if (hmi == NULL) {
         LOGE("load: couldn't find symbol %s", sym);
         status = -EINVAL;
@@ -616,7 +616,7 @@ static int load(const char *id,
 为什么用HMI 字符串就能查到 hw_module_t结构体呢？
 readelf xx.so -s
 
-HAL模块的入口就是 HAL_MODULE_INFO_SYM变量 哈哈
+HAL模块的入口就是 HAL_MODULE_INFO_SYM变量
 
 
 static inline int framebuffer_open(const struct hw_module_t* module, 
@@ -1575,7 +1575,7 @@ LOCAL_SRC_FILES := foo.c bar.c.arm
 LOCAL_ARM_MODE := arm
 
 我在./core/clear_vars.mk:LOCAL_ARM_MODE:= 写上arm
-结果整个项目都是 target arm c/c++ 了  哈哈
+结果整个项目都是 target arm c/c++ 了
 当编译到opengl的时候，出错，看来这个目录的egl.c要用thumb编译
 我就在这个目录中的Android.mk中加上  LOCAL_ARM_MODE:= 空
 那么这个目录就用thumb编译了 target thumb c

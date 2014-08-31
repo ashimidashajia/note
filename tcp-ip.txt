@@ -48,12 +48,25 @@ error的值为90
 从PC上选择一个文件，然后上传到板子上 可以参考GoodReader
 
 用dvb-c工程机推送udp ts 流到192.168.1.87工作机，wireshark竟然识别了UDP中的TS包，为何？
-
-<<<<<<< HEAD
 pppoe拨号，路由器不断电的情况下，wan口ip会变化。
-=======
-
 m3盒子用电话线adsl拨号获得ip，在工位可ping通 106.120.10.49，可以adb connect
-
 在家用路由器获取ip，同在联通宽带里面应该可以访问，用3G访问不了，说明外网出口可能不是ap的wan口ip
->>>>>>> a0bc1395651cfe169959c28c242b16534a887899
+
+
+RFC3984  - RTP Payload Format for H.264 Video
+
+Real-time Transport Protocol (RTP) 
+RTSP（Real Time Streaming Protocol），实时流传输协议，是TCP/IP协议体系中的一个应用层协议，由哥伦比亚大学、
+网景和RealNetworks公司提交的IETF RFC标准。该协议定义了一对多应用程序如何有效地通过IP网络传送多媒体数据。RTSP在体系结构上位于RTP和RTCP之上，
+
+RTSP（Real Time Streaming Protocol）
+
+The transmission of streaming data itself is not a task of the RTSP protocol. Most RTSP servers use the
+ Real-time Transport Protocol (RTP) for media stream delivery, however some vendors implement proprietary 
+transport protocols. The RTSP server from RealNetworks, for example, also features RealNetworks' proprietary 
+RDT stream transport.
+
+The Real-Time Transport Control Protocol (RTCP) is a sister protocol of the Real-time Transport Protocol (RTP).
+
+
+
