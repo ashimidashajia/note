@@ -18,10 +18,6 @@ android2.2 Stagefright+ffmpeg+openmax
   自己实现openmax。这种做法难度很大，且难于得到nxp的支持，加之当时的严重bug逐步解决，
 故此想法放弃。
 
-需求	需求描述	备注
-Network Protocols	"RTSP (RTP, SDP)
-HTTP/HTTPS progressive streaming
-HTTP/HTTPS live streaming"	
 Container	"1 视频 mkv avi mp4 flv/f4v mpeg/mpg mov ts trp m2ts tp trp wmv rm rmvb 
 2 音频 mp3 wav flac ogg aac ac3  wma dts (ac3不是文件格式吧？)"	
 Decoder(Profile&Level)	"1 海斯3716: H.264 MPEG-2 MPEG4 SP/ASP DivX4/5/6 VC-1 AVS REAL8/9/10 AAC DD/DD+ DTS

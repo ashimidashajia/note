@@ -15,7 +15,7 @@
 	12) 使用SIMD的jpeg库:libjpeg-turbo(软件中心)
 		普通jpeg库：libjpeg-dev(开发版)
 	13) synaptic 新立得包管理器
-	14) wireshark 抓包工具(见wireshark.txt)
+	14) wireshark 抓包工具
 	
 	注：没有的命令直接执行，会给出安装包名的提示。
 
@@ -51,6 +51,8 @@
 	5) apt-get remove删除包，apt-get autoremove 自动删除没用的依赖包。
 	6) apt-get update 这个命令什么作用？
 	7) 加源 add-apt-repository "deb http://us.archive.ubuntu.com/ubuntu/ hardy multiverse" ;sudo apt-get update
+	8) 如何降低软件包版本？
+	9) PPA是Personal Package Archives
 		
 
 3 virtual Box相关
@@ -89,7 +91,8 @@
 4 包
 	1) dpkg
 		dpkg -l
-		dpkg -i packagename.deb 安装包
+		dpkg -i xx.deb 安装包
+		dpkg -r 删除包（需试验）
 		但是提示
 		python-numpy 依赖于 libc6 (>= 2.14)；然而：
 		系统中 libc6 的版本为 2.13-20ubuntu5。
@@ -103,13 +106,54 @@
 		python-numpy 依赖于 python (<< 2.7)；然而：
 		系统中 python 的版本为 2.7.2-7ubuntu2。
 		而ubuntu中也没有提供13.10 的支持，这就是不用04版本的后遗症。
-		dpkg -r 删除包
-	2) 包管理网站
+		
+	2) 包管理站
 		http://pkgs.org/
 		http://packages.ubuntu.com/  (11.04/11.10版本不维护)
+		https://launchpad.net/ubuntu/
 	3) libxx-dev包除.so还有.h和.a用于编译和静态链接。
+	4) 依赖:包解压后 /DEBIAN/control 描述依赖包
+
+	5) 包源：
+		1) 格式
+			deb http://xxx.com/ubuntu oneiric main
+			deb-src http://xxx.com/ubuntu oneiric main
+			deb-src指的是源码下载？
+		 
+		2) http://cn.archive.ubuntu.com
+			采用apache服务器维护， Northeastern University Networking Center(美国东北大学)
+			http://hk.archive.ubuntu.com/ubuntu/ (u12.04-server)
+			http://cn.archive.ubuntu.com/ubuntu/dists/precise/main (u12.04)
+			main目录下有Packages.gz 文本描述各种包，这些包都是Ubuntu Developers维护，比如：
+				Package: libjpeg-turbo8
+				Maintainer: Ubuntu Developers
+				Architecture: amd64
+				Source: libjpeg-turbo
+				Version: 1.1.90+svn733-0ubuntu4
+				Replaces: libjpeg8 (<< 8c-2ubuntu5)
+				Depends: libc6 (>= 2.7)
+				Pre-Depends: multiarch-support
+				Filename: pool/main/libj/libjpeg-turbo/libjpeg-turbo8_1.1.90-0ubuntu4_amd64.deb
+
+			Filename目录在：
+				http://cn.archive.ubuntu.com/ubuntu/pool/main/(这个包都在这个目录)
+			此目录有 liba/  libb/  ... libj/ 将库按字母排列
+			而像wireshark这类的软件在：
+				http://cn.archive.ubuntu.com/ubuntu/pool/universe/w/wireshark/wireshark-common_1.6.2-1_amd64.deb
+
+			Get:1 http://hk.archive.ubuntu.com/ubuntu/ precise/main libatasmart4 amd64 0.18-3 [26.9 kB]
+			非LTS版本弊端：20140901删除wireshark1.6.2就安装不上了，因原路径ubuntu.com/.../universe/w/wireshark/下删除了这个版本
+			打印看
+			http://cn.archive.ubuntu.com/ubuntu/ oneiric/universe wireshark amd64 1.6.2-1         404  Not Found
+			http://cn.archive.ubuntu.com/ubuntu/pool/universe/w/wireshark/wireshark_1.6.2-1_amd64.deb  404  Not Found
+			现在(140901)wireshark在/ubuntu/dists/precise/universe/binary-amd64/Packages.gz中有描述
+
+		3) http://archive.canonical.com (Apache/2.2.22 Ubuntu Server) 这个源内容很少
+		4) http://mirrors.163.com/ubuntu/   ubuntu.com的镜像站，速度快。因为是镜像站，某文件ubuntu主站没有了他也就没有了
 
 
+
+		
 
 5 grub
 	1) 单ubuntu系统不显示grub菜单,可一直按住shift键显示
@@ -174,29 +218,33 @@
 
 8 系统安装
 	1) LTS版本：
+		hardy (8.04LTS)早就不支持了
 		lucid (10.04LTS)
 		precise (12.04LTS)
 		trusty (14.04LTS)
-	   其他	
+	   其他:
+		natty (11.04)
 		oneiric (11.10)
-		Utopic (14.10)
+		quantal (12.10)
+		saucy (13.10)
+		Utopic (14.10)		
 
 	2) 用UltraISO制作的系统盘是FAT32系统
 	3) sudo passwd root；su root 进root用户,禁用root：sudo passwd -l root
-	4)
-		2块硬盘组raid0，安装win7+ubuntu双系统时，出现麻烦：1 raid0，2 win7。这跟原来单盘，winxp的情形不同。
+	4) 2块硬盘组raid0，安装win7+ubuntu双系统时，出现麻烦：1 raid0，2 win7。这跟原来单盘，winxp的情形不同。
 		主要原因是grub引导程序不支持raid0。
 		方案1：另外安装一块笔记本硬盘用于ubuntu，安装时候把raid0双盘拔掉。独立安装，启动时候靠bios选择引导盘切换系统。
 		问题：肯能是这块盘的性能太差，抑或是ubuntu14.04系统本身有问题，系统运行缓慢，软件打开也慢。换成gnome桌面也不行。
-		方案2：再安装2块160G硬盘，组成raid0（实验可行，2组raid0，主板还是挺强的）。安装ubuntu12.04时候，选择boot程序装在sda上（此时应该是u盘）实测不行
+		方案2：再安装2块160G硬盘，组成raid0（实验可行，2组raid0，主板还是挺强的）。安装ubuntu12.04时候，选择boot程序装在sda上
+		(此时应该是u盘)实测不行
 		ubuntu无法启动。并且，160G raid0 两块盘工作时非常热。并且他们是sata2.0 3.0G  性能肯定不如我的sata3.0 6G双盘好。
 		后来考虑，我安装一块320G 笔记本小盘。安装ubuntu12.04 时候可以选择启动程序安装位置，grub不是不支持raid嘛，我把boot
 		程序安装在非raid的单盘上，然后把系统安装在raid0上，安装倒是成功了，但是无法启动，没有出现启动菜单，选择320G单盘为
 		启动盘，提示grub错误，丢失文件。
-
 		方案3：使用EasyBCD引导，不使用grub，折腾一个晚上，没有成功，能出现grub菜单，也可以选，但是停止在启动页面，无法进入ubuntu系统。
 		方案4：raid0 独立安装ubuntu，虚拟机安装winxp。
 	5) home目录单独分出较好，重装系统时不用备份数据。
+	6) .bashrc
 
 
 9 服务配置
@@ -294,10 +342,6 @@
 
 10 错误报告
 	1) 装完显卡驱动，声卡驱动不工作了。安装一个3D桌面的东西，桌面显示不正常了。
-	2) ubuntu12.04+wireshark1.6.7，看视频抓包卡死，cpu占用100%。xp+wireshark1.11,或ubuntu11.10+wireshark1.6.2_1没有问题。网上讨论但没找到解决办法。有人说按抓1.2.x解决。
-能否在12.04上安装wireshark1.12.0呢？
-看http://packages.ubuntu.com/search?suite=all&searchon=names&keywords=wireshark
-
 	3) 由11.04升级到11.10成功(以前这样升级都是失败的，进不了桌面)
 	4) ubuntu 11.10  evolution 的目录不在  ~/.evolution 了 而是 ~/.local/share/evolution 
 	5) unity 问题挺多，新产品出来需要很多时间磨合
@@ -308,11 +352,18 @@
 
 
 
-12.04 由于之前试验，卸载安装卸载使得libncurses库损坏，导致man xx无法使用：libncurses.so.5: No such file or directory
-查看10.04 在/lib下有此库64位版本，而12.04 /lib/x86_64-linux-gnu下只有libncursesw.so.5没有 libncurses.so.5
-apt-get install 显示已经是最新的版本。(apt-get remove 失败，否则重新安装应该也能解决)
-下载libncursesw5_5.9-4_amd64.deb，dpkg -i安装后/lib/x86_64-linux-gnu下出现此库，问题解决
+12 other
+	1) u12.04损坏了libncurses库，导致man xx无法使用：libncurses.so.5: No such file or directory。u10.04 在/lib下有此库64位版本，
+	而u12.04 /lib/x86_64-linux-gnu下只有libncursesw.so.5没有 libncurses.so.5。apt-get install 显示版本已最新，apt-get remove失败
+	下载libncursesw5_5.9-4_amd64.deb，dpkg -i安装后/lib/x86_64-linux-gnu下出现此库，解决。
 
+	2) 解决u12.04+wireshark1.6.7 卡死问题：手工下载包及多级依赖包成功降低版本至1.2.7，抓视频包不死机了但点击详情死机。
+	升级到u14.04用的1.10.6较难很多依赖包版本不对需重装，开始的都能装，最后所需gtk3.0与系统冲突无法安装。ubuntu版和winxp版不同，
+	前者包只有2M，许多依赖包靠系统提供，后者25M，应该包含了所需全部。u11.10之1.6.2
+	
+	3) ubuntu server12.04 apt-get install openjdk-7-jre 安装jre7成功，并自动配置了update-alternatives
+
+	
 
 build-essential包含:
 The following extra packages will be installed:
@@ -320,10 +371,6 @@ The following extra packages will be installed:
 The following NEW packages will be installed:
   build-essential dpkg-dev g++ g++-4.6 libalgorithm-diff-perl libalgorithm-diff-xs-perl libalgorithm-merge-perl libdpkg-perl libstdc++6-4.6-dev libtimedate-perl
 
-.bashrc
-
-2 设置软件源：系统设置->Update Manager->Setting->Ubuntu Software->Server for China 
-确认一下 就可更新。此后就可以apt-get软件包了
 
 6 ubuntu11.04 信使无法显示中文无法设置，使用经典桌面（相对11.04 新推出的桌面 可在启
 动登录时选择）可以：首选项-system-上面两行修改为gb18030 panel font 改为文泉驿 即可。
@@ -964,8 +1011,6 @@ apt-get install -f 可以卸载 python-numpy:i386
 1 ubuntu14.04 拼音输入法总是不爽
 在软件中心搜索 IBus Pinyin Setup
 重启电脑，我在ubuntu11.10上熟悉的输入法终于回来了（一个蓝色的“拼”字那个）
-
-wowza： ./startup.sh: 35: java: not found  需要先安装jre
 
 3 安装ubuntu12.04 server ：  mysql  root:12345
 OpenSSH Server

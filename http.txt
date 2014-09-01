@@ -1,3 +1,26 @@
+1 http progressive stream
+
+
+PC也可以直接html5 视频，progressive streaming
+
+android官方支持的网络流协议3种：
+RTSP (RTP, SDP)
+HTTP/HTTPS progressive streaming
+HTTP/HTTPS live streaming draft protocol
+
+wowza不支持progressive streaming
+dlna默认只支持progressive streaming
+
+腾讯视频地址是mp4的
+http://124.193.165.203/vlive.qqvideo.tc.qq.com/r0012dhf0vn.p202.1.mp4?vkey=F7F1A
+E8D272A2260E615614483DB318B6398E3FE03BC6D2F97126935268F1326D866CF28128DE056&sha=
+&level=3&br=200&fmt=hd&sdtfrom=v3000&platform=10403
+
+这个地址粘在chrome浏览器，页面右击保存，可以下载mp4文件。
+
+
+
+
 wiki 保存修改后弹出 “Your edit was saved” 小标签如何做到
 
 sessions and cookies
