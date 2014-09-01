@@ -1,0 +1,8 @@
+1 ubifs,yaffs2,ext2 over block
+  博通，nxp用的是ubifs。博通生产发现，system分区开机数次（几千）出现坏快。调查发现，
+  即使system挂载成read only，ubifs的内部机制在每次挂载的时候还是会多次擦写分区。如果
+  将MTD直接设置成read only，ubifs不能工作。最后，system使用了只读文件系统cramfs。
+  隐患：data分区也有损坏可能，只是不会导致系统无法启动。
+
+2 amlogic竟然使用了ext4，可行吗？
+  rockchip用的是什么？

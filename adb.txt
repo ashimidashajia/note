@@ -13,4 +13,4 @@
 adb install -r ApiDemos.apk  提示 Failure [INSTALL_FAILED_DEXOPT] (-r 如已安装则覆盖否则提示：INSTALL_FAILED_ALREADY_EXISTS)
 adb push ApiDemo.apk ApiDemo.odex 不能运行 logcat显示 mismatch dep signature for
 
-
+adb -s devicename shell  多设备连接时，选择

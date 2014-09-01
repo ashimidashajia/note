@@ -365,3 +365,60 @@ make clean
 
 ---
 除了拆开盒子，如何迅速查出板子内存配置
+
+
+
+fcntl.h定义了很多宏和open,fcntl函数原型  #include <unistd.h>
+　　是POSIX标准定义的unix类系统定义符号常量的头文件，包含了许多UNIX系统服务的函数原型，例如read函数、write函数和getpid函数
+
+       int open(const char *pathname, int flags);
+       int open(const char *pathname, int flags, mode_t mode);
+
+ mode specifies the permissions to use in case a new file is created.  
+这里的权限就指 用户，组，其他的读写可执行等
+只有指定 O_CREAT 参数的时候，mode才有意义，否则直接赋值为0即可，即使不赋0，内部也会把他清零。
+
+
+1 epoll - I/O event notification facility
+epoll 是 poll 的变体
+
+epoll是Linux内核为处理大批量句柄而作了改进的poll，是Linux下多路复用IO接
+口select/poll的增强版本，它能显著减少程序在大量并发连接中只有少量活跃的
+情况下的系统CPU利用率。
+
+select/poll 叫 多路复用i/o接口？!
+
+
+堆栈回溯
+typedef struct frame_pointer_t
+{
+    struct frame_pointer_t *pre;
+    unsigned int    ret_address;
+}frame_pointer;
+
+static frame_pointer* fp;
+void stack_trace(int n)
+{
+
+    __asm("sw  $30, fp"); 
+    while(n--)
+    {
+       dl_printf("\r\n frame is 0x%x, ret address is 0x%x \r\n", (unsigned int)fp->pre, fp->ret_address);
+       fp = fp->pre;
+    }
+}
+
+
+20131023 调试EPG系统引发
+编译完成了如何安装到服务器，如何制作安装包
+新的so放入到/usr/local/lib 下要运行 ldconfig 才能找到。
+
+
+针对不同的平台，要移植irq.c 
+他干什么呢？ 要处理一级中断。
+
+这里要注册中断号码。基本是按照一级中断寄存器定义的。
+
+irq.c 主要是实现一个 struct irq_chip 结构体
+
+

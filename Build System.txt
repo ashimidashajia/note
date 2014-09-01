@@ -126,3 +126,62 @@ define dump-words-to-file
 
 
 
+framework/base 删除里面的api.xml 测试用的视频，真正代码部分就50M 左右。没有那么的庞大。
+4.1编译完，out有17G之多
+
+4 4.1的编译器目录比较混乱
+prebuilts/gcc/linux-x86/arm/arm-linux-androideabi-4.6/bin:
+prebuilts/gcc/linux-x86/arm/arm-eabi-4.6/bin:
+通过showcommands发现最终用的是前者。那么prebuilt目录是干什么的呢？
+
+
+build/envsetup.sh
+including device/asus/grouper/vendorsetup.sh
+including device/generic/armv7-a-neon/vendorsetup.sh
+including device/generic/armv7-a/vendorsetup.sh
+including device/moto/wingray/vendorsetup.sh
+including device/samsung/crespo/vendorsetup.sh
+including device/samsung/maguro/vendorsetup.sh
+including device/ti/panda/vendorsetup.sh
+including sdk/bash_completion/adb.bash
+
+显示配备了这些device 最后的sdk/bash 是什么？
+
+
+prebuilt 和 prebuilts 两个目录都需要，删除prebuilt 系统编译不过去
+在这2个目录中删除了一些不用的编译器，比如过时的arm版本，x86编译器等。
+
+---------------
+c++的server都是由init启动
+关于权限问题，xml可以制定 shared uid
+
+system权限 1000 有权访问 apk目录吗？
+
+
+SDK使用说明
+-------------------
+
+1 设置环境变量：
+  a. 普通(用于发布)  ：
+	source pnx8400_a9_env.sh newbox retail singlehd_license_free
+  b. 带打印(用于调试)：
+	source pnx8400_a9_env.sh newbox retail singlehd_license_free_trace
+  c. 编译SDK之外app，比如测试程序等
+        source android_env.sh newbox retail singlehd_license_free ; export _TMTGTCOPYAPP=1
+         文件生成在 bin/armgnu_linux_static_el_cortex-a9_flo_linux_mp_ 目录下
+  d. 编译SDK之外的库，比如dd，dm
+        source android_env.sh newbox retail singlehd_license_free ; export _TMTGTCOPYLIB=1
+         文件生成在 lib/armgnu_linux_static_el_cortex-a9_flo_linux_mp_ 目录下
+  在以上配置中加 export _TMECHO=1 (分号隔离) 可以显示编译参数详情
+
+2 编译
+  a. sdk全部编译： 执行 make （sdk根目录）
+  b. 只编译sdk用户空间部分： 执行 make change_toolchain 或者执行 make app （sdk根目录）
+  c. 编译自己的库或者测试程序： 进入自己的makefile所在目录，执行 make
+
+3 gnu linux的rootfs编译
+  在当前目录
+  全部编译： 执行 make -f makefile-gnu
+  只编译用户空间部分： 执行 make -f makefile-gnu app
+
+

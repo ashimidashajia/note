@@ -15,7 +15,7 @@
 	12) 使用SIMD的jpeg库:libjpeg-turbo(软件中心)
 		普通jpeg库：libjpeg-dev(开发版)
 	13) synaptic 新立得包管理器
-	14) wireshark 抓包工具
+	14) wireshark 抓包工具(见wireshark.txt)
 	
 	注：没有的命令直接执行，会给出安装包名的提示。
 
@@ -181,6 +181,7 @@
 
 		方案3：使用EasyBCD引导，不使用grub，折腾一个晚上，没有成功，能出现grub菜单，也可以选，但是停止在启动页面，无法进入ubuntu系统。
 		方案4：raid0 独立安装ubuntu，虚拟机安装winxp。
+	5) home目录单独分出较好，重装系统时不用备份数据。
 
 
 10 服务配置
@@ -274,33 +275,6 @@
 
 	7) wiki
 		wiki导出pdf做过很多尝试，始终没有配置成功
-	8) wireshark
-	apt-get install wireshark 仅安装一个2,324 kB wireshark包  wireshark-common
-	安装低版本1.2.7-1 提示wireshark-common还是1.6.7，在软件中心或apt-get remove卸载之
- wireshark depends on libc-ares2 (>= 1.7.0); however:
-  Package libc-ares2 is not installed.
- wireshark depends on libsmi2ldbl; however:
-  Package libsmi2ldbl is not installed.
- wireshark depends on wireshark-common (= 1.2.7-1); however:
-  Package wireshark-common is not installed.
-
-成功退回到1.2.7版本，实时抓视频包不死了，但是无法查看包详情，一点就死机，整个桌面不动了，奇怪，去要f4切换强制kill 
-
-，11.10什么版本？
-
-再执行apt-get install wireshark：
-sudo apt-get install wireshark
-Reading package lists... Done
-Building dependency tree       
-Reading state information... Done
-You might want to run 'apt-get -f install' to correct these:
-The following packages have unmet dependencies:
- wireshark : Depends: libwireshark1 (>= 1.6.0-1) but it is not going to be installed
-             Depends: libwiretap1 (>= 1.6.0-1) but it is not going to be installed
-             Depends: libwsutil1 (>= 1.6.0-1) but it is not going to be installed
-             Depends: wireshark-common (= 1.6.7-1) but it is not going to be installed
-E: Unmet dependencies. Try 'apt-get -f install' with no packages (or specify a solution).
-难道新安装的系统首次就有 wireshark-common ？？？ libwireshark1 ？？？
 
 
 11 错误报告
@@ -316,6 +290,7 @@ E: Unmet dependencies. Try 'apt-get -f install' with no packages (or specify a s
 
 12 技巧
 	~目录建立Work保存所有工作内容，可能误删。可将其改为root权限，在内部再建立分类目录。这样在work下建立新目录较麻烦，有助于强制规范此目录。
+
 
 
 12.04 由于之前试验，卸载安装卸载使得libncurses库损坏，导致man xx无法使用：libncurses.so.5: No such file or directory
@@ -1323,5 +1298,48 @@ geidt 搜索框右击选择区分大小写
 作为Ubuntu项目的领导者,Canonical知道Ubuntu的内涵
 
 系统完全死掉时，可以ctrl+alt+f3 去kill某个进程。
+
+
+--grub--
+2011 11 21
+
+出现grub rescue后 执行ls 会罗列出磁盘信息，然后
+ls (hd0,x)/boot/grub 依次执行，找到 /boot/grub所在目录，（所在目录会显示此目录下的文件）
+
+假设找到 (hd1,6) 调用如下命令：
+
+set root=(hd1,6)
+set prefex=(hd1,6/boot/grub
+insmod /boot/grub/normal.mod
+注意 = 前后没有空格
+
+然后调用如下命令，就可以显示丢失的grub菜单了
+grub rescue>normal
+
+此时不要高兴，如果重启，仍然有问题（真是步步惊险），我们进入linux，对gurb进行修复
+
+sudo update-grub
+sudo grub-install /dev/sda (注意，这里要指定 mbr 坐在磁盘 不要指定分区号 开始我以为是/boot坐在磁盘，结果不对)
+
+
+至此，开始接触功能强大的grub
+
+
+2 Friday, 16 December 2011
+整理老机器 80G盘+160G盘  80G盘上有多个分区并且安装了windows系统（是以前一直用的）有主分区，扩展分区等。
+在ubuntu上除windows系统分区外，全部删除。
+然后执行
+sudo update-grub
+sudo grub-install /dev/sda
+重启成功 ，依次成功的尝试
+但是下一步，如果我把windows分区也删除了，会怎样呢？只有一个系统就不许要grub了
+进而把windows删除 然后把mbr写到sdb上试试
+
+sudo update-grub  能成功  开机后仍然有grub菜单（常磊直接新机器安装ubuntu 就没有grub菜单了）
+sudo grub-install /dev/sdb  （sdb执行成功了，不知道是不是真的安装到了sdb上，因为此时sda上也有）
+
+
+超微 转码器  每个节目的组播端口号必须不同，否则ipqam搜不到节目
+
 
 
