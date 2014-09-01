@@ -107,8 +107,6 @@ File is missing 'moov' atom.
 android4.0 默认不支持m3u8
 
 ts 转换成mp4文件后，可以用wowza例子在PC上用Flash播放。看来flash 不但可以flv也可mp4啊
-当然，PC也可以直接html5 视频，progressive streaming
-
 
 配置文件里 sanjosestreaming 是什么流
 
@@ -119,8 +117,6 @@ vlc 里面显示视频格式mpgv 代表mpeg1/2
 要填写本地机器地址！！和工程机设置好的端口号。
 
 苹果和android都显示无法播放,vlcl可以！现在要转码
-
-sudo tcpdump -i eth1 检测特有网口
 
 
 http://www.wowza.com/forums/content.php?326-How-to-specify-a-play-start-time-and-duration-for-HTTP-streaming
@@ -143,22 +139,6 @@ User Agent Switcher
 在“获取附加组件”中，搜索User Agent Switcher，点击“添加至Firefox”，然后在弹出的窗口点击“立即安装”
 
 User-Agent: Mozilla/5.0 (iPhone; CPU iPhone OS 6_1_3 like Mac OS X) AppleWebKit/536.26 (KHTML, like Gecko) Version/6.0 Mobile/10B329 Safari/8536.25\r\n
-
------------
-android官方支持的网络流协议3种：
-RTSP (RTP, SDP)
-HTTP/HTTPS progressive streaming
-HTTP/HTTPS live streaming draft protocol
-
-wowza不支持progressive streaming
-dlna默认只支持progressive streaming
-
-腾讯视频地址是mp4的
-http://124.193.165.203/vlive.qqvideo.tc.qq.com/r0012dhf0vn.p202.1.mp4?vkey=F7F1A
-E8D272A2260E615614483DB318B6398E3FE03BC6D2F97126935268F1326D866CF28128DE056&sha=
-&level=3&br=200&fmt=hd&sdtfrom=v3000&platform=10403
-
-这个地址粘在chrome浏览器，页面右击保存，可以下载mp4文件。
 
 启动为 服务器模式
 /sbin/service WowzaMediaServer start
@@ -355,17 +335,12 @@ dvr启动后就开始了录制。
 --
 组播流端口选择10000，wireshark显示ndmp 什么意思？
 
---
-wireshark
-tcpdump -i em2 port 10000 -s 1360 -w  dump.ts
-可以把捕获的RTP的流里面的TS提取出来，得到纯粹的ts文件
 注：为什么wireshark不认rtp流，需要右键选Decode as 选rtp。
 因为udp头里面没有表明rtp协议的地方，后面的数据只能认为纯data，rtp协议开头的交互
 wireshark没有捕获到，好比从中间接听谈话，不知到对方在说什么一样。
 --
 录制20多个小时后，iphone可以正常播放，但是android平台就不行了，分析可能因为m3u8文件
 太大了（此时已达到1.9M）
-
 
 --
 20131009

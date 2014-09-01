@@ -34,7 +34,7 @@
 	执行：
 	sudo update-alternatives --install "/usr/bin/java" "java" "/usr/lib/jvm/jdk1.6.0_35/jre/bin/java" 1
 	sudo update-alternatives --install "/usr/bin/javac" "java" "/usr/lib/jvm/jdk1.6.0_35/bin/javac" 1
-
+	有时javadoc也需要切换。apt-get install openjdk时自动配置好alternatives
 
 	设置环境变量，修改~/.profile(当前用户)或/etc/profile(全局用户)
 	export JAVA_HOME=/usr/lib/jvm/jdk1.7.0_10
@@ -2019,4 +2019,18 @@ ndk
 ---
 java如何最终生成一个jar包
 
+
+4 华硕应用偶尔闪烁红色边框：
+I can confirm that changing the build type from "eng" 
+(=engineering) to "user" (=end user) does remove the red border issue.
+
+4.0.3只要把 开发人员选项-严格模式已启用  选项去掉，重启即可消失。
+应用程序在主线程上执行长时间操作时闪烁屏幕。
+
+5 华硕 terminal的logcat setting应用操作时看到
+intent.action.HDMI_PLUGGED  
+
+
+ndk里面没有pthread库？
+通过查看源码，pthread函数在libc.so里，所以不用包含-lpthread  -lrc
 

@@ -37,4 +37,30 @@ root拥有所有的capability,
 
 
 
+ audio focus。关于ICS音量设置
+
+
+发现am是toolbox shell的一个脚本，在busybox的shell中不能执行。
+
+# Script to start "am" on the device, which has a very rudimentary
+# shell.
+#
+base=/system
+export CLASSPATH=$base/framework/am.jar
+exec app_process $base/bin com.android.commands.am.Am "$@"
+
+同样形式的还有
+bmgr bu ime input monkey pm svc
+
+基本上是 启动一个app_process进程（就是zygote）然后创建一个dalvike 虚拟机执行参数指定的jar包。
+这可以在命令行中启动一个apk 
+
+
+对接特殊按键的方法()
+framework/base/core/java/android/view/KeyEvent.java
+framework/base/core/res/res/values/attrs.xml
+framework/base/include/ui/KeycodeLabels.h
+
+在这三个文件加我们需要的键值映射就行了。
+
 

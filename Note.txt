@@ -84,7 +84,7 @@ make install 后： 有如下打印：
 这时候在：
 /usr/lib/python2.7/dist-packages/cv2.so
 /usr/local/lib/python2.7/dist-packages/cv2.so
-同时存在 cv2.so 了，哈！ 用哪个呢？
+同时存在 cv2.so 了，用哪个？
 
 python 靠缩进判断if 包含的语句结束。
 语句从 if __name__ == '__main__':处开始执行。

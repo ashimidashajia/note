@@ -51,6 +51,8 @@
 	5) apt-get remove删除包，apt-get autoremove 自动删除没用的依赖包。
 	6) apt-get update 这个命令什么作用？
 	7) 加源 add-apt-repository "deb http://us.archive.ubuntu.com/ubuntu/ hardy multiverse" ;sudo apt-get update
+	8) 如何降低软件包版本？
+	9) PPA是Personal Package Archives
 		
 
 3 virtual Box相关
@@ -73,7 +75,7 @@
 		FATAL: Error inserting vboxdrv (/lib/modules/3.13.0-33-generic/misc/vboxdrv.ko): 
 		Unknown symbol in module, or unknown parameter (see dmesg)
 		查看dmesg：有 vboxdrv: Unknown symbol mcount。（找不到mcount符号）
-		开始以为kernel版本问题，显示grub(方法见grub专题)，选择老版本kernel，还是不行
+		开始以为kernel版本问题，显示grub(见grub专题)，选择老版本kernel，还是不行
 		最后查明，编译android的时候把gcc切换到4.4了，而这里需要4.6才能成功执行 /etc/init.d/vboxdrv setup(百度 Unknown symbol mcount）
 		(都是12.04升级惹的祸，以后不要升级ubuntu，装完啥样就啥样，升级带来风险，但同时也学到了不少)
 		20140819又升级了内核，又遇到这个问题，sudo /etc/init.d/vboxdrv setup搞定。
@@ -86,28 +88,77 @@
 		在虚拟机菜单->Devices->USB Devices看到U盘，选择之即可在xp中访问。
 	8) 个别程序需将文件拷至虚拟机目录，在共享ubuntu目录执行异常。已知的：winrar直接提示错误，Phoenixcard，uboot部分烧不进入。
 
+4 包
+	1) dpkg
+		dpkg -l
+		dpkg -i xx.deb 安装包
+		dpkg -r 删除包（需试验）
+		但是提示
+		python-numpy 依赖于 libc6 (>= 2.14)；然而：
+		系统中 libc6 的版本为 2.13-20ubuntu5。
+		dpkg：处理 python-numpy (--install)时出错：
+		说明需要低版本的numpy
+		sudo apt-get -f install  可以卸载依赖错误的软件包
+		再次执行 apt-get install python-numpy :
+		错误 http://cn.archive.ubuntu.com/ubuntu/ oneiric/main python-numpy amd64 1:1.5.1-2ubuntu2
+		说明需要 1.5.1 这个版本
+		但是没有1.5.1这个版本，用了1.3.0  
+		python-numpy 依赖于 python (<< 2.7)；然而：
+		系统中 python 的版本为 2.7.2-7ubuntu2。
+		而ubuntu中也没有提供13.10 的支持，这就是不用04版本的后遗症。
 		
+	2) 包管理站
+		http://pkgs.org/
+		http://packages.ubuntu.com/  (11.04/11.10版本不维护)
+		https://launchpad.net/ubuntu/
+	3) libxx-dev包除.so还有.h和.a用于编译和静态链接。
+	4) 依赖:包解压后 /DEBIAN/control 描述依赖包
+
+	5) 包源：
+		1) 格式
+			deb http://xxx.com/ubuntu oneiric main
+			deb-src http://xxx.com/ubuntu oneiric main
+			deb-src指的是源码下载？
+		 
+		2) http://cn.archive.ubuntu.com
+			采用apache服务器维护， Northeastern University Networking Center(美国东北大学)
+			http://hk.archive.ubuntu.com/ubuntu/ (u12.04-server)
+			http://cn.archive.ubuntu.com/ubuntu/dists/precise/main (u12.04)
+			main目录下有Packages.gz 文本描述各种包，这些包都是Ubuntu Developers维护，比如：
+				Package: libjpeg-turbo8
+				Maintainer: Ubuntu Developers
+				Architecture: amd64
+				Source: libjpeg-turbo
+				Version: 1.1.90+svn733-0ubuntu4
+				Replaces: libjpeg8 (<< 8c-2ubuntu5)
+				Depends: libc6 (>= 2.7)
+				Pre-Depends: multiarch-support
+				Filename: pool/main/libj/libjpeg-turbo/libjpeg-turbo8_1.1.90-0ubuntu4_amd64.deb
+
+			Filename目录在：
+				http://cn.archive.ubuntu.com/ubuntu/pool/main/(这个包都在这个目录)
+			此目录有 liba/  libb/  ... libj/ 将库按字母排列
+			而像wireshark这类的软件在：
+				http://cn.archive.ubuntu.com/ubuntu/pool/universe/w/wireshark/wireshark-common_1.6.2-1_amd64.deb
+
+			Get:1 http://hk.archive.ubuntu.com/ubuntu/ precise/main libatasmart4 amd64 0.18-3 [26.9 kB]
+			非LTS版本弊端：20140901误删了wireshark1.6.2就安装不上了，因原路径ubuntu.com/.../universe/w/wireshark/下删除了这个版本
+			打印看
+			http://cn.archive.ubuntu.com/ubuntu/ oneiric/universe wireshark amd64 1.6.2-1         404  Not Found
+			http://cn.archive.ubuntu.com/ubuntu/pool/universe/w/wireshark/wireshark_1.6.2-1_amd64.deb  404  Not Found
+			现在(140901)wireshark在/ubuntu/dists/precise/universe/binary-amd64/Packages.gz中有描述
+			用尽各种办法没找到1.6.2，还有源码编译这一出吧。
+			
+			修改源从11.10到10.04，update时看到：
+			“获取：http://cn.archive.ubuntu.com lucid/universe amd64 Packages [5,430 kB]” 明白了
+			apt-get install wireshark 成功安装1.2.7，点击详情死机（与u12.04退到1.2.7现象一样）
+
+		3) http://archive.canonical.com (Apache/2.2.22 Ubuntu Server) 这个源内容很少,没有wireshark等
+		4) http://mirrors.163.com/ubuntu/   ubuntu.com的镜像站，速度快。因为是镜像站，某文件ubuntu主站没有了他也就没有了
 
 
 
-4 dpkg
-	dpkg -l
-	dpkg -i packagename.deb  可以安装！！！
-	但是提示
-	python-numpy 依赖于 libc6 (>= 2.14)；然而：
-	系统中 libc6 的版本为 2.13-20ubuntu5。
-	dpkg：处理 python-numpy (--install)时出错：
-	说明需要低版本的numpy
-	sudo apt-get -f install  可以卸载依赖错误的软件包
-	再次执行 apt-get install python-numpy :
-	错误 http://cn.archive.ubuntu.com/ubuntu/ oneiric/main python-numpy amd64 1:1.5.1-2ubuntu2
-	说明需要 1.5.1 这个版本
-	但是没有1.5.1这个版本，用了1.3.0  
-	python-numpy 依赖于 python (<< 2.7)；然而：
-	系统中 python 的版本为 2.7.2-7ubuntu2。
-	而ubuntu中也没有提供13.10 的支持，这就是不用04版本的后遗症。
-	dpkg -r 删除一个包
-
+		
 
 5 grub
 	1) 单ubuntu系统不显示grub菜单,可一直按住shift键显示
@@ -117,73 +168,91 @@
         sudo update-grub
 	可以选择旧版本的kernel
 
-	调整磁盘分区，然后
-	sudo update-grub
 	sudo grub-install /dev/sdb
 	系统正常启动
 
+	出现grub rescue后 执行ls 会罗列出磁盘信息，然后
+	ls (hd0,x)/boot/grub 依次执行，找到 /boot/grub所在目录，（所在目录会显示此目录下的文件）
 
-6 非dev和dev包的区别,以libncurses5和libncurses5-dev为例：
-	前者包含文件：
-	/lib/x86_64-linux-gnu/libncurses.so.5
+	假设找到 (hd1,6) 调用如下命令：
+	set root=(hd1,6)
+	set prefex=(hd1,6/boot/grub
+	insmod /boot/grub/normal.mod
+	注意 = 前后没有空格
+
+	然后调用如下命令，就可以显示丢失的grub菜单了
+	grub rescue>normal
+
+	进入linux，对gurb进行修复
+
+	sudo grub-install /dev/sda (注意，这里要指定 mbr 坐在磁盘 不要指定分区号 开始我以为是/boot坐在磁盘，结果不对)
+
+	整理老机器 80G盘+160G盘  80G盘上有多个分区并且安装了windows系统（是以前一直用的）有主分区，扩展分区等。
+	在ubuntu上除windows系统分区外，全部删除。
+	然后执行
+	sudo grub-install /dev/sda
+	重启成功 ，依次成功的尝试
+	但是下一步，如果我把windows分区也删除了，会怎样呢？只有一个系统就不许要grub了
+	进而把windows删除 然后把mbr写到sdb上试试
+
+	开机后仍然有grub菜单（常磊直接新机器安装ubuntu 就没有grub菜单了）
+	sudo grub-install /dev/sdb  （sdb执行成功了，不知道是不是真的安装到了sdb上，因为此时sda上也有）
+
+7 32/64位库
+
+	i386  i686 都是32位  x86_64 代表64位
+	/lib  64位库
+	/lib/x86_64-linux-gnu 64位库
+	/lib/i386-linux-gnu 32位库
+	/usr/lib 64位库
+	/usr/lib/i386-linux-gnu 32位库
+	/usr/lib/x86_64-linux-gnu 64位库
+	/usr/lib32  32位库
+
+	/lib32  32位库
+	以lib32ncurses5_5.7_amd64.deb 为例子，解压缩后：
+	/usr/lib32/libmenu.so.5
 	...
-	/usr/lib/x86_64-linux-gnu/libpanel.so.5.9
-	/usr/share/doc/libncurses5/FAQ
-	/usr/share/doc/libncurses5/TODO.Debian
-	/usr/share/doc/libncurses5/changelog.Debian.gz
-	/usr/share/doc/libncurses5/copyright
-
-	后者包含文件：
-	/usr/include/curses.h
+	/usr/lib32/libform.so.5
+	/lib32/libncurses.so.5
 	...
-	/usr/include/unctrl.h
-	/usr/lib/x86_64-linux-gnu/libcurses.a
-	/usr/lib/x86_64-linux-gnu/libcurses.so
-	...
-	/usr/lib/x86_64-linux-gnu/libpanel.a
-	/usr/lib/x86_64-linux-gnu/libpanel.so
-	/usr/lib/x86_64-linux-gnu/pkgconfig/form.pc
-	/usr/lib/x86_64-linux-gnu/pkgconfig/menu.pc
-	/usr/lib/x86_64-linux-gnu/pkgconfig/ncurses++.pc
-	/usr/lib/x86_64-linux-gnu/pkgconfig/ncurses.pc
-	/usr/lib/x86_64-linux-gnu/pkgconfig/panel.pc
-	/usr/share/doc/libncurses5-dev/changelog.Debian.gz
-	/usr/share/doc/libncurses5-dev/copyright
-	可见，主要是多了.h头文件和.a静态库。
+	/lib32/libtic.so.5
+	#dpkg --add-architecture i386  ？？
+	#apt-get update
+	#apt-get install ia32-libs
 
-7 包管理网站(本文提到下载deb包都出自这些网站)
-	http://pkgs.org/
-	
-8 32位和64位库
-
-
-9 系统安装
+8 系统安装
 	1) LTS版本：
+		hardy (8.04LTS)早就不支持了
 		lucid (10.04LTS)
 		precise (12.04LTS)
 		trusty (14.04LTS)
-	   其他	
+	   其他:
+		natty (11.04)
 		oneiric (11.10)
-		Utopic (14.10)
+		quantal (12.10)
+		saucy (13.10)
+		Utopic (14.10)		
 
 	2) 用UltraISO制作的系统盘是FAT32系统
 	3) sudo passwd root；su root 进root用户,禁用root：sudo passwd -l root
-	4)
-		2块硬盘组raid0，安装win7+ubuntu双系统时，出现麻烦：1 raid0，2 win7。这跟原来单盘，winxp的情形不同。
+	4) 2块硬盘组raid0，安装win7+ubuntu双系统时，出现麻烦：1 raid0，2 win7。这跟原来单盘，winxp的情形不同。
 		主要原因是grub引导程序不支持raid0。
 		方案1：另外安装一块笔记本硬盘用于ubuntu，安装时候把raid0双盘拔掉。独立安装，启动时候靠bios选择引导盘切换系统。
 		问题：肯能是这块盘的性能太差，抑或是ubuntu14.04系统本身有问题，系统运行缓慢，软件打开也慢。换成gnome桌面也不行。
-		方案2：再安装2块160G硬盘，组成raid0（实验可行，2组raid0，主板还是挺强的）。安装ubuntu12.04时候，选择boot程序装在sda上（此时应该是u盘）实测不行
+		方案2：再安装2块160G硬盘，组成raid0（实验可行，2组raid0，主板还是挺强的）。安装ubuntu12.04时候，选择boot程序装在sda上
+		(此时应该是u盘)实测不行
 		ubuntu无法启动。并且，160G raid0 两块盘工作时非常热。并且他们是sata2.0 3.0G  性能肯定不如我的sata3.0 6G双盘好。
 		后来考虑，我安装一块320G 笔记本小盘。安装ubuntu12.04 时候可以选择启动程序安装位置，grub不是不支持raid嘛，我把boot
 		程序安装在非raid的单盘上，然后把系统安装在raid0上，安装倒是成功了，但是无法启动，没有出现启动菜单，选择320G单盘为
 		启动盘，提示grub错误，丢失文件。
-
 		方案3：使用EasyBCD引导，不使用grub，折腾一个晚上，没有成功，能出现grub菜单，也可以选，但是停止在启动页面，无法进入ubuntu系统。
 		方案4：raid0 独立安装ubuntu，虚拟机安装winxp。
+	5) home目录单独分出较好，重装系统时不用备份数据。
+	6) .bashrc
 
 
-10 服务配置
+9 服务配置
 	1) apache配置
 		1 /etc/init.d/apache2 restart 
 		2 网页地址在 /var/www 默认有index.html内容：It works! 如果无index文件显示目录和文件列表。
@@ -274,37 +343,6 @@
 
 	7) wiki
 		wiki导出pdf做过很多尝试，始终没有配置成功
-	8) wireshark
-	apt-get install wireshark 仅安装一个2,324 kB wireshark包  wireshark-common
-	安装低版本1.2.7-1 提示wireshark-common还是1.6.7，在软件中心或apt-get remove卸载之
- wireshark depends on libc-ares2 (>= 1.7.0); however:
-  Package libc-ares2 is not installed.
- wireshark depends on libsmi2ldbl; however:
-  Package libsmi2ldbl is not installed.
- wireshark depends on wireshark-common (= 1.2.7-1); however:
-  Package wireshark-common is not installed.
-
-成功退回到1.2.7版本，实时抓视频包不死了，但是无法查看包详情，一点就死机，整个桌面不动了，奇怪，去要f4切换强制kill 
-12.04问题很多，感觉最好用的还是10.04了
-，11.10什么版本？
-
-如果强制安装u13.10使用的1.10.2 就会安装一系列依赖的库，关联依赖，依赖又依赖。
-
-再执行apt-get install wireshark：
-sudo apt-get install wireshark
-Reading package lists... Done
-Building dependency tree       
-Reading state information... Done
-You might want to run 'apt-get -f install' to correct these:
-The following packages have unmet dependencies:
- wireshark : Depends: libwireshark1 (>= 1.6.0-1) but it is not going to be installed
-             Depends: libwiretap1 (>= 1.6.0-1) but it is not going to be installed
-             Depends: libwsutil1 (>= 1.6.0-1) but it is not going to be installed
-             Depends: wireshark-common (= 1.6.7-1) but it is not going to be installed
-E: Unmet dependencies. Try 'apt-get -f install' with no packages (or specify a solution).
-难道新安装的系统首次就有 wireshark-common ？？？ libwireshark1 ？？？
-
-
 
 
 11 错误报告
@@ -313,20 +351,31 @@ E: Unmet dependencies. Try 'apt-get -f install' with no packages (or specify a s
 能否在12.04上安装wireshark1.12.0呢？
 看http://packages.ubuntu.com/search?suite=all&searchon=names&keywords=wireshark
 
+
+10 错误报告
+	1) 装完显卡驱动，声卡驱动不工作了。安装一个3D桌面的东西，桌面显示不正常了。
 	3) 由11.04升级到11.10成功(以前这样升级都是失败的，进不了桌面)
 	4) ubuntu 11.10  evolution 的目录不在  ~/.evolution 了 而是 ~/.local/share/evolution 
 	5) unity 问题挺多，新产品出来需要很多时间磨合
 
 
-12 技巧
+11 技巧
 	~目录建立Work保存所有工作内容，可能误删。可将其改为root权限，在内部再建立分类目录。这样在work下建立新目录较麻烦，有助于强制规范此目录。
 
 
-12.04 由于之前试验，卸载安装卸载使得libncurses库损坏，导致man xx无法使用：libncurses.so.5: No such file or directory
-查看10.04 在/lib下有此库64位版本，而12.04 /lib/x86_64-linux-gnu下只有libncursesw.so.5没有 libncurses.so.5
-apt-get install 显示已经是最新的版本。(apt-get remove 失败，否则重新安装应该也能解决)
-下载libncursesw5_5.9-4_amd64.deb，dpkg -i安装后/lib/x86_64-linux-gnu下出现此库，问题解决
 
+12 other
+	1) u12.04损坏了libncurses库，导致man xx无法使用：libncurses.so.5: No such file or directory。u10.04 在/lib下有此库64位版本，
+	而u12.04 /lib/x86_64-linux-gnu下只有libncursesw.so.5没有 libncurses.so.5。apt-get install 显示版本已最新，apt-get remove失败
+	下载libncursesw5_5.9-4_amd64.deb，dpkg -i安装后/lib/x86_64-linux-gnu下出现此库，解决。
+
+	2) 解决u12.04+wireshark1.6.7 卡死问题：手工下载包及多级依赖包成功降低版本至1.2.7，抓视频包不死机了但点击详情死机。
+	升级到u14.04用的1.10.6较难很多依赖包版本不对需重装，开始的都能装，最后所需gtk3.0与系统冲突无法安装。ubuntu版和winxp版不同，
+	前者包只有2M，许多依赖包靠系统提供，后者25M，应该包含了所需全部。u11.10之1.6.2
+	
+	3) ubuntu server12.04 apt-get install openjdk-7-jre 安装jre7成功，并自动配置了update-alternatives
+
+	
 
 build-essential包含:
 The following extra packages will be installed:
@@ -334,10 +383,6 @@ The following extra packages will be installed:
 The following NEW packages will be installed:
   build-essential dpkg-dev g++ g++-4.6 libalgorithm-diff-perl libalgorithm-diff-xs-perl libalgorithm-merge-perl libdpkg-perl libstdc++6-4.6-dev libtimedate-perl
 
-.bashrc
-
-2 设置软件源：系统设置->Update Manager->Setting->Ubuntu Software->Server for China 
-确认一下 就可更新。此后就可以apt-get软件包了
 
 6 ubuntu11.04 信使无法显示中文无法设置，使用经典桌面（相对11.04 新推出的桌面 可在启
 动登录时选择）可以：首选项-system-上面两行修改为gb18030 panel font 改为文泉驿 即可。
@@ -939,32 +984,12 @@ ubuntu@ubuntu:/var/lib$ sudo rm -rf apt/mirrors/partial/
 安装opencv时候需要 numpy 但是用apt-get install python-numpy 找不到源，通过其他方式
 下载了他的deb文件。 怎么安装呢？ 直接双击会打开软件中心
 
-
-
  python-numpy: 1:1.5.1-2ubuntu2 (Multi-Arch: no) is not co-installable with 
 python-numpy:i386 1:1.5.1-2ubuntu2 (Multi-Arch: no) which is currently installed
 
 apt-get install -f 可以卸载 python-numpy:i386
 
-------------
-20140516
-ubuntu下面的 .deb包 可以解压缩，解开后：
-/DEBIAN/control   描述依赖关系，版本等信息
-/DEBIAN/md5sums   各个文件的md5校验和
-/DEBIAN/postinst  2个sh脚本
-/DEBIAN/prerm
-/usr/lib/python2.7
 
-系统会按照这个目录结构依次拷贝到系统目录。
-
-
-
-------------------
-libxxx.so  和  libxxx-dev.so 不同，后者用于开发，那么有什么不同呢？ 解开包发现 完全不同。
-不带dev的里面是.so 带dev的里面是.a
-
-
-====================
 由于LInux原始的防火墙工具iptables过于繁琐，所以ubuntu默认提供了一个基于iptable之上的防火墙工具ufw。
 
 我在调试 mysql 外网访问时候，执行了 ufw enable  结果导致所有web服务无法使用：apache wiki  gerrit ssh 等
@@ -998,8 +1023,6 @@ libxxx.so  和  libxxx-dev.so 不同，后者用于开发，那么有什么不�
 1 ubuntu14.04 拼音输入法总是不爽
 在软件中心搜索 IBus Pinyin Setup
 重启电脑，我在ubuntu11.10上熟悉的输入法终于回来了（一个蓝色的“拼”字那个）
-
-wowza： ./startup.sh: 35: java: not found  需要先安装jre
 
 3 安装ubuntu12.04 server ：  mysql  root:12345
 OpenSSH Server
@@ -1194,14 +1217,11 @@ libncurses.so.5 -> libncurses.so.5.9
 /lib32/libncurses.so.5.9 名字改了，再执行adb提示：
 adb: error while loading shared libraries: libncurses.so.5: wrong ELF class: ELFCLASS64
 
-ubuntu包管理网站：
-http://packages.ubuntu.com/  发现各种包 11.04  11.10  版本不维护
-
 
 问题解决：
 1 20140812
 12.04 不知道怎么弄的，virtualbox无法启动，提示libncursesw.so.5找不到。软件中心检查，libncursesw库以及libncursesw:i386库都是安装的，但是在系统中找不到64位版的libncursesw.so.5
-在http://packages.ubuntu.com上找到这个库，文件列表：
+找到这个库，文件列表：
 /lib/x86_64-linux-gnu/libncursesw.so.5   （检查，发现我的12.04根本没有这个文件，那为什么包管理器显示这个库已经安装了呢？bug？）
 /lib/x86_64-linux-gnu/libncursesw.so.5.9
 /usr/lib/x86_64-linux-gnu/libformw.so.5
@@ -1268,35 +1288,6 @@ proc  process
 主版本号表明程序库版本之间的潜在不兼容性。
 次要版本号表明只是修正了缺陷。
 
-i386  i686 都是32位  x86_64 代表64位
-
-
-/lib  64位库
-/lib/x86_64-linux-gnu 64位库
-/lib/i386-linux-gnu 32位库
-/usr/lib 64位库
-/usr/lib/i386-linux-gnu 32位库
-/usr/lib/x86_64-linux-gnu 64位库
-/usr/lib32  32位库
-
-
-/lib32  32位库
-
-以lib32ncurses5_5.7_amd64.deb 为例子，解压缩后：
-/usr/lib32/libmenu.so.5
- ...
-/usr/lib32/libform.so.5
-/lib32/libncurses.so.5
- ...
-/lib32/libtic.so.5
-
-
-http://packages.ubuntu.com
-
-#dpkg --add-architecture i386  ？？
-#apt-get update
-#apt-get install ia32-libs
-
 https://help.ubuntu.com/community/UpgradeNotes
 
 删除gnome panel里的图标。10.04版本有删除菜单，11.10 以后没有，需要进入
@@ -1314,18 +1305,15 @@ intel官网有14.04版的的显卡驱动，没有12.04的。不能轻易尝试�
 
 geidt 搜索框右击选择区分大小写
 
-
-
-
-
 关于ARM的几个文件,名字中的 TRM 代表Technical Reference Manual
 例如,DDI0151C_920T_TRM.pdf 是关于920T内核的 技术参考手册
 文件号为DDI0151C
 
-
-
 作为Ubuntu项目的领导者,Canonical知道Ubuntu的内涵
-
 系统完全死掉时，可以ctrl+alt+f3 去kill某个进程。
+
+
+超微 转码器  每个节目的组播端口号必须不同，否则ipqam搜不到节目
+
 
 

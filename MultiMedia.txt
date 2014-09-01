@@ -18,10 +18,6 @@ android2.2 Stagefright+ffmpeg+openmax
   自己实现openmax。这种做法难度很大，且难于得到nxp的支持，加之当时的严重bug逐步解决，
 故此想法放弃。
 
-需求	需求描述	备注
-Network Protocols	"RTSP (RTP, SDP)
-HTTP/HTTPS progressive streaming
-HTTP/HTTPS live streaming"	
 Container	"1 视频 mkv avi mp4 flv/f4v mpeg/mpg mov ts trp m2ts tp trp wmv rm rmvb 
 2 音频 mp3 wav flac ogg aac ac3  wma dts (ac3不是文件格式吧？)"	
 Decoder(Profile&Level)	"1 海斯3716: H.264 MPEG-2 MPEG4 SP/ASP DivX4/5/6 VC-1 AVS REAL8/9/10 AAC DD/DD+ DTS
@@ -1752,5 +1748,46 @@ jpeg baseline
 
 音频:mpeg1 mpeg2 layer1 layer2  mpeg2-aac  mpeg4-aac mpeg4-he-aac
 dd(ac-3)   dd+   lpcm
+
+
+2个android电视棒，对mp4和m3u8的支持都很好。可以很好适应ott系统。
+那么他们是软解还是硬解呢？ 怀疑是软解码的。（如何确认一下呢?）
+
+A tip; this can be caused by the m3u-file missing an #EXT-X-ENDLIST (indicating 
+it is in fact a window over a live stream, rather than VOD-type content.
+
+
+
+iPod支持	AAC (16 至 320 Kbps)、受保护的 AAC (来自 iTunes Music Store)、MP3 (16 至 320 Kbps)、MP3 VBR、Audible (2、3 和 4 格式)、Apple Lossless、WAV、AIFF
+
+步骤 1 选取“iTunes”>“偏好设置”，单击“高级”，然后单击“导入”。
+步骤 2 从 “导入使用”弹出式菜单中选取一个编码器。
+
+如果您想要将正在导入的歌曲刻录成高质量的音乐光盘而不损音质，则请选取“Apple Lossless 编码器”或“AIFF 编码器”。（记住，使用这种格式导入的歌曲会占用更多的磁盘空间。）
+
+1)AIFF
+AIFF是音频交换文件格式(Audio Interchange File Format)的英文缩写，是Apple公司开发的文件格式，如今广泛普及的WAV就是参照它“克窿”出来的(个人观点)
+
+2)WAV
+WAV是由微软和IBM联合开发的用于音频数字存储的标准(个人认为是联合开发)，符合RIFF(Resource Interchange File Format)文件格式规范，类似AIFF，都是平台标准(个人理解)。
+
+3)Apple Lossless
+Apple Lossless是苹果公司开发的无损音频编解码方案(无特别详细的资料文档)。
+
+其实很简单的，在OS X 系统 插入CD 然后直接把桌面CD光盘目录中的aiff格式音频文件拷贝到电脑中
+当然，获取高品质音源的途径有很多，比如从HD DVD中提取，APE转换等。。在这里就不一一列举了。
+
+
+1 关于资源冲突问题， 音乐播放器退到后台播放，打开多媒体，音乐要暂停，开始播放多媒体。
+一个音乐播放器推出到后台，打开视频播放器，这种情况需要2个音频硬解码器才可以搞定?我不这样认为。
+
+
+缩略图需要双解码器。
+因为U盘插入，系统会在后台扫描缩略图，而此时可以DVB正在播放，导致冲突。
+并且，在播放器内部，
+
+海思的缩略图也是基于双解码器的吗？   而系统很有可能不配置成双解码器。
+
+要不要设计一套没有缩略图的。
 
 
