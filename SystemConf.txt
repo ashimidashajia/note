@@ -142,13 +142,18 @@
 				http://cn.archive.ubuntu.com/ubuntu/pool/universe/w/wireshark/wireshark-common_1.6.2-1_amd64.deb
 
 			Get:1 http://hk.archive.ubuntu.com/ubuntu/ precise/main libatasmart4 amd64 0.18-3 [26.9 kB]
-			非LTS版本弊端：20140901删除wireshark1.6.2就安装不上了，因原路径ubuntu.com/.../universe/w/wireshark/下删除了这个版本
+			非LTS版本弊端：20140901误删了wireshark1.6.2就安装不上了，因原路径ubuntu.com/.../universe/w/wireshark/下删除了这个版本
 			打印看
 			http://cn.archive.ubuntu.com/ubuntu/ oneiric/universe wireshark amd64 1.6.2-1         404  Not Found
 			http://cn.archive.ubuntu.com/ubuntu/pool/universe/w/wireshark/wireshark_1.6.2-1_amd64.deb  404  Not Found
 			现在(140901)wireshark在/ubuntu/dists/precise/universe/binary-amd64/Packages.gz中有描述
+			用尽各种办法没找到1.6.2，还有源码编译这一出吧。
+			
+			修改源从11.10到10.04，update时看到：
+			“获取：http://cn.archive.ubuntu.com lucid/universe amd64 Packages [5,430 kB]” 明白了
+			apt-get install wireshark 成功安装1.2.7，点击详情死机（与u12.04退到1.2.7现象一样）
 
-		3) http://archive.canonical.com (Apache/2.2.22 Ubuntu Server) 这个源内容很少
+		3) http://archive.canonical.com (Apache/2.2.22 Ubuntu Server) 这个源内容很少,没有wireshark等
 		4) http://mirrors.163.com/ubuntu/   ubuntu.com的镜像站，速度快。因为是镜像站，某文件ubuntu主站没有了他也就没有了
 
 
