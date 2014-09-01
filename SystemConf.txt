@@ -285,8 +285,10 @@
   Package wireshark-common is not installed.
 
 成功退回到1.2.7版本，实时抓视频包不死了，但是无法查看包详情，一点就死机，整个桌面不动了，奇怪，去要f4切换强制kill 
-
+12.04问题很多，感觉最好用的还是10.04了
 ，11.10什么版本？
+
+如果强制安装u13.10使用的1.10.2 就会安装一系列依赖的库，关联依赖，依赖又依赖。
 
 再执行apt-get install wireshark：
 sudo apt-get install wireshark
@@ -301,6 +303,8 @@ The following packages have unmet dependencies:
              Depends: wireshark-common (= 1.6.7-1) but it is not going to be installed
 E: Unmet dependencies. Try 'apt-get -f install' with no packages (or specify a solution).
 难道新安装的系统首次就有 wireshark-common ？？？ libwireshark1 ？？？
+
+
 
 
 11 错误报告
