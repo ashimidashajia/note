@@ -14,7 +14,7 @@ The following NEW packages will be installed:
 Need to get 12.2 MB of archives.
 After this operation, 71.8 MB of additional disk space will be used.
 
-
+ 
 
 1 配置安装
 		apt-get install wireshark 仅安装一个2,324 kB wireshark包  wireshark-common
