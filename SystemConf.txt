@@ -106,6 +106,8 @@
 		python-numpy 依赖于 python (<< 2.7)；然而：
 		系统中 python 的版本为 2.7.2-7ubuntu2。
 		而ubuntu中也没有提供13.10 的支持，这就是不用04版本的后遗症。
+
+		尝试安装高版本wireshark时，使用dpkg安装了依赖库libwireshark3_1.10.6-1_amd64，现成为垃圾，
 		
 	2) 包管理站
 		http://pkgs.org/
