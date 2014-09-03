@@ -2,6 +2,10 @@
 envsetup.sh 中定义 add_lunch_combo() 函数
 
 
+百事通版本升级检测：
+ro.app_version=1.0.19(单降低这里不行，还要降低下面那行或者只降低下面那行？)
+ro.build.version.incremental=1.0.19
+
 -------------------------------------
 20140707
 m3 的银河，best，华数版本 在代码上是如何区分的。
@@ -311,7 +315,7 @@ D/DownLoadServer(  479):
 Upgrade_step = 2 成功
 Upgrade_step = 0 没成功
 
-发现 这个是uboot里面的一个环境变量。修改过来就好了！
+这是uboot环境变量。修改过来就好！
 难道是我执行
 update_reboot还是 charging_reboot，的时候，他修改了这个环境变量？！！！！
 

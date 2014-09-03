@@ -1,8 +1,9 @@
 1 Ubuntu系统常见软件包安装：
+	0) sudo apt-get install apache2 nautilus-open-terminal minicom vim wireshark vlc virtualbox
 	1) apache: apache2
 	2) 目录打开终端:nautilus-open-terminal
-	3) 串口: ckermit 或者 putty 或者 minicom
-		(minicom有时有问题，u-boot开发者推荐用ckermit)
+	3) 串口: ckermit(u-boot开发者推荐) 或 putty 或 minicom
+
 	4) 飞鸽:iptux
 	5) svn工具:subversion subversion-tools
 	6) vim (系统默认的vi不好用)
@@ -1328,5 +1329,8 @@ geidt 搜索框右击选择区分大小写
 
 超微 转码器  每个节目的组播端口号必须不同，否则ipqam搜不到节目
 
+
+显卡问题：已经很久忽略了显卡问题。早在2009年，在一台带有独立显卡的机器上安装federo，然后安装显卡驱动得以支持1080p和双屏。后来安装ubuntu一直是忽略此问题的，因为默认就能用，直到在i53470上运行12.04，个别地方（gedit最小化 和firefox）出现黑框和白色线条，也可能是gnome的bug。
+公司的i5 2400 hd2000 也是公版驱动。
 
 
