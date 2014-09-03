@@ -86,8 +86,6 @@
 3) 不推荐12.04编译Android，库兼容问题产生错误。实测发现编译m3平台4.0.4基本成功，仅在做ota zip包时出现boot_img变量的一个错误。
 在a20平台4.2.2中成功。
 
-
-
 4 提示找不到某某库的原因
 	1 确实没有安装
 	2 有-m32选项需要32位版但系统只有64位版(readelf -h可查看)
@@ -132,7 +130,6 @@
 	
 2 make命令
 	1) make update-api
-
 
 
 怀疑是python版本问题，公司11.10上的版本是2.7.2+（官网找不到这个版本），12.04 是2.7.3。从官网下载2.7.2编译安装。出现新问题：
@@ -202,39 +199,6 @@ uestc@uestc-ThinkPad-T43:~/tools$ sudo apt-get install u-boot-tools texinfo texl
 
 u-boot_tools ???
 -------------------------
-
-解决方法：
-
-修改源码目录下/build/core/combo/HOST_linux-x86.mk文件：
-
-将以下语句
-HOST_GLOBAL_CFLAGS += -D_FORTIFY_SOURCE=0
-修改为
-HOST_GLOBAL_CFLAGS += -U_FORTIFY_SOURCE -D_FORTIFY_SOURCE=0
-
-原因：
-在Android系统过程中，要使用gcc-4.4/g++-4.4的编译器，而Ubuntu12.04的gcc版本为4.6.3
-
-我公司是11.10  原来家里成功编译ics的是14.04  还真没用过12.04.
-
-12.04：
-# gcc --version
-gcc (Ubuntu/Linaro 4.6.3-1ubuntu5) 4.6.3，此版编译android 4.0会出错
-
-14.04：
-gcc 4.8.2
-
-ubuntu 11.10的gcc版本是4.6.1，版本太高，编译android时失败，要把gcc版本改为4.4.3。
-
-
-python-markdown
-
-This is a Python implementation of John Gruber’s Markdown. It is almost completely 
-compliant with the reference implementation, though there are a few very minor 
-differences. See John’s Syntax Documentation for the syntax rules.
-
-Python-markdown2：完全用Python实现的Markdown （Markdown 是啥）
-Markdown是一个轻文本标记语言，它允许你在写的时候使用简单文本格式，然后转换为XHTML（HTML）。Python-markdown 是完全用Python实现的Markdown，与用Perl实现的 Markdown.pl非常接近，同时增加了一些扩展，包括语法高亮等
 
 ----------
 公司11.10是安装了的:
