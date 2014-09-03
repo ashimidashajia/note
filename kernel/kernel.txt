@@ -1,3 +1,8 @@
+线程栈在堆空间
+
+
+
+
 1 编译
   clean           - Remove most generated files but keep the config and
                     enough build support to build external modules
@@ -420,5 +425,16 @@ void stack_trace(int n)
 这里要注册中断号码。基本是按照一级中断寄存器定义的。
 
 irq.c 主要是实现一个 struct irq_chip 结构体
+
+
+1 malloc 分配堆空间，mm_struct记录brk地址  那么程序malloc 后再free 那么堆空间起步就出来一个空洞？这时候再malloc 还是要继续扩充brk吗？
+2 malloc 8k 然后memset 3byte 内核会一次分配出来8k物理内存吗？
+
+关于malloc分配器：有的地方用大车，有得地方用小车
+火车把一批人运送到一个城市，再由小车运送到各个地方。个有个的用处。
+就像buddy系统和malloc分批器的区别一样。
+
+就好比我从这里做地铁到回龙观，再做个摸底到家里。
+如果我从这里就打个摸底到家，那轮子还不得开掉了。
 
 

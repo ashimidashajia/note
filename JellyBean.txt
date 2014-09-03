@@ -212,14 +212,7 @@ init: skipping insecure file '/init.rc'
 
 4 编译参数有些区别
 
-
-5 4.0的prelink怎么实现的？
-Prior to Android 4.0 (ICS), the Android system also used prelinking. Prelinking is a valuable performance enhancement,
-but it also has the effect of inhibiting ASLR. In Android 4.0, for a number of different reasons, we decided to remove 
-prelinking from the Android system.
-
 6 libstdc++.so 源码目录 bionic/libstdc++
-
 
 7 一个库中添加1函数，调用此函数生成1可执行elf，然后库中此函数删除，编译拷贝，再执行elf打印：
 mips_relocate_got(linker.cpp:1236): cannot locate "gaojie_test"...CANNOT LINK EXECUTABLE

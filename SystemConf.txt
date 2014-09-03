@@ -16,13 +16,15 @@
 		普通jpeg库：libjpeg-dev(开发版)
 	13) synaptic 新立得包管理器
 	14) wireshark 抓包工具
+	15) python-numpy
 	
 	注：没有的命令直接执行，会给出安装包名的提示。
 
 2  APT
 	1) Debian/Ubuntu采用deb软件包,通常用dpkg（package manager for Debian）或 apt（Advanced Package Tool）工具进行管理。
 		对应RHEL/CentOS/Fedora中的使用yum管理系统中的rpm（Redhat Package Management）。
-	2) apt-get install时候，Suggested packages:部分默认不安装。若要apt-get默认下载推荐包，需建立配置文件：/etc/apt/apt.conf：
+	2) apt-get install
+		Suggested packages:默认不安装。若要安装，需建立配置文件：/etc/apt/apt.conf：
 		APT::Install-Recommends "true";
 		APT::Install-Suggests "true";
 		如果不希望apt-get下载suggested的包：
@@ -44,6 +46,9 @@
 		apt-get instal lib32z1则安装1个包：lib32z1
 		再次执行：
 		apt-get instal lib32z1-dev 显示安装2个包：lib32z1-dev zlib1g-dev
+
+		apt-get -f install  可卸载依赖错误的软件包
+
 	3) 包只下载不安装如：apt-get -d install vim (前提是这个包尚未安装否则提示已经最新)。
 		实测执行后立即打印：Download complete and in download only mode，并没有真正下载包数据。
 	4) apt-get下载的包默认在/var/cache/apt/archives，可在/etc/apt/source.list中修改存放位置。apt-get autoclean 命令可删除这些软件包。
@@ -90,22 +95,28 @@
 
 4 包
 	1) dpkg
-		dpkg -l
-		dpkg -i xx.deb 安装包
-		dpkg -r 删除包（需试验）
-		但是提示
-		python-numpy 依赖于 libc6 (>= 2.14)；然而：
-		系统中 libc6 的版本为 2.13-20ubuntu5。
-		dpkg：处理 python-numpy (--install)时出错：
-		说明需要低版本的numpy
-		sudo apt-get -f install  可以卸载依赖错误的软件包
-		再次执行 apt-get install python-numpy :
-		错误 http://cn.archive.ubuntu.com/ubuntu/ oneiric/main python-numpy amd64 1:1.5.1-2ubuntu2
-		说明需要 1.5.1 这个版本
-		但是没有1.5.1这个版本，用了1.3.0  
-		python-numpy 依赖于 python (<< 2.7)；然而：
-		系统中 python 的版本为 2.7.2-7ubuntu2。
-		而ubuntu中也没有提供13.10 的支持，这就是不用04版本的后遗症。
+		-l List packages matching given pattern
+		-i xx.deb Install the package
+		-r xxx Remove the package
+	
+		u11.04执行：
+		dpkg -i libpcap0.8_1.0.0-6_amd64.deb
+		dpkg：警告：即将把 libpcap0.8 从 1.1.1-8 降级到 1.0.0-6
+		(libpcap0.8 (1.0.0-6) 这纠结，到底是0.8 还是1.0.0-6啊)
+
+		gtk-2.0和gtk-3.0 能共存但u11.04执行：
+		dpkg -i libgtk2.0-0_2.20.0-0ubuntu4_amd64.deb
+		dpkg：警告：即将把 libgtk2.0-0 从 2.24.6-0ubuntu5 降级到 2.20.0-0ubuntu4
+		#可能不同的大版本可共存，小版本不能共存。
+		libgtk2.0-0:amd64 2.20.0-0ubuntu4 (Multi-Arch: no) is not co-installable with 
+		libgtk2.0-0:i386 2.24.6-0ubuntu5 (Multi-Arch: same) which is currently installed ??
+		尝试卸载libgtk2.0 会删除近500M数据显然不行。
+		
+		deb包格式：
+		DEBIAN/control文件
+		Version: 2.20.0-0ubuntu4
+		Architecture: amd64 (Multi-Arch: same  这里怎么写？)
+
 		
 	2) 包管理站
 		http://pkgs.org/
@@ -152,10 +163,13 @@
 			修改源从11.10到10.04，update时看到：
 			“获取：http://cn.archive.ubuntu.com lucid/universe amd64 Packages [5,430 kB]” 明白了
 			apt-get install wireshark 成功安装1.2.7，点击详情死机（与u12.04退到1.2.7现象一样）
+			非lts版过了维护期，安装的软件也就安装了，如果卸载就无法再安装(vlc/wireshark)
+			
 
 		3) http://archive.canonical.com (Apache/2.2.22 Ubuntu Server) 这个源内容很少,没有wireshark等
-		4) http://mirrors.163.com/ubuntu/   ubuntu.com的镜像站，速度快。因为是镜像站，某文件ubuntu主站没有了他也就没有了
+		4) http://mirrors.163.com/ubuntu/   ubuntu.com的镜像站(nginx)，速度快。因为是镜像站，某文件ubuntu主站没有了他也就没有了
 
+	6) 
 
 
 		
@@ -223,15 +237,16 @@
 
 8 系统安装
 	1) LTS版本：
-		hardy (8.04LTS)早就不支持了
-		lucid (10.04LTS)
-		precise (12.04LTS)
-		trusty (14.04LTS)
+		Hardy Heron (8.04LTS) 停止
+		Lucid Lynx (10.04.4LTS) 2013.5
+		Precise Pangolin (12.04.5LTS) 2017.4
+		Trusty Tahr (14.04LTS)  2019.4
+		不用lts版，过了维护期会有很多问题
 	   其他:
-		natty (11.04)
-		oneiric (11.10)
-		quantal (12.10)
-		saucy (13.10)
+		natty (11.04)  2012.10
+		oneiric (11.10) 2013.5
+		quantal (12.10) 2014.5
+		saucy (13.10)   2014.7
 		Utopic (14.10)		
 
 	2) 用UltraISO制作的系统盘是FAT32系统
@@ -250,6 +265,7 @@
 		方案4：raid0 独立安装ubuntu，虚拟机安装winxp。
 	5) home目录单独分出较好，重装系统时不用备份数据。
 	6) .bashrc
+	7) https://wiki.ubuntu.com/
 
 
 9 服务配置

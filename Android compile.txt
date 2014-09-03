@@ -1,6 +1,6 @@
 开发环境搭建以及编译问题
 
-1 20140810 编译android环境：
+1 编译android环境：
 	1) bison flex  2个工具配合使用，语法解释器（类似yacc），跟aidl有关
 	2) git-core
 	3) jdk 1.6 (见jdk专题)
@@ -88,8 +88,6 @@
 
 
 
-
-
 4 提示找不到某某库的原因
 	1 确实没有安装
 	2 有-m32选项需要32位版但系统只有64位版(readelf -h可查看)
@@ -116,55 +114,24 @@
 		prebuilt/$(HOST_PREBUILT_TAG)/toolchain/arm-eabi-4.4.0/bin/arm-eabi-
 	endif
 
-  6) froyo的build/core/combo/arch/arm中有armv7-a.mk 和 armv7a-neon.mk
-      注释分别为：
-	# Generating binaries for the ARMv7-a architecture and higher
-	# Generating binaries for the ARMv7-a architecture and higher with NEON
-  
-	arm官网上介绍Cortex-A9时候：
-	Optional NEON™ media and/or floating point processing engine
-	所以NXP没有NEON，区别还有
-	-mfpu=vfpv3-d16
-	-mfpu=neon 【neon提供FPU所具有的性能和功能】
-	那么如何决定使用哪个文件呢？
-	core/combo/TARGET_linux-arm.mk中有：
+  6) froyo的build/core/combo/arch/arm有:
+	armv7-a.mk	(for ARMv7-a and higher)
+	armv7a-neon.mk (for ARMv7-a and higher with NEON)
 
-	ifeq ($(strip $(TARGET_ARCH_VARIANT)),)
-	TARGET_ARCH_VARIANT := armv5te
-	endif
-	TARGET_ARCH_SPECIFIC_MAKEFILE := $(BUILD_COMBOS)/arch/$(TARGET_ARCH)/$(TARGET_ARCH_VARIANT).mk
-	所以我要去设置 TARGET_ARCH_VARIANT 变量，注意这个文件的注释：
-	# Configuration for Linux on ARM.
-	# Included by combo/select.mk
-	# You can set TARGET_ARCH_VARIANT to use an arch version other
-	# than ARMv5TE. Each value should correspond to a file named
-	# $(BUILD_COMBOS)/arch/<name>.mk which must contain
-	# makefile variable definitions similar to the preprocessor
-	# defines in system/core/include/arch/<combo>/AndroidConfig.h. Their
-	# 跟AndroidConfig.h有屁关系?!
-	# purpose is to allow module Android.mk files to selectively compile
-	# different versions of code based upon the funtionality and
-	# instructions available in a given architecture version.
-	#
-	# The blocks also define specific arch_variant_cflags, which
-	# include defines, and compiler settings for the given architecture
-	# version.
-	#
+
 	
 	同时在这个文件里会include armv5te.mk ,下面还会判断armv5te.mk中的宏定义
 	TARGET_ARCH_VARIANT应该可以设定在你的 product.mk中	
 	make TARGET_ARCH_VARIANT=armv7-a 也行！
 	那么 product.mk这个文件怎么使用呢？ ？
-	显然直接修改 TARGET_linux-arm.mk 文件是最方便的
-
-   7)初次运行 . /build/envsetup.sh 
-	including device/htc/dream/vendorsetup.sh
-	including device/htc/passion/vendorsetup.sh
-	including device/htc/sapphire/vendorsetup.sh
+	直接修改 TARGET_linux-arm.mk 文件是最方便的
 
 
 
-
+. /build/envsetup.sh 
+	
+2 make命令
+	1) make update-api
 
 
 
@@ -952,22 +919,6 @@ eabi 和 oabi 的区别
 它的官方Toolchain也是基于Bionic Libc而并非glibc的 这使得使用或移植其他Toolchain来用于Android要比较麻烦
 在Google公布用于Android的官方Toolchain之前，多数的Android爱好者使用的Toolchain是在http://www.codesourcery.com/gnu_toolchains/arm/download.html  
 下载的一个通用的Toolchain  它用来编译和移植Android 的Linux内核是可行的，因为内核并不需要C库， 但是开发Android的应用程序时，直接采用或者移植其他的Toolchain都比较麻烦，其他Toolchain编译的应用程序只能采用静态编译的方式才能运行于Android模拟器中，这显然是实际开发中所不能接受的方式。目前尚没有看到说明成功移植其他交叉编译器来编译 Android应用程序的资料。 
-
-与glibc相比，Bionic Libc有如下一些特点：
--          采用BSD License，而不是glibc的GPL License；
--          大小只有大约200k，比glibc差不多小一半，且比glibc更快；
--          实现了一个更小、更快的pthread；
--          提供了一些Android所需要的重要函数，如”getprop”, “LOGI”等；
--          不完全支持POSIX标准，比如C++ exceptions，wide chars等；
--          不提供libthread_db 和 libm的实现 
-
-
-另外，Android中所用的其他一些二进制工具也比较特殊：
-         加载动态库时使用的是/system/bin/linker而不是常用的/lib/ld.so;
-        prelink工具不是常用的prelink而是apriori，其源代码位于” <your_android>/build/tools/apriori”
-        strip工具也没有采用常用的strip，即“<your_android>/prebuilt/linux-x86/toolchain /arm-eabi-4.2.1/bin”
-	 目录下的arm-eabi-strip，而是位于<your_android>/out/host /linux-x86/bin/的soslim工具。
-
 
 3  android 的启动过程
 Android 启动过程详解

@@ -1,3 +1,92 @@
+编译系统原理及相关
+
+1 Prelink
+	1) 比如对于prelink的libc.so  如果libc.so 修改了 但是某个库还是基于老的libc.so编译的，
+		那么到新的libc.so上能否运行呢？ 如果不是prelink的肯定没有问题，那么使用prelink的呢？
+	2) prelink被删除的原因
+		build: remove prelinker build build system
+		This patch removes support for prelinking from the build system.  By now, the
+		prelinker has outlived its usefulness for several reasons.  Firstly, the
+		speedup that it afforded in the early days of Android is now nullified by the
+		speed of hardware, as well as by the presence of Zygote.  Secondly, the space
+		savings that come with prelinking (measued at 17MB on a recent honeycomb
+		stingray build) are no longer important either.  Thirdly, prelinking reduces
+		the effectiveness of Address-Space-Layout Randomization.  Finally, since it is
+		not part of the gcc suite, the prelinker needs to be maintained separately.
+
+		The patch deletes apriori, soslim, lsd, isprelinked, and iself from the source
+		tree.  It also removes the prelink map.
+
+		LOCAL_PRELINK_MODULE becomes a no-op.  Individual Android.mk will get cleaned
+		separately.  Support for prelinking will have to be removed from the recovery
+		code and from the dynamic loader as well.
+		Change-Id: I5839c9c25f7772d5183eedfe20ab924f2a7cd411
+		SHA:b375e71d306f2fd356b9b356b636e568c4581fa1
+	3) 2.3之前
+		system/core/下面新建一个
+		LOCAL_PATH:= $(call my-dir)
+		include $(CLEAR_VARS)
+		LOCAL_MODULE:= libtest1
+		LOCAL_SRC_FILES := test.c
+		LOCAL_SHARED_LIBRARIES := libctest
+		include $(BUILD_SHARED_LIBRARY)
+
+		这样一个简单的makefile 用mmm编译竟然提示：
+		target Prelink: libtest1 (out/target/product/Hi3716C/symbols/system/lib/libtest1.so)
+		build/tools/apriori/prelinkmap.c(168): library 'libtest1.so' not in prelink map
+		不过system/core/libctest 里面也没有表明prelink 实际上是prelink的
+		有的库里面有 LOCAL_PRELINK_MODULE := false  可能默认是prelink
+	4) 4.0的prelink怎么实现的？
+		Prior to Android 4.0 (ICS), the Android system also used prelinking. Prelinking is a valuable performance enhancement,
+		but it also has the effect of inhibiting ASLR. In Android 4.0, for a number of different reasons, we decided to remove 
+		prelinking from the Android system.
+
+
+bionic特点：
+	200k大小，比glibc小一半，且比glibc快；
+	实现了一个更小、更快的pthread；
+	提供了一些Android所需要的重要函数，如”getprop”, “LOGI”等；
+	不完全支持POSIX标准，比如C++ exceptions，wide chars等；
+	不提供libthread_db 和 libm的实现 
+
+加载动态库使用/system/bin/linker而不是常用的/lib/ld.so;
+prelink工具不是常用的prelink而是apriori，源码/build/tools/apriori”
+strip不是/prebuilt/linux-x86/toolchain /arm-eabi-4.2.1/bin/arm-eabi-strip，而是/out/host /linux-x86/bin/soslim
+
+
+	Cortex-A9：Optional NEON media and/or floating point processing engine
+
+	-mfpu=vfpv3-d16
+	-mfpu=neon (neon提供FPU所具有的性能和功能)
+
+	那么如何决定使用哪个文件呢？
+	core/combo/TARGET_linux-arm.mk中有：
+
+	ifeq ($(strip $(TARGET_ARCH_VARIANT)),)
+	TARGET_ARCH_VARIANT := armv5te
+	endif
+	TARGET_ARCH_SPECIFIC_MAKEFILE := $(BUILD_COMBOS)/arch/$(TARGET_ARCH)/$(TARGET_ARCH_VARIANT).mk
+	所以我要去设置 TARGET_ARCH_VARIANT 变量，注意这个文件的注释：
+	# Configuration for Linux on ARM.
+	# Included by combo/select.mk
+	# You can set TARGET_ARCH_VARIANT to use an arch version other
+	# than ARMv5TE. Each value should correspond to a file named
+	# $(BUILD_COMBOS)/arch/<name>.mk which must contain
+	# makefile variable definitions similar to the preprocessor
+	# defines in system/core/include/arch/<combo>/AndroidConfig.h. Their
+	# 跟AndroidConfig.h有屁关系?!
+	# purpose is to allow module Android.mk files to selectively compile
+	# different versions of code based upon the funtionality and
+	# instructions available in a given architecture version.
+	#
+	# The blocks also define specific arch_variant_cflags, which
+	# include defines, and compiler settings for the given architecture
+	# version.
+	#
+
+
+
+
 1 framework/base 目录下的 Android.mk 引用 FRAMEWORKS_BASE_SUBDIRS
 生成 framework.jar 包含了 framework/base 目录下的所有java文件
 2 build/core/pathmap.mk 
@@ -184,4 +273,9 @@ SDK使用说明
   全部编译： 执行 make -f makefile-gnu
   只编译用户空间部分： 执行 make -f makefile-gnu app
 
+
+frameworks/base/libs/utils/Android.mk  生成 libutils.so
+ndk编译的时候
+prebuiltLib/libutils.so: undefined reference to `__aeabi_f2ulz'  这个函数在libgcc.a中
+什么样的c语言描述会调用这个函数呢？ 貌似是浮点运算,换成ndk-r4 就没有这个打印
 

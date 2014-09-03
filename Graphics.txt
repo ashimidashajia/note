@@ -1798,24 +1798,12 @@ surfaceflinger里面的surface 跟java空间的surface不是一回事。
 思考：如果系统没有PMEM驱动会怎样呢？
 显然没有PMEM也就不能使用2D加速函数了，那么surfaceflinger使用OpenGL硬加速不用2D加速行吗？就像nxp平台的？
 
-----------
-20120220
 private_handle_t 继承 native_handle 在 gralloc_alloc_buffer里面创建。
 
-------------
-20121019
 android 2.2 surfaceflinger 驻留在system_server 进程，4.0 有独立的 system/bin/serfaceflinger 进程
 
-----
 海思平台在system_service里面注册了一个 :MemService::instantiate() 管理内存分配
 system_server里面去掉memservice 就会打印 I/ServiceManager( 1266): Waiting for sevice MemService...
-
-------------------
-20120220
-关于局部变量：
-打印调试过程中，apk进程的局部变量竟然不再stack空间，而是越过了prelink区域跑到了 0x536c4a64 处。（线程栈在堆空间，可能是线程栈）
-
-
 
 3 SufaceFlinger主要功能是：
 
@@ -1838,7 +1826,6 @@ typedef struct {
     int numInts;        /* number of ints at &data[numFds] */
     int data[0];        /* numFds + numInts ints */  这个难道就是buffer？！
 } native_handle_t;
-
 
 
 -------------------WebUI视频透明方法--------------
@@ -4527,11 +4514,179 @@ waitForCondition(DequeueCondition) timed out (identity=1, status=0). CPU may be 
 2 android 的 ps 命令可以加 -P -p -x 参数
  -P 可以显示一个进程是 fg 还是 bg。比如开始 setting进程为bg。打开 Setting 再执行ps -P 就显示 fg
 退出又变为 bg 
-   
 
-
--------------------
 这里FBO中的FB并不是kernel里的Frame Buffer，而是Opengl里的FrameBuffer
+
+Android系统对2D和3D加速的需求分析
+
+2D加速
+Android2.1版本及以上，800x480分辨率的LCD，在没有2D加速情况下，界面显示速度不可接受，拖动界面反应迟钝。
+分析原因，主界面由RGB背景和RGBA前景图标组成，一幅800x480的RGBA图形要占用1500KB内存，RGB则是 750KB，
+如果完全由CPU进行RGBA和RBA的merge操作，将会消耗大量时间（每个点都要计算）。
+在系统中使用2D加速引擎后，可以大幅提高系统界面流畅性，某些2D测试程序成绩显著提升，并可有效降低界面操作的CPU占用率。
+总结：Android2.1系统中推荐使用2D加速。
+
+3D加速
+Android2.1系统以后很多地方提供了标准和高级两种方案，比如主界面提供Launcher和 Launcer2两个选择。其中Launcher
+即为以前版本的主界面，Launcher2则第一次出现在Google Nexus One手机中，需要3D硬件支持，否则无法运行。
+此外还有替代Gallery的Gallery3D应用程序，可以以3D效果显示图片，我尝试编译进系统，可以运行该程序，但是在显示3D图
+片时调用OpenGL的API报错。
+“I/RenderView( 249): Texture creation fail, glError 128”
+大部分Liverwallpaper也需要3D支持才可以正常显示。
+总结：如果需要更好的效果，推荐使用3D加速。
+
+2D加速实现方案
+当前HTC手机采用的高通msm7k和msm8k的方案，是采用 copybit模块实现2D加速，因为msm系列处理器的2D和3D加速单元是分开的。
+然而采用TI3430方案的摩托罗拉Milestone并没有采用Copybit模块对2D进行特殊处理。
+为什么TI没有使用copybit呢，因为copybit的上层封装实际就是Opengl es的API（GLdrawTexi等），TI的2D/3D加速引擎使
+用的是POWERVR SGX™，这个引擎是完整OpenGL ES支持的，也就是实现了所有（至少是所有必须的）的OpenGL ES API，并没有
+特意去区分2D和3D加速。
+
+总结：Copybit现在是什么东西？现在的Copybit是封装在Android系统opengl软件实现（libagl）库的一部分，仅对
+openGL ES 2D API进行封装，实现openGL ES 2D API到硬件的加速功能。如果处理器的GPU较为统一，可以完全替代libagl，
+那么可以丢开copybit，自己去实现openGL ES 2D API的加速功能。
+如果你的处理器只有2D加速，没有3D，那么可以去实现copybit，因为相对3D API来说，这个模块的封装google基本是做好的，
+只要去实现一个HAL即可。
+
+Android的体系架构中已经考虑到了硬件加速的问题，并在整个架构中有所体现。但是这方面的文档并不多见，几乎没有。
+在项目最初的时候确定方案是最头疼的事情。如何集成硬件加速器到Android系统中？
+经过多方打听，据说Android本身并不完善，所以有的公司使用DirectFB作为中介来做集成。首先将DirectFB porting 
+到 Android中，再在DirectFB中使用硬件加速。这个方法有个优点：对将来Android版本的升级没有太大的依赖性，而
+且DirectFB已经很成熟，即使没有硬件加速器，也能达到一定的加速目的。但是在公司现有的人力和时间的状况下，没有
+办法达成预期。所以公司有计划购买其他公司 DirectFB到Android的集成方案。
+经过代码分析，通过了解Android的绘图系统SGL，包括Skia（着色系统）和SurfaceFlinger（Surface控制系统），
+我们发现，Android的SGL中已经考虑到了硬件加速的问题，并为之提供了接口。这一点相当重要。所以我们需要做的工作
+量就相当少。硬件加速可以分为两个部分。一个是位图的copy部分，也就是通常所说的blit；另一个是绘图部分。Android 
+为用户提供的仅仅是第一个部分的接口。这个原因，在做Qtopia平台时候就已经分析过了。目前我们已经完成了第一部分的集成工作。
+具体来看，做blit操作，主要集中内存搬移上，首先要考虑的就是内存的分配，使用和释放。这一点Android做得比Qtopia
+细心多了。 Android提供了pmem驱动来作为内存管理的接口。这样能够保证，Android绘图系统获得的地址全部是物理连续的。
+对硬件加速的驱动控制非常有帮助。当然pmem的内容很多包括，Android其实只使用了其中的最基本的分配部分:在Android启动
+的时候，分配8M的空间给SGL使用。至于这8M空间怎么使用，是SGL来处理的，处理的方式和pmem的方式有点类似，但增加更多的
+参数，方便使用者。这种方式有点类似于“在应用层写驱动”的做法，可以避免linux的GPL原则，从而有机会达到一定的商业某的。
+(Android有一部份代码是没有开源的)。
+内存的问题解决了，下面就是代码的书写。Android提供了bilt的相关头文件，只要实现对应的函数就好了，相对来说，不是特别复杂。
+我们的2D驱动是沿用的Qtopia上2D加速驱动。改动不大。主要实现了blit相关的函数内容实现。
+
+实现后，有发现一个问题，这个问题看上去是个老问题：小线段问题。
+小线段问题分两类。
+刚开始遇到的是所有的画面都会出现小线段。这个问题分析之后，有解决掉，几乎看不到小线段了。
+后来发现 status bar中，如果时间更新，或者拖动status bar会出现不明状况的小线段。这些小线段有时候有，有时候没有，
+很随机。考虑是多线程的问题。后来经过调试，发现并不是这么一回事。现在已经找到了解决方案，可以保证小线段不出现。目前还
+不清楚确切的原因。
+
+S3C6410的双Framebuffer于Android系统中存在的问题
+
+在为S3C6410移植Android系统过程中，发现在拖动任务栏，软键盘输入信息等情况下，屏幕会出现闪烁现象，类似刷新率不足情况。
+一直认为原因是自己porting的系统没有实现copybit等2D加速功能，导致填充速度不够快。昨天在调试双Framebuffer时发现，
+问题可能出在双 Framebuffer上的交换上。Android使用双Framebuffer机制，front显示，back填充，前后交互显得特别重要。
+打开三星驱动debug宏，可以发现系统（Android 1.5）在EGL初始化后不断调用显示驱动以下几个函数，实现buffer交换：
+s3cfb_check_var()
+s3cfb_activate_var()
+pan_display()
+打开debug的printk信息后，我发现一件很有意思的情况，原来所谓的闪烁现象，现在都不见了，至少基本看不出了。Printk会降低
+驱动调用速度，会不会问题出在显示驱动？文章Patch Framebuffer Driver with Double-Buffering to Support Android's
+ Page-Flipping中也提到双buffer驱动导致不断开关LCD。于是查到s3cfb_activate_var()函数，这个函数重写了 LCD的寄存器。
+应该是短时间重写该寄存器导致出现问题。临时的解决方法是在这个函数后添加mdelay(5)延时,但会导致效率降低,更好的解决方法应该修
+改驱动或者Android中间层调用代码，这个需要跟踪下Android的UI相关代码，待续。
+
+Android2.0/2.1系统中，S3C6410双 Framebuffer显示问题的解决方法
+
+前文Problems with S3C6410 double framebuffer in Android找到了Android系统处理三星S3C6410处理器的双
+Framebuffer驱动时出现的屏闪问题。这两天分析了三星原厂提供的cupcake代码后，终于找到解决方法。
+
+Android2.0之后，Google把和Framebuffer打交道的EGL显示部分也抽象为一个HAL模块——Gralloc
+
+cupcake中用于swapbuffer也被移到了Gralloc下的Framebuffer.cpp文件中，具体函数变为fb_post：
+
+static int fb_post(struct framebuffer_device_t* dev, buffer_handle_t buffer)
+{
+    if (private_handle_t::validate(buffer) < 0)
+        return -EINVAL;
+
+    fb_context_t* ctx = (fb_context_t*)dev;
+
+    private_handle_t const* hnd = reinterpret_cast<private_handle_t const*>(buffer);
+    private_module_t* m = reinterpret_cast<private_module_t*>(dev->common.module);
+    
+    if (m->currentBuffer) {
+        m->base.unlock(&m->base, m->currentBuffer);
+        m->currentBuffer = 0;
+    }
+
+    if (hnd->flags & private_handle_t::PRIV_FLAGS_FRAMEBUFFER) {
+
+        m->base.lock(&m->base, buffer, 
+                private_module_t::PRIV_USAGE_LOCKED_FOR_POST, 
+                0, 0, m->info.xres, m->info.yres, NULL);
+
+        const size_t offset = hnd->base - m->framebuffer->base;
+        m->info.activate = FB_ACTIVATE_VBL;
+        m->info.yoffset = offset / m->finfo.line_length;
+        if (ioctl(m->framebuffer->fd, FBIOPUT_VSCREENINFO, &m->info) == -1) {
+            LOGE("FBIOPUT_VSCREENINFO failed");
+            m->base.unlock(&m->base, buffer); 
+            return -errno;
+        }
+        m->currentBuffer = buffer;
+        
+    } else {
+        // If we can't do the page_flip, just copy the buffer to the front 
+        // FIXME: use copybit HAL instead of memcpy
+        
+        void* fb_vaddr;
+        void* buffer_vaddr;
+        
+        m->base.lock(&m->base, m->framebuffer, 
+                GRALLOC_USAGE_SW_WRITE_RARELY, 
+                0, 0, m->info.xres, m->info.yres,
+                &fb_vaddr);
+
+        m->base.lock(&m->base, buffer, 
+                GRALLOC_USAGE_SW_READ_RARELY, 
+                0, 0, m->info.xres, m->info.yres,
+                &buffer_vaddr);
+
+        memcpy(fb_vaddr, buffer_vaddr, m->finfo.line_length * m->info.yres);
+        
+        m->base.unlock(&m->base, buffer); 
+        m->base.unlock(&m->base, m->framebuffer); 
+    }
+    
+    return 0;
+}
+
+=======================================================================
+函数名称变了，应该是实现方法有所改变，不是直接贴swap，而是采用时间间隔来post。
+
+但最底层的处理方法不会变，还是用FBIOPUT_VSCREENINFO。
+
+同样，用PAN_DISPLAY修改即可。
+
+if (ioctl(m->framebuffer->fd, FBIOPAN_DISPLAY, &m->info) < 0)
+{
+   LOGE("%s::FBIOPAN_DISPLAY fail(%s)", __func__, strerror(errno)); 
+   return 0; 
+}
+
+unsigned int crtc = 0;
+
+if(ioctl(m->framebuffer->fd, FBIO_WAITFORVSYNC, &crtc) < 0) {
+//s3cfb_wait_for_vsync->wait_event_interruptible_timeout
+   LOGE("%s::FBIO_WAITFORVSYNC fail(%s)", __func__, strerror(errno)); 
+   return 0; 
+}
+
+
+/*   if (ioctl(m->framebuffer->fd, FBIOPUT_VSCREENINFO, &m->info) == -1) 
+{
+            LOGE("FBIOPUT_VSCREENINFO failed");
+            m->base.unlock(&m->base, buffer); 
+            return -errno;
+        }
+*/
+========================================================================
+
+
 
 
 

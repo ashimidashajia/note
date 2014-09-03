@@ -731,3 +731,39 @@ Unnamed repository; edit this file 'description' to name the repositor
 
 ldap 和 LDAP Account Manager
 
+
+
+[gerrit]
+	basePath = git
+	canonicalWebUrl = http://192.168.7.32:8081/
+[database]
+	type = h2
+	database = db/ReviewDB
+[auth]
+	type = LDAP
+[ldap]
+	server = ldap://192.168.7.31
+	accountBase = ou=People,dc=cyldap,dc=com
+	groupBase = ou=People,dc=cyldap,dc=com
+	accountFullName = cn
+[sendemail]
+	smtpServer = localhost
+[container]
+	user = root
+	javaHome = /usr/lib/jvm/java-6-openjdk-amd64/jre
+[sshd]
+	listenAddress = *:29418
+[httpd]
+	listenUrl = http://*:8081/
+[cache]
+	directory = cache
+[gitweb]
+	cgi = /usr/share/gitweb/gitweb.cgi
+
+
+
+优秀软件发布平台：
+http://bitnami.com/stacks/version-control
+http://sourceforge.net/projects/vlc/files/
+http://dl.oschina.net/soft/android
+

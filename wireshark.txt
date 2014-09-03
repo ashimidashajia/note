@@ -1,37 +1,47 @@
 1 配置安装
-		apt-get install wireshark 仅安装一个2,324 kB wireshark包  wireshark-common
-		安装低版本1.2.7-1 提示wireshark-common还是1.6.7，在软件中心或apt-get remove卸载之
-		wireshark depends on libc-ares2 (>= 1.7.0); however:
-		Package libc-ares2 is not installed.
-		wireshark depends on libsmi2ldbl; however:
-		Package libsmi2ldbl is not installed.
-		wireshark depends on wireshark-common (= 1.2.7-1); however:
-		Package wireshark-common is not installed.
+		1) apt-get install wireshark 仅安装一个2,324 kB wireshark包  wireshark-common
+			安装低版本1.2.7-1 提示wireshark-common还是1.6.7，在软件中心或apt-get remove卸载之
+			wireshark depends on libc-ares2 (>= 1.7.0); however:
+			Package libc-ares2 is not installed.
+			wireshark depends on libsmi2ldbl; however:
+			Package libsmi2ldbl is not installed.
+			wireshark depends on wireshark-common (= 1.2.7-1); however:
+			Package wireshark-common is not installed.
 
-		成功退回到1.2.7版本，实时抓视频包不死了，但是无法查看包详情，一点就死机，整个桌面不动了，奇怪，去要f4切换强制kill 
-
-		u11.10是1.6.2
+			成功退回到1.2.7版本，实时抓视频包不死了，但是无法查看包详情，一点就死机，整个桌面不动了，去要f4切换强制kill 
 
 		2) ubuntu12.04+wireshark1.6.7，看视频抓包卡死，cpu占用100%。xp+wireshark1.11,或ubuntu11.10+wireshark1.6.2_1没有问题。
-		网上讨论但没找到解决办法。有人说按抓1.2.x解决。
-		能否在12.04上安装wireshark1.12.0呢？
-		看http://packages.ubuntu.com/search?suite=all&searchon=names&keywords=wireshark
+			网上讨论但没找到解决办法。有人说按抓1.2.x解决。
+			能否在12.04上安装wireshark1.12.0呢？
+			看http://packages.ubuntu.com/search?suite=all&searchon=names&keywords=wireshark
 
-		再执行apt-get install wireshark：
-		sudo apt-get install wireshark
-		Reading package lists... Done
-		Building dependency tree       
-		Reading state information... Done
-		You might want to run 'apt-get -f install' to correct these:
-		The following packages have unmet dependencies:
-		wireshark : Depends: libwireshark1 (>= 1.6.0-1) but it is not going to be installed
-		Depends: libwiretap1 (>= 1.6.0-1) but it is not going to be installed
-		Depends: libwsutil1 (>= 1.6.0-1) but it is not going to be installed
-		Depends: wireshark-common (= 1.6.7-1) but it is not going to be installed
-		E: Unmet dependencies. Try 'apt-get -f install' with no packages (or specify a solution).
-		难道新安装的系统首次就有 wireshark-common ？？？ libwireshark1 ？？？
+			再执行apt-get install wireshark：
+			sudo apt-get install wireshark
+			Reading package lists... Done
+			Building dependency tree       
+			Reading state information... Done
+			You might want to run 'apt-get -f install' to correct these:
+			The following packages have unmet dependencies:
+			wireshark : Depends: libwireshark1 (>= 1.6.0-1) but it is not going to be installed
+			Depends: libwiretap1 (>= 1.6.0-1) but it is not going to be installed
+			Depends: libwsutil1 (>= 1.6.0-1) but it is not going to be installed
+			Depends: wireshark-common (= 1.6.7-1) but it is not going to be installed
+			E: Unmet dependencies. Try 'apt-get -f install' with no packages (or specify a solution).
+			难道新安装的系统首次就有 wireshark-common ？？？ libwireshark1 ？？？
 
-		u11.10+wireshark1.6.2 可以抓usb数据
+			u11.10+wireshark1.6.2 可以抓usb数据
+
+		3) 非sudo执行
+			sudo groupadd wireshark
+			sudo usermod -a -G wireshark YOUR_USER_NAME
+			sudo chgrp wireshark /usr/bin/dumpcap
+			sudo chmod 750 /usr/bin/dumpcap
+			sudo setcap cap_net_raw,cap_net_admin=eip /usr/bin/dumpcap
+
+			sudo getcap /usr/bin/dumpcap
+
+		4) 对应关系
+
 
 
 2 使用
