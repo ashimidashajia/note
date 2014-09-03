@@ -259,6 +259,8 @@
 		1) 采用了更为合理的独立/home分区，如果系统需要重装不用拷贝home区的数据。
 		2) /分区预留200G，新系统装完使用3.9G。安装必要软件并使用一段时间后使用？？G
 		3) 安装中文后浏览器变成楷体，不如黑体好看。sudo apt-get remove fonts-arphic-ukai fonts-arphic-uming
+	8) 重装系统需备份：
+		1) iBus拼音输入法自定义词典 Preference - Dictionary
 
 
 9 服务配置
