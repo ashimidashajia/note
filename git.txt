@@ -1,12 +1,51 @@
 1 基本命令 
-	1) pull = fetch + merge
-	2) -f参数 --force
+	1) pull
+		pull = fetch + merge
+		pull不看同名看track，“当前分支”有track关系时，git pull做合并操作。
+		当前不在这个分支时，这个分支虽然有track关系，也只是fetch不merge
+		另一种执行方式为：git pull origin newbox
+
+	2) 参数
+		-f --force
+
 	3) 本地与远程同名分支才能互相合并跟踪
 	4) push:Updates remote refs using local refs
 	5) git help -w commit  打开html帮助信息
 
-2 配置
-	1 git config
+
+即使没有track关系（即.git/config里面没有类似下面的描述）
+[branch "xxx"]
+  remote = origin
+  merge = refs/heads/xxx
+只要是同名分支，都会被跟踪track，git push 无参数都可以push。
+
+
+ 1 当前分支无跟踪分支时，执行git pull提示：
+
+You asked me to pull without telling me which branch you
+want to merge with, and 'branch.newbox.merge' in
+your configuration file does not tell me, either. Please
+specify which branch you want to use on the command line and
+try again (e.g. 'git pull <repository> <refspec>').
+See git-pull(1) for details.
+
+If you often merge with the same branch, you may want to
+use something like the following in your configuration file:
+
+    [branch "newbox"]
+    remote = <nickname>
+    merge = <remote-ref>
+
+    [remote "<nickname>"]
+    url = <url>
+    fetch = <refspec>
+
+See git-config(1) for details.
+
+
+
+2 git config
+
 	--system选项创建并操作/etc/gitconfig针对所有用户
 	--global选项创建并操作~/.gitconfig针对当前用户
 	无选项操作.git/config针对当前项目	
@@ -17,8 +56,20 @@
 	git config --global user.email xx@xx.com
 	git config --global merge.tool vimdiff
 
+	Git 可以理解 kdiff3，tkdiff，meld，xxdiff，emerge，vimdiff，gvimdiff，ecmerge，和 opendiff 等合并工具的输出信息。
 
-Git 可以理解 kdiff3，tkdiff，meld，xxdiff，emerge，vimdiff，gvimdiff，ecmerge，和 opendiff 等合并工具的输出信息。
+
+ branch.autosetupmerge
+ Tells git branch and git checkout to set up new branches so that git-pull(1) will 
+appropriately merge from the starting point branch. Note that even if this
+ option is not set, this behavior can be chosen per-branch using the --track and 
+--no-track options. 
+The valid settings are: false — no automatic setup is done;
+ true — automatic setup is done when the starting point is a remote branch; always
+ — automatic setup is done when the starting point is either a local branch or 
+remote branch. This option defaults to true.
+
+
 
 3 基础原理
 	1 Delta压缩算法用于计算一个新文件和一个已经存储在系统中的参考文件之间的Delta编码。
@@ -348,8 +399,7 @@ working directory files.
 但是有必要指定这个吗？难道还能把这个仓库的修改推送到别的仓库?
 
 在github上测试，有2个远程分支对应的本地分支都发生了修改，执行git push 无参数，可以同时
-把2个分支都推送上去。 但是如果一个新建的本地分支，还没有远程的分支与之对应【2011-03-11
-这里的“对应”其实是指具有track关系】
+把2个分支都推送上去。 但是如果一个新建的本地分支，还没有远程的分支与之对应【这里的“对应”其实是指具有track关系】
 
 如果建立一个新的本地分支（远程还没有对分支），执行git push 无参数，这个分支是推不上去的。只能执行 ”git push origin 本地分支名“ ，才行
 【重点】：但是，git push origin test 
@@ -365,11 +415,6 @@ checkout -b my2.6.14 v2.6.14  【当然】这个分支是一个独立分支，�
 
 关于git push 加参数：第一个参数必须是remote名字！ 不能是一个分支名。tab键 能出来的也只有remote名字。
 
-【20110311】最新发现，即使没有track关系（即.git/config里面没有类似下面的描述）
-[branch "zhulin"]
-  remote = origin
-  merge = refs/heads/zhulin
-只要是同名分支，都会被跟踪track，git push 无参数都可以push。
 
 如果不写repo参数，默认是【origin】
 
@@ -437,34 +482,6 @@ import android.view.ViewGroup;
 必须找到2个分支的共同“纯祖先”，也就是2个分支交汇于一点的地方。
 因为2个分支合并，而产生的不纯祖先，不算数。
 
-
-36 关于git pull 
- 1 当前分支无跟踪分支时，执行git pull提示：[20110428编辑]
-
-You asked me to pull without telling me which branch you
-want to merge with, and 'branch.newbox.merge' in
-your configuration file does not tell me, either. Please
-specify which branch you want to use on the command line and
-try again (e.g. 'git pull <repository> <refspec>').
-See git-pull(1) for details.
-
-If you often merge with the same branch, you may want to
-use something like the following in your configuration file:
-
-    [branch "newbox"]
-    remote = <nickname>
-    merge = <remote-ref>
-
-    [remote "<nickname>"]
-    url = <url>
-    fetch = <refspec>
-
-See git-config(1) for details.
-
-pull不看同名看track，“当前分支”有track关系时，git pull做合并操作。
-当前不在这个分支时，这个分支虽然又track关系，也只是fetch 不merge【fetch吗？】
-另一种执行方式为：git pull origin newbox
-
  2 详情：git help config  看 branch.<name>.merge
  
 branch.<name>.merge
@@ -520,9 +537,6 @@ Ncurses 提供字符终端处理库，包括面板和菜单  tig名字很有意�
 
 40 2011-03-07 难道没有注意到吗？frameworks/base用了一次 “黑色 -mirro参数” 后，现在更清晰了，没有了几十个分支，只有清晰的几个“活跃分支”
    其他的死分支（不活跃的）都没有了,在那里也是碍眼。
-
-
-41 有时候出现提示： does not track upstream
 
 42 2011-03-10 关于独立分支和跟踪分支
    本地分支分为独立分支和跟踪分支
@@ -588,9 +602,7 @@ git branch to always behave as if --no-track were given. Set it to always if you
    merge = refs/heads/girlf
 可见，完全可以不同名！
 
-关于push  pull 还是有点乱套！
-20110311 git pull 跟 track 分支有关系。
----------------------------------------------------------------------
+
 Update the remote-tracking branches for the repository you cloned
 from, then merge one of them into your current branch:
 
@@ -599,17 +611,6 @@ from, then merge one of them into your current branch:
 
 $>git branch xxxx origin/girlfrind1 
 Branch xxxx set up to track remote branch girlfrind1 from origin.
-
-44  git config
- branch.autosetupmerge  不太明白！
- Tells git branch and git checkout to set up new branches so that git-pull(1) will 
-appropriately merge from the starting point branch. Note that even if this
- option is not set, this behavior can be chosen per-branch using the --track and 
---no-track options. 
-The valid settings are: false — no automatic setup is done;
- true — automatic setup is done when the starting point is a remote branch; always
- — automatic setup is done when the starting point is either a local branch or 
-remote branch. This option defaults to true.
 
 45 关于 git config
 
