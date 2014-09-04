@@ -277,7 +277,18 @@
 	8) 重装系统需备份：
 		1) iBus拼音输入法自定义词典 Preference - Dictionary
 		2) 邮件通讯录
+	9) 关于在线升级
+		公司的u11.10从来未升级，每天开机都弹出提示，点击一次“否”，事实证明工作3年良好。
+		家里的u14.04装完升级几次后变得很不稳定，经常死机。vlc播放貌似也不正常了
 
+	10) 删除unity
+		apt-get -y --auto-remove purge unity
+		apt-get -y --auto-remove purge unity-common
+		apt-get -y --auto-remove purge unity-lens*
+		apt-get -y --auto-remove purge unity-services
+		apt-get -y --auto-remove purge unity-asset-pool
+
+	apt-get remove unity*，*这里能无限tab到所有跟它有关联的包——包括是它的和不是它的……    实际测试：确实会删除一堆东西。
 
 9 服务配置
 	1) apache配置
@@ -416,6 +427,9 @@
 	apt-get install gcc
 	apt-get install make
 
+
+14 unity  gnome
+	Unity 是由 Canonical 公司开发,Ubuntu 11.04 版本开始就作为标准桌面环境
 
 
 build-essential包含:
