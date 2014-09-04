@@ -276,6 +276,7 @@
 		3) 安装中文后浏览器变成楷体，不如黑体好看。sudo apt-get remove fonts-arphic-ukai fonts-arphic-uming
 	8) 重装系统需备份：
 		1) iBus拼音输入法自定义词典 Preference - Dictionary
+		2) 邮件通讯录
 
 
 9 服务配置
@@ -1332,5 +1333,21 @@ geidt 搜索框右击选择区分大小写
 
 显卡问题：已经很久忽略了显卡问题。早在2009年，在一台带有独立显卡的机器上安装federo，然后安装显卡驱动得以支持1080p和双屏。后来安装ubuntu一直是忽略此问题的，因为默认就能用，直到在i53470上运行12.04，个别地方（gedit最小化 和firefox）出现黑框和白色线条，也可能是gnome的bug。
 公司的i5 2400 hd2000 也是公版驱动。
+
+
+配置docbook 编译环境
+apt-get install docbook-xml docbook-xsl xsltproc fop
+
+解决打开winmail.dat 附件问题的方法： 使用 tnef
+
+sudo apt-get install tnef
+tnef winmail.dat 
+你也可以先用tnef -t winmail.dat 来看看包含的文件。
+windows附件用convmv转一下文件名的编码：
+代码:
+convmv -f gbk -t utf8 –notest *
+
+google 地图  支持坐标输入
+39.6600805,-105.353731 (Wowza Media Systems, LLC)
 
 

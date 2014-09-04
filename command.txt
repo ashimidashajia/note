@@ -24,3 +24,4 @@ dd if=/dev/zero conout=1M of=dd.bin 可迅速生成512M文件
 给每个空目录里面添加一个.tmp文件
 find ./ -type d -empty | grep -v \.git | xargs -i touch {}/.tmp
 
+tar 一个目录总是失败，原因是里面有个 root权限的文件

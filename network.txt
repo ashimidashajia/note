@@ -18,3 +18,11 @@ Content-Length:1874642
 
 8.8.8.8是Google提供的免费DNS服务器
 
+
+路由器 54-e6-fc-42-45-0b （但是路由器后面打印的最后是0a，这里显示的是0b）
+20120418明白了 0a是LAN口的 0b 是WAN 口的
+
+http://opensource.apple.com/tarballs/mDNSResponder/
+android源码里面有 mdnsresponder 这个库  并且这在system/bin/netd 有引用。
+
+

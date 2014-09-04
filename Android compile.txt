@@ -1949,3 +1949,15 @@ intent.action.HDMI_PLUGGED
 ndk里面没有pthread库？
 通过查看源码，pthread函数在libc.so里，所以不用包含-lpthread  -lrc
 
+
+3.rootfs的使用
+（1）在原来的bcm7241-rootfs上切换到HaiWaiFta分支上
+（2）更换kernel
+进入cfe，更新kernel为bcm7241-rootfs/cfe_kernel/vmlinuz
+（3）修改启动参数
+进入cfe的命令行模式，按如下命令修改启动参数：
+setenv -p STARTUP "boot -z -elf nandflash0.kernel: 'root=/dev/nfs nfsroot=192.168.5.72:/home/lonely/bcm/723x/bcm7241-rootfs rw, ip=192.168.11.87:192.168.5.72:192.168.88.1:255.255.0.0:ccdt-stb:eth0:on  mtdparts=spi0.0:1M(cfe),64K(macadr),64K(nvram),64K(stbid),64K(disp_format),64K(encryption),-(others);brcmnand.0:10M(kernel),20M(recovery),10M(splash),10M(misc),300M(ubi_fs),3000M(ubi_data),400M(ubi_cache),100M(ubi_dvb) init=/init bmem=192M@64M bmem=440M@512M'"
+
+注:ip地址和nfs路径按照自己的电脑来配置。
+
+

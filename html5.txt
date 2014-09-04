@@ -519,4 +519,114 @@ border-radius  极路由状态页面采用
 gateway项目使用此标签导致ie8 不能正常显示
 
 
+---
+极路由
+
+关于WIFI保存设置的 url：/turbo/api/wifi/set_base
+   post信息包格式：ssid=malong&encryption=mixed-psk&key=12345677&key_show=12345677&key_cache=12345677&old_ssid=kjkj&device=radio0.network1&old_password=12345677
+
+注：接口已经对接上，获取JSON信息并显示已完成（省去部分验证机制），正在调
+研JSON取值范围，及JSON回传保存问题。
+
+wifi 响应问题：已传回响应json:{"code":0,"msg":""},可以保存信息，但无提示成功
+
+/cgi-bin/turbo/;stok=6107b645ca6c73c57d2ee84c1b0670da/api/wifi/view_detail?device=radio0.network1
+上面是WIF设置的JSON路径，格式如下：
+{ 
+ "wifi_key": "12345678", 
+ "ssid": "kjkj", 
+ "encryption": "mixed-psk", 
+ "device": "radio0.network1", 
+ "msg": "", 
+ "code": 0, 
+ "channel": 0, 
+ "status": 1, 
+ "mode": "Master", 
+ "quality": 0, 
+ "signal": 0 
+}
+
+/cgi-bin/turbo/;stok=6107b645ca6c73c57d2ee84c1b0670da/api/wifi/view_detail?device=radio0.network1
+上面是WIF设置的JSON路径，格式如下：
+{ 
+ "wifi_key": "12345678", 
+ "ssid": "kjkj", 
+ "encryption": "mixed-psk", 
+ "device": "radio0.network1", 
+ "msg": "", 
+ "code": 0, 
+ "channel": 0, 
+ "status": 1, 
+ "mode": "Master", 
+ "quality": 0, 
+ "signal": 0 
+}
+
+
+初始化wan口信息获取JSON信息url：/turbo/api/network/get_wan_info
+JSON格式为：
+{ "static_ip": "192.168.11.80",
+  "mtu": "1500",
+  "mtu_defult": 1500,
+  "is_internet_link": 0,
+  "msg": "",
+  "status": 1,
+  "static_mask": "255.255.0.0",
+  "override_dns2": "202.106.0.20",
+  "static_gw": "192.168.88.1",
+  "mac": "20:CF:30:E0:E9:CF",
+  "is_eth_link": 0,
+  "override_dns": "202.106.0.20",
+  "code": 0,
+  "peerdns": "0",
+  "wan_status": { "dev_up": true, "iface_pending": false, "msg": "", "dev_link": false, "iface_up": true },
+  "uptime": 3954,
+  "pppoe_name": "11122",
+  "static_dns": "202.106.0.20",
+  "ipv4": [ { "mask": "255.255.0.0", "ip": "192.168.11.80" } ],
+  "gate_way": "192.168.88.1",
+  "dns_ip": [ "202.106.0.20" ],
+  "type": "static",
+  "macaddr": "20:cf:30:e0:e9:cf",
+  "pppoe_passwd": "1122",
+  "ipv6": {  }
+}
+
+保存设置的get包url：
+/turbo/api/network/set_wan_connect?network_type=ip&type=static&pppoe_name=
+&pppoe_passwd=&ip_type=static&static_ip=192.168.6.151&static_mask=255.255.0.0&static_gw=192.168.88.1&static_dns=202.106.0.20
+&static_dns2=1.1.1.1&ssid=&channel=&bssid=&encryption=&key=&key_show=&override_dns=
+&override_dns2=&uptime=0
+响应json为：{ "msg": "", "code": 0 }
+
+
+
+
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+局域网IP地址
+Json 获取地址url：/turbo/api/network/get_lan_info
+Json 格式：
+{ "mac": "D4:EE:07:04:05:8C",
+  "ipv6": [ { "mask": "FFFF:FFFF:FFFF:FFFF:0:0:0:0", "type": "Link", "ip": "FE80:0:0:0:D6EE:7FF:FE04:58C" } ],
+  "code": 0,
+  "msg": "",
+  "uptime": 2533,
+  "status": 1,
+  "dns_ip": {  },
+  "ipv4": [ { "mask": "255.255.255.0", "ip": "192.169.199.1" } ],
+  "is_lan_link": { "lan_4": 0, "lan_3": 0, "lan_2": 1, "lan_1": 0 }
+}
+
+保存设置响应：
+url：/turbo/api/network/set_lan_ip?ip=192.169.199.1&old_ip=192.170.199.1&old_mask=&device= 
+响应的json为：{ "msg": "", "code": 0 }
+
+
+关于昨天无法显示artDialog问题，今天早上已解决，原因是由于firefox在保存是
+自动更给js文件名，导致有重名文件但内容不同的情况，因而导致js引用错误。现
+已用chrome重新保存了web模板，见附件；
+注：通过调整，利用以前的模板已经可以模拟基本的wifi设置（读取+保存+包括成
+功提示），现正在同意改为chrome模板。
+
 
