@@ -767,3 +767,39 @@ http://bitnami.com/stacks/version-control
 http://sourceforge.net/projects/vlc/files/
 http://dl.oschina.net/soft/android
 
+
+
+ git push  origin master 
+Counting objects: 4, done.
+Delta compression using up to 4 threads.
+Compressing objects: 100% (2/2), done.
+Writing objects: 100% (3/3), 312 bytes, done.
+Total 3 (delta 0), reused 0 (delta 0)
+remote: Processing changes: refs: 1, done    
+To ssh://192.168.1.52:29418/test-proj.git
+ ! [remote rejected] master -> master (can not update the reference as a fast forward)
+error: failed to push some refs to 'ssh://192.168.1.52:29418/test-proj.git'
+
+
+无法直接提交
+我可以通过设置gerrit的 Access 使得某些人可以直接提交，当然只有管理员账户有权这样做。
+
+比如我把Administrator组设置为可以对refs/heads/* 可以push。就可以直接提交了
+
+
+能够review需要很多设置，这些设置要inherit frome all-projects
+
+HEAD:refs/for/master 或者写成 master:refs/for/master  ：前后不能有空格
+
+到gerrit上就变成了 refs/changes/01/1/1 格式 并没有 refs/for/master
+
+如何才能设置成1个人就可以审核通过? 对Label Code-Review  改为一次2分即可。
+但是review完成后，并没有真正把代码提交到master分支，或者说还没有merge
+要点击 Publish and Submit 才可以，但是我只看到了Publish Comments 没有前者啊
+需要单独给某人添加 Verified权限。  Verify 和 Code Review可以是一个人也可以是不同的人
+依据项目规模大小确定。可是还是不行，还需要添加 Submit 权限。这回就有了Publish and Submit
+
+需要Code-Review 和 Verified 2个状态都打勾才可以。
+
+
+

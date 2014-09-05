@@ -10,7 +10,7 @@
 	7) 64位系统运行32位程序提示找不到这个文件或目录，安装ia32库
 		apt-get install ia32-libs
 	8) openjdk6:openjdk-6-jdk
-	9) gnome桌面:gnome-session-fallback
+	9) gnome桌面:gnome-session-fallback 或 gnome-panel
 	10) 命令行url工具:curl
 	11) ts分析工具:tstools
 	12) 使用SIMD的jpeg库:libjpeg-turbo(软件中心)
@@ -66,7 +66,7 @@
 3 virtual Box相关
 	1) 在device菜单中执行“安装增强功能”鼠标可自由切换且可全屏显示 
 	2) 共享文件夹设置后需重启
-	3) File->Preference->General->Default Machine Folder 可选择非home/user目录(在这个目录觉得不爽)
+	3) File->Preference->General->Default Machine Folder 可选择非home/user(在这里觉得不爽)
 	4) 网络设置选择桥接 ，就可以与win7 组成局域网，
 		选择 桥接 后，虚拟机地址变为192.168.0.103 这个地址是由路由器的DHCP分配的
 		[在DHCP服务器->DHCP列表与绑定 中看到]
@@ -259,7 +259,7 @@
 	4) 2块硬盘组raid0，安装win7+ubuntu双系统时，出现麻烦：1 raid0，2 win7。这跟原来单盘，winxp的情形不同。
 		主要原因是grub引导程序不支持raid0。
 		方案1：另外安装一块笔记本硬盘用于ubuntu，安装时候把raid0双盘拔掉。独立安装，启动时候靠bios选择引导盘切换系统。
-		问题：肯能是这块盘的性能太差，抑或是ubuntu14.04系统本身有问题，系统运行缓慢，软件打开也慢。换成gnome桌面也不行。
+		问题：这块盘性能差，系统运行缓慢。
 		方案2：再安装2块160G硬盘，组成raid0（实验可行，2组raid0，主板还是挺强的）。安装ubuntu12.04时候，选择boot程序装在sda上
 		(此时应该是u盘)实测不行
 		ubuntu无法启动。并且，160G raid0 两块盘工作时非常热。并且他们是sata2.0 3.0G  性能肯定不如我的sata3.0 6G双盘好。
@@ -268,18 +268,18 @@
 		启动盘，提示grub错误，丢失文件。
 		方案3：使用EasyBCD引导，不使用grub，折腾一个晚上，没有成功，能出现grub菜单，也可以选，但是停止在启动页面，无法进入ubuntu系统。
 		方案4：raid0 独立安装ubuntu，虚拟机安装winxp。
-	5) home目录单独分出较好，重装系统时不用备份数据。
+	5) /home单独分出较好，重装系统时不用备份数据。
 	6) .bashrc
 	7) https://wiki.ubuntu.com/
 
 	7) u12.04 (20140903安装，维护到2019年4月)
 		1) 采用了更为合理的独立/home分区，如果系统需要重装不用拷贝home区的数据。
 		2) /分区预留200G，新系统装完使用3.9G。安装必要软件并使用一段时间后使用？？G
-		3) 安装中文后浏览器变成楷体，不如黑体好看。sudo apt-get remove fonts-arphic-ukai fonts-arphic-uming
+		3) 浏览器变黑体：sudo apt-get remove fonts-arphic-ukai fonts-arphic-uming(删除楷体)
 	8) 重装系统需备份：
 		1) iBus拼音输入法自定义词典 Preference - Dictionary
 		2) 邮件通讯录
-	9) 关于在线升级
+	9) 在线升级
 		公司的u11.10每次升级提示都选“否”，事实证明3年工作良好。
 		家里的u14.04升级几次变得不稳定，经常死机。vlc也不好用。所以也采用不升级补丁策略。
 		升级后，不可预见的事情很多。目前看最稳定经典的版本仍然是10.04，11.10也不错。
@@ -291,6 +291,45 @@
 		apt-get -y --auto-remove purge unity-lens*
 		apt-get -y --auto-remove purge unity-services
 		apt-get -y --auto-remove purge unity-asset-pool
+
+	11) Server版
+		Software selection:
+		OpenSSH Server
+		LAMP server (linux apache mysql php?)
+		PostgreSQL database
+		Tomcat Java server
+		Virtual Machine host （这就是 虚拟主机吗？20130508）
+		Manual package selection：进入一个怪异界面，q退出即可
+		--aptitude??
+		Configuring mysql-server-5.5
+		设置 root 密码 123456
+		命令行设置ip地址子网掩码网关：
+		ifconfig eth0 192.168.4.1 netmask 255.255.255.0 up
+		route add default gw IP
+		echo "nameserver 211.98.1.28">> /etc/resolv.conf
+		重启会消失
+
+		正确方法：编辑 /etc/network/interfaces 文件：
+
+		auto eth0 
+		iface eth0 inet static （原来是dhcp）
+		address 192.168.200.99 
+		netmask 255.255.255.0 
+		gateway 192.168.200.100 
+		dns-nameservers 202.106.0.20 （/etc/resolv.conf 自动添加:nameserver 202.106.0.20）
+
+		添加root用户：
+		sudo passwd root （yinjiezoule）
+		su
+		安装完成后  apache mysql php都ok
+		装完后，tomcat 也默认都装好了  端口8080
+
+	12) bug list
+		1) u14.04+unity
+			1) ctrl+space切换中英文有时不灵敏（u11.10+gnome很灵敏）
+			2) 文件浏览卡有时字体突然变粗，进退几次恢复正常
+			3) 使用过程多次出现死机
+
 
 9 软件配置
 	1) apache配置
@@ -416,7 +455,6 @@
 	~目录建立Work保存所有工作内容，可能误删。可将其改为root权限，在内部再建立分类目录。这样在work下建立新目录较麻烦，有助于强制规范此目录。
 
 
-
 12 other
 	1) u12.04损坏了libncurses库，导致man xx无法使用：libncurses.so.5: No such file or directory。u10.04 在/lib下有此库64位版本，
 	而u12.04 /lib/x86_64-linux-gnu下只有libncursesw.so.5没有 libncurses.so.5。apt-get install 显示版本已最新，apt-get remove失败
@@ -443,18 +481,6 @@
 	apt-get install make
 
 
-14 unity & gnome
-	Unity 是由Canonical公司(Ubuntu项目领导者)开发,Ubuntu 11.04 版本开始就作为标准桌面环境
-14 11.10 默认没有gnome桌面 需要安装 gnome-shell   这个版本的gnome 跟 10.04 的比也
-有了很大的变化。有gnome classic 和 gnome  现在的gnome-shell 功能更加强大，可以从网络上随意下载主题。
-Gnome Tweak Tool 设置工具，可以设置Theme。这个工具装完后为 
-Advanced Settings 可以设置的项很多很多这说明，gnome shell 是一个相当开放的系统 gnome3 ? gnome shell？ 
-
-	公司u11.10安装的gnome版本是3.2.1(System Monitor->System显示（14.04没有这个选项卡了）)
-
-
-
-
 15 做死
 	引发系统崩溃的2个手贱命令
 	apt-get remove unity* (想删除unity桌面)
@@ -462,6 +488,18 @@ Advanced Settings 可以设置的项很多很多这说明，gnome shell 是一�
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+--------------------------------------------------------------------------------
 build-essential包含:
 The following extra packages will be installed:
   dpkg-dev g++ g++-4.6 libalgorithm-diff-perl libalgorithm-diff-xs-perl libalgorithm-merge-perl libdpkg-perl libstdc++6-4.6-dev libtimedate-perl
@@ -577,50 +615,12 @@ RSA host key for [192.168.1.52]:29418 has changed and you have requested strict 
 Host key verification failed.
 
 
-known_hosts文件是干什么用的呢？
+known_hosts记录已经被授权的机器
 
 
 username@username:/$ ssh-keygen -f "/home/username/.ssh/known_hosts" -R [192.168.1.52]:29418
 /home/username/.ssh/known_hosts updated.
 Original contents retained as /home/username/.ssh/known_hosts.old
-
-
-
-----------------
- git push  origin master 
-Counting objects: 4, done.
-Delta compression using up to 4 threads.
-Compressing objects: 100% (2/2), done.
-Writing objects: 100% (3/3), 312 bytes, done.
-Total 3 (delta 0), reused 0 (delta 0)
-remote: Processing changes: refs: 1, done    
-To ssh://192.168.1.52:29418/test-proj.git
- ! [remote rejected] master -> master (can not update the reference as a fast forward)
-error: failed to push some refs to 'ssh://192.168.1.52:29418/test-proj.git'
-
-
-无法直接提交
-我可以通过设置gerrit的 Access 使得某些人可以直接提交，当然只有管理员账户有权这样做。
-
-比如我把Administrator组设置为可以对refs/heads/* 可以push。就可以直接提交了
-
-
-能够review需要很多设置，这些设置要inherit frome all-projects
-
-HEAD:refs/for/master 或者写成 master:refs/for/master  ：前后不能有空格
-
-到gerrit上就变成了 refs/changes/01/1/1 格式 并没有 refs/for/master
-
-如何才能设置成1个人就可以审核通过? 对Label Code-Review  改为一次2分即可。
-但是review完成后，并没有真正把代码提交到master分支，或者说还没有merge
-要点击 Publish and Submit 才可以，但是我只看到了Publish Comments 没有前者啊
-需要单独给某人添加 Verified权限。  Verify 和 Code Review可以是一个人也可以是不同的人
-依据项目规模大小确定。可是还是不行，还需要添加 Submit 权限。这回就有了Publish and Submit
-
-需要Code-Review 和 Verified 2个状态都打勾才可以。
-
-
-known_hosts干什么的？
 
 
 Generating SSH Keys。 key是rsa算法  ssh 是secure shell
@@ -629,7 +629,7 @@ ssh-keygen -t rsa -C "username@cyclecentury.com"
 Generating public/private rsa key pair.
 
 
-The key fingerprint is:   fingerprint 是什么？  指纹
+The key fingerprint is:     指纹
 
 The key fingerprint is:
 ed:73:6e:31:6f:1f:4a:4d:3f:81:26:e6:7d:09:8a:b6 username@cyclecentury.com
@@ -653,7 +653,6 @@ The key's randomart image is:
 
 公钥中包含邮箱信息
 
-登录http://vc.cn:8088  这个是 gerrit 服务器
 
 For more information about SSH key passphrases
 Enter passphrase (empty for no passphrase): usernamexxx
@@ -664,7 +663,6 @@ Enter passphrase (empty for no passphrase): usernamexxx
 sudo apt-get install unrar
 
 文件比较  meld 
-
 
 gerrit2 注册用户的时候，页面显示
 
@@ -719,16 +717,6 @@ ssh-keygen -F www.example.net
 SSH服务端的配置使用的配置文件是“/etc/ssh/sshd_config”
 打开发现 HostKey /etc/ssh/ssh_host_rsa_key 
 
-
-
-
-
-20120823
-192.168.1.4 上面有一个www用户，里面有 ftproot (ftp服务器)，用户层配置为只能上传不能
-删除，我只能用root用户进入，在服务器上直接删除。vca 用户里面有 mantis，mediawiki
-
-
-vi /etc/passwd 可以看到很多用户
 
 
 从提示信息上看，应该是qtss用户未能创建造成的，查看了一下Install脚本，发现创建用户的脚本是这样的：
@@ -859,64 +847,6 @@ mysql 使用root：123456 账户登录，搜出来2个db :performance_schema   t
 user = debian-sys-maint
 password = TgaAWxNqnEsF1tlo 能查到2个db  一个my_wiki  一个testdb 
 
-
-
-------------------------------------------
-skyuc 网站账户
-username:test
-
------------------
-注册一个普通用户： username1：testtest
-wwwroot/admincp/ 管理路径
----------------------------------------------
-20130508
-配置192.168.1.52  ubuntu12.04.1
-账户：username:hejianxin
-root:hejianxin
-
-manage system with Landscape
-
-Software selection:
-OpenSSH Server
-LAMP server (linux apache mysql php?)
-PostgreSQL database
-Tomcat Java server
-Virtual Machine host （这就是 虚拟主机吗？20130508）
-Manual package selection：进入一个怪异界面，q退出即可
-
---aptitude??
-
-Configuring mysql-server-5.5
-设置 root 密码 123456
-
-命令行设置ip地址子网掩码网关：
-ifconfig eth0 192.168.4.1 netmask 255.255.255.0 up
-route add default gw IP
-echo "nameserver 211.98.1.28">> /etc/resolv.conf
-重启会消失
-20130411
-
-正确方法：编辑 /etc/network/interfaces 文件：
-
-auto eth0 
-iface eth0 inet static （原来是dhcp）
-address 192.168.200.99 
-netmask 255.255.255.0 
-gateway 192.168.200.100 
-dns-nameservers 202.106.0.20 （/etc/resolv.conf 自动添加:nameserver 202.106.0.20）
-
-
-添加root用户：
-sudo passwd root （yinjiezoule）
-su
-
-安装完成后  apache mysql php都ok
-装完后，tomcat 也默认都装好了  端口8080
-
-
---20130516--R710 192.168.7.95 wowza服务器-
-用户密码：wowza:wowza
-mysql root:123456
 
 ---------------------------------------------------
 DNS服务安装
@@ -1288,18 +1218,6 @@ provider dsl-provider
 如果我們想由 NetworkManager 管理 eth0 的設定，那就要刪掉 network/interfaces 內關於 eth0的設定內容。注意， network/interfaces 內關於 lo 的那兩行設定是必要的，請勿刪除。
 重启电脑查看connection information正常（logout restart network都不行）
 
-目录解释：
-etc:
-早期UNIX贝尔实验室解释：etcetra directory 。 etc. 就是Et cetra。表示其他、等等什么的，英语里能常常看都这个缩写的。放不能归类到其他目录中的内容。
-后来FHS规定用来放配置文件，就解释为："Editable Text Configuration" 或者 "Extended Tool Chest"。
-
-opt:
-Optional application software packages
-optional 的前三个字母
-
-proc  process
-
-
 ---------
 动态库：
 主版本号表明程序库版本之间的潜在不兼容性。
@@ -1347,3 +1265,17 @@ google 地图  支持坐标输入
 39.6600805,-105.353731 (Wowza Media Systems, LLC)
 
 
+
+vlc中文字幕：
+中文字幕：
+设置－选项－video--subtitle/osd字体渲染里面选择中文字体。
+在打开视频的时候字幕编码选择gb18030就可以了。
+
+
+----
+还可以这样制作启动盘？
+installing the image on to a USB stick with GNU/Linux
+Insert the drive (any data it contains will be erased!)
+Run dmesg in a terminal: this will give you the location of the stick in square brackets, such as sdb
+To write the image, run sudo dd if=gnome-3.12.iso of=/dev/DRIVE bs=8M conv=fsync, replacing DRIVE with the location (e.g., /dev/sdb but not e.g., /dev/sdb1)
+Once the write operation has finished, you can reboot with the USB drive inserted (you may have to specify the boot device on startup)
