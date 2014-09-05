@@ -17,7 +17,7 @@
 		普通jpeg库：libjpeg-dev(开发版)
 	13) synaptic 新立得包管理器
 	14) wireshark 抓包工具
-	15) python-numpy
+	15) python-numpy opencv需要
 	16) python-markdown
 		用Python实现的Markdown(轻文本标记语言，把简单文本转换为HTML)
 	
@@ -246,13 +246,15 @@
 		Trusty Tahr (14.04LTS)  2019.4
 		不用lts版，过了维护期会有很多问题
 	   其他:
+		maverick (10.10)
 		natty (11.04)  2012.10
 		oneiric (11.10) 2013.5
 		quantal (12.10) 2014.5
 		saucy (13.10)   2014.7
 		Utopic (14.10)		
 
-	2) 用UltraISO制作的系统盘是FAT32格式。Ubuntu自带的Startup Disk Creator 制作的启动盘，运行系统正常，但安装中弹出提示框显示几个问号而不能继续。
+	2) 用UltraISO制作的系统盘是FAT32格式。Ubuntu自带的Startup Disk Creator 制作的启动盘，运行系统正常，
+		但安装中弹出提示框显示几个问号而不能继续。
 	3) sudo passwd root；su root 进root用户,禁用root：sudo passwd -l root
 	4) 2块硬盘组raid0，安装win7+ubuntu双系统时，出现麻烦：1 raid0，2 win7。这跟原来单盘，winxp的情形不同。
 		主要原因是grub引导程序不支持raid0。
@@ -278,8 +280,10 @@
 		1) iBus拼音输入法自定义词典 Preference - Dictionary
 		2) 邮件通讯录
 	9) 关于在线升级
-		公司的u11.10从来未升级，每天开机都弹出提示，点击一次“否”，事实证明工作3年良好。
-		家里的u14.04装完升级几次后变得很不稳定，经常死机。vlc播放貌似也不正常了
+		公司的u11.10每次升级提示都选“否”，事实证明3年工作良好。
+		家里的u14.04升级几次变得不稳定，经常死机。vlc也不好用。所以也采用不升级补丁策略。
+		升级后，不可预见的事情很多。目前看最稳定经典的版本仍然是10.04，11.10也不错。
+		新版本功能增加以及架构调整需要很长时间才能稳定。
 
 	10) 删除unity
 		apt-get -y --auto-remove purge unity
@@ -288,9 +292,7 @@
 		apt-get -y --auto-remove purge unity-services
 		apt-get -y --auto-remove purge unity-asset-pool
 
-	apt-get remove unity*，*这里能无限tab到所有跟它有关联的包——包括是它的和不是它的……    实际测试：确实会删除一堆东西。
-
-9 服务配置
+9 软件配置
 	1) apache配置
 		1 /etc/init.d/apache2 restart 
 		2 网页地址在 /var/www 默认有index.html内容：It works! 如果无index文件显示目录和文件列表。
@@ -382,6 +384,19 @@
 	7) wiki
 		wiki导出pdf做过很多尝试，始终没有配置成功
 
+	8) minicom
+		-s   -w
+		进入 Serial port setup 设置ttyUSB0 软硬件流控为No
+		进入 Modem and dialing parameter setup 依次输入A B K 将后面的字符删除
+		ctrl+a +l 将串口接受到的所有数据保存到文件中,如果没有指定文件路径,那么文件将默认保存到
+		打开minicom时所在的当时目录下,比如shell当前在/home/目录下,这是执行minicom命令打开,
+		然后ctrl+a+l打开文件捕获,随后串口上来的所有数据将被捕获存储到/home/目录下minicom.cap的文件中
+		ctrl+a +w 打开自动换行功能,如果arm上传来的数据很长而且没有回车换行符号,那么如果不开
+		启自动换行功能,尬觉后边传上来的数据就看不到了.minicom中上下左右按键不能用
+
+
+
+
 
 11 错误报告
 	1) 装完显卡驱动，声卡驱动不工作了。安装一个3D桌面的东西，桌面显示不正常了。
@@ -428,8 +443,23 @@
 	apt-get install make
 
 
-14 unity  gnome
-	Unity 是由 Canonical 公司开发,Ubuntu 11.04 版本开始就作为标准桌面环境
+14 unity & gnome
+	Unity 是由Canonical公司(Ubuntu项目领导者)开发,Ubuntu 11.04 版本开始就作为标准桌面环境
+14 11.10 默认没有gnome桌面 需要安装 gnome-shell   这个版本的gnome 跟 10.04 的比也
+有了很大的变化。有gnome classic 和 gnome  现在的gnome-shell 功能更加强大，可以从网络上随意下载主题。
+Gnome Tweak Tool 设置工具，可以设置Theme。这个工具装完后为 
+Advanced Settings 可以设置的项很多很多这说明，gnome shell 是一个相当开放的系统 gnome3 ? gnome shell？ 
+
+	公司u11.10安装的gnome版本是3.2.1(System Monitor->System显示（14.04没有这个选项卡了）)
+
+
+
+
+15 做死
+	引发系统崩溃的2个手贱命令
+	apt-get remove unity* (想删除unity桌面)
+	apt-get remove python (想更换python版本)
+
 
 
 build-essential包含:
@@ -476,6 +506,8 @@ lspci -v 可以看到
 /dev下面有很多tty是被  minicom打开后也是默认tty  而串口是ttySx
 
 
+backspace按键的设置 ctrl+a+t B- backspace key sends ：DEL /  BS  选择 DEL  工作正常
+
 17 在上面板上选择了“新建面板” 结果左右出现了空白  网上解决办法 删除username目录下的一堆 .
 开头的文件夹
 删除后,所有的设置都回复初始状态. 令我痛心的是  邮件也需要重新配置
@@ -486,43 +518,13 @@ Evolution 首次运行时会在您的主目录内创建 .evolution  目录，并
 还好  配置完成后 邮件都还在 因为目录没有变
 
 
-
-14 11.10 默认没有gnome桌面 需要安装 gnome-shell   这个版本的gnome 跟 10.04 的比也
-有了很大的变化。有gnome classic 和 gnome  现在的gnome-shell 功能更加强大，可以从网络上随意下载主题。
-软件中心搜索 Gnome Tweak Tool 这是一个高级设置工具，可以设置Theme。这个工具装完后为 
-Advanced Settings 可以设置的项很多很多这说明，gnome shell 是一个相当开放的系统 gnome3 ? gnome shell？ 
-
-
-
-系统升级后，不可预见的事情太多
-
-
-
-20 20111127 系统有一个recovery 模式，可以在紧急情况下进入shell 进行必要的操作。
+20系统有一个recovery 模式，可以在紧急情况下进入shell 进行必要的操作。
  比如今天 我对系统的bash 做了一个  chmod u+s 的操作，导致系统无法启动。进入recovery
 （注意，有很多选项，有一种进去后没有写权限只能读） 执行 chmod u-s 就好了
 
-21 visualbox 的使用：右Ctrl + F   +Home  等用于各种切换
 
 22 ubuntu中使用usb串口线，设备为 /dev/ttyUSB0  在11.10 中，板子上电会导致putty推出
 只用minicom 就没有问题，但是minicom怎么保存数据呢？
-
-minicom配置：
-sudo minicom -s
-进入 Serial port setup 设置ttyUSB0 软硬件流控为No
-进入 Modem and dialing parameter setup 依次输入A B K 将后面的字符删除
-
-
-ctrl+a +l 将串口接受到的所有数据保存到文件中,如果没有指定文件路径,那么文件将默认保存到
-打开minicom时所在的当时目录下,比如shell当前在/home/目录下,这是执行minicom命令打开,
-然后ctrl+a+l打开文件捕获,随后串口上来的所有数据将被捕获存储到/home/目录下minicom.cap的文件中
-ctrl+a +w 打开自动换行功能,如果arm上传来的数据很长而且没有回车换行符号,那么如果不开
-启自动换行功能,尬觉后边传上来的数据就看不到了
-
-
-minicom中上下左右按键不能用
-
-backspace按键的设置 ctrl+a+t B- backspace key sends ：DEL /  BS  选择 DEL  工作正常
 
 
 24 ubuntu修改MAC地址
@@ -751,11 +753,6 @@ WARNING: REMOTE HOST IDENTIFICATION HAS CHANGED
 IT IS POSSIBLE THAT SOMEONE IS DOING SOMETHING NASTY
 然后按照提示处理即可
 
-2 ubuntu server 没有 add-apt-repository （下载jdk6需要）
-系统提示没有add-apt-repository命令，则需要先安装python-software-properties，
-命令sudo apt-get install python-software-properties
-此时需要手动添加：
-"deb http://archive.canonical.com/ubuntu maverick partner"到/etc/apt/sources.list文件中。)
 
 DNS服务器的设置(不要设置这个，这是自动生成的)
 #/etc/resolv.conf
@@ -1011,16 +1008,6 @@ ubuntu@ubuntu:/var/lib$ sudo rm -rf apt/mirrors/partial/
 20140114 早晨开机分辨率变成了1024*768。重启2次，各种设置无效，不认显示器。乱点了一通。
 突然就又好了，不知何故。
 20140117 问题重现
-
-20140515
-安装opencv时候需要 numpy 但是用apt-get install python-numpy 找不到源，通过其他方式
-下载了他的deb文件。 怎么安装呢？ 直接双击会打开软件中心
-
- python-numpy: 1:1.5.1-2ubuntu2 (Multi-Arch: no) is not co-installable with 
-python-numpy:i386 1:1.5.1-2ubuntu2 (Multi-Arch: no) which is currently installed
-
-apt-get install -f 可以卸载 python-numpy:i386
-
 
 由于LInux原始的防火墙工具iptables过于繁琐，所以ubuntu默认提供了一个基于iptable之上的防火墙工具ufw。
 
@@ -1334,11 +1321,6 @@ intel官网有14.04版的的显卡驱动，没有12.04的。不能轻易尝试�
 
 geidt 搜索框右击选择区分大小写
 
-关于ARM的几个文件,名字中的 TRM 代表Technical Reference Manual
-例如,DDI0151C_920T_TRM.pdf 是关于920T内核的 技术参考手册
-文件号为DDI0151C
-
-作为Ubuntu项目的领导者,Canonical知道Ubuntu的内涵
 系统完全死掉时，可以ctrl+alt+f3 去kill某个进程。
 
 
