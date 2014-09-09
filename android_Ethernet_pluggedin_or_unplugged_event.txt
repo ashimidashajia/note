@@ -1,4 +1,4 @@
-Client side:
+java Client side:
 define the API,
 	framework/base/core/java/android/net/INetworkManagementEventObserver.aidl
 	   /**
@@ -35,7 +35,7 @@ the impl is used by,
                 new NetdCallbackReceiver(), "netd", 10, NETD_TAG, 160);
         mThread = new Thread(mConnector, NETD_TAG);
 
-the NativeDaemonConnector,
+the NativeDaemonConnector(java local socket),
 	./base/services/java/com/android/server/NativeDaemonConnector.java
 	in function listenToSocket(), will new socket and do callback, code like below,
 	
@@ -60,5 +60,29 @@ the NativeDaemonConnector,
 
 
 native Socket side,
-TODO
+netd/main.cpp will setup the NetlinkManager, CommandListener
+	nm = NetlinkManager::Instance()
+	cl = new CommandListener();
+	nm->setBroadcaster((SocketListener *) cl);
+	nm->start()
 
+the commandListener will setup socket "netd" to communicate with java side local socket
+	CommandListener::CommandListener() :
+                 FrameworkListener("netd", true)
+
+the NetlinkManager.cpp will setup socket with linux kernel (NETLINK_KOBJECT_UEVENT, NETLINK_ROUTE, NETLINK_NFLOG [see start for info]) and use the NetlinkHandler.cpp as callback
+	setupSocket
+	start
+	stop
+	setBroadcaster
+	getBroadcaster
+	
+/android/system/NetlinkHandler.cpp
+	onEvent will call 
+		notifyInterfaceRemoved [in this call back mNm->getBroadcaster()->sendBroadcast(ResponseCode::InterfaceChange,msg, false); the getBroadcaster() is CommandListener(netd)]
+		notifyInterfaceChanged
+		notifyInterfaceAdded
+
+
+TODO
+linux kernel side
